@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   initMethodMap.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/07/15 18:36:30 by art3mis          ###   ########.fr       */
+/*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
+/*   Updated: 2025/07/17 21:16:21 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "Webserv.hpp"
 
-int	main( int argc, char **argv )
+void	initMethodMap()
 {
-	(void)argv;
-
-	if (argc != 2)
-		return (err_msg(NULL, ERR_USAGE), FAILURE);
-	return (SUCCESS);	
+	// method_map["HEAD"] = &HandleHEAD;
+	// method_map["GET"] = &HandleGET;
+	// method_map["POST"] = &HandlePOST;
+	// method_map["DELETE"] = &HandleDELETE;
 }
