@@ -18,7 +18,7 @@ PURPLE		:=	\033[38;2;211;211;255m
 #————————————————————————————————————————————————————————
 
 NAME		:=	webserv
-INC			:=	-I includes/
+INC			:=	-I INCLUDES/
 
 CPPFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 DEPFLAGS	:=	-MMD -MP
@@ -36,11 +36,11 @@ endef
 #	SOURCES
 #————————————————————————————————————————————————————————
 
-SRCS_DIR	:=	srcs/
-SRCS		:=	$(sort $(shell find srcs -type f -name '*.cpp'))
-#SRCS		:=	$(sort $(shell find srcs -type f \( -name '*.cpp' -o -name '*.ipp' \)))
+SRCS_DIR	:=	SRCS/
+SRCS		:=	$(sort $(shell find SRCS -type f -name '*.cpp'))
+#SRCS		:=	$(sort $(shell find SRCS -type f \( -name '*.cpp' -o -name '*.ipp' \)))
 
-OBJS_DIR	:=	objs/
+OBJS_DIR	:=	OBJS/
 OBJS		:=	$(patsubst $(SRCS_DIR)%.cpp,$(OBJS_DIR)%.o,$(SRCS))
 #OBJS		+=	$(patsubst $(SRCS_DIR)%.ipp,$(OBJS_DIR)%.o,$(SRCS))
 DEPS		:=	$(OBJS:.o=.d)
