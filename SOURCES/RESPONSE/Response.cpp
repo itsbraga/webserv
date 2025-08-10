@@ -6,11 +6,11 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/07/17 21:16:21 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/07 21:42:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Webserv.hpp"
+#include "webserv.hpp"
 
 std::map< int, Response::ResponseFunction >	Response::_builders;
 std::map< std::string, std::string >		Response::_content_types;

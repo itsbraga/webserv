@@ -6,11 +6,11 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/07/17 21:23:29 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/07 21:42:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Webserv.hpp"
+#include "webserv.hpp"
 
 /*
 	For 200, 201, 202 : Body, Content-Length and Content-Type
@@ -57,7 +57,7 @@ void	Response::MovedPermanently()
 		(this->*_builders[500])();
 	this->_status_code = 301;
 	this->_status_name = "Moved Permanently";
-	addHeader("server", "Webserv/1.0");
+	addHeader("server", "Webserv_420 /1.0");
 	addHeader("connection", "keep-alive");
 	addHeader("content-type", "text/html ; charset=utf-8");
 	body = "Moved Permanently. Redirecting to " + location + "\n";
