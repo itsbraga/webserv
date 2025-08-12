@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Webserv.hpp                                        :+:      :+:    :+:   */
+/*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/07/17 21:15:52 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/11 20:12:26 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 
 // C
 # include <netinet/in.h>
+# include <netinet/ip.h>
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/wait.h>
@@ -50,7 +51,7 @@
 \**************************/
 
 // initMethodMap.cpp
-void	initMethodMap();
+void	init_method_map();
 
 // err_msg.cpp
 void	err_msg( const std::string& context, const std::string& reason );

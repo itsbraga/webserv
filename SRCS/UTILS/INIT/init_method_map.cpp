@@ -12,7 +12,7 @@
 
 #include "webserv.hpp"
 
-void	initMethodMap()
+void	init_method_map()
 {
 	// method_map["HEAD"] = &HandleHEAD;
 	// method_map["GET"] = &HandleGET;

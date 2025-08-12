@@ -57,7 +57,7 @@ void	Response::MovedPermanently()
 		(this->*_builders[500])();
 	this->_status_code = 301;
 	this->_status_name = "Moved Permanently";
-	addHeader("server", "Webserv_420 /1.0");
+	addHeader("server", "Webserv/1.0");
 	addHeader("connection", "keep-alive");
 	addHeader("content-type", "text/html ; charset=utf-8");
 	body = "Moved Permanently. Redirecting to " + location + "\n";
