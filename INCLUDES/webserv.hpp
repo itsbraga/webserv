@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/11 20:12:26 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/08/20 18:20:36 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@
 
 // C
 # include <netinet/in.h>
-# include <netinet/ip.h>
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/wait.h>
@@ -37,8 +36,13 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/epoll.h>
+# include <sys/stat.h>
 
 // Our libs
+# include "Parser.hpp"
+# include "Server.hpp"
+# include "Location.hpp"
+# include "LocationTree.hpp"
 # include "Message.hpp"
 # include "Response.hpp"
 
@@ -46,12 +50,26 @@
 # include "defines.hpp"
 # include "colors.hpp"
 
+typedef struct webserv_s
+{
+	unsigned int		servers_nb;
+	std::vector<Server> servers;
+}		webserv_t;
+
+/**************************\
+ *	PARSING
+\**************************/
+
+
 /**************************\
  *	Utils
 \**************************/
 
 // initMethodMap.cpp
-void	init_method_map();
+void	initMethodMap();
+
+//string.cpp
+std::vector<std::string>	split(std::string str, char delimiter);
 
 // err_msg.cpp
 void	err_msg( const std::string& context, const std::string& reason );

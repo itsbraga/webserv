@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/11 20:11:01 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/08/20 18:24:23 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,23 @@
 
 int	main( int argc, char **argv )
 {
-	(void)argv;
+	webserv_t	conf;
 
 	if (argc != 2)
 		return (err_msg(NULL, ERR_USAGE), FAILURE);
-
-	// initMethodMap(); etc...
-	while (true) // pour epoll qui manage les servers
+	try
 	{
+		Parser::handle_file_config(argv[1]);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
 		
 	}
-	return (SUCCESS);
+	// initMethodMap(); etc...
+	// while (true) // pour epoll qui manage les servers
+	// {
+		
+	// }
+	// return (SUCCESS);
 }
