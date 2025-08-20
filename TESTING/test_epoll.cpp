@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 20:03:26 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/20 18:19:23 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/20 18:56:58 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,7 @@ static bool	__handleServerSocket( int epollFd, epoll_event& event)
 	return (true);
 }
 
+// Faire la difference entre une requete complete et incomplete (attendre)
 static void	__handleClientData( int clientSocket )
 {
 	char buffer[1024];
@@ -169,7 +170,7 @@ static void	__handleClientData( int clientSocket )
 	if (nBytes <= 0)
 		return ;
 
-	std::cout << B "Body: " R;
+	// std::cout << B "Body: " R;
 	std::cout.write(buffer, nBytes), std::cout << std::endl;
 }
 
