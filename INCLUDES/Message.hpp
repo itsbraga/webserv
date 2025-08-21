@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/07 21:42:35 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/21 17:53:44 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,20 @@ class Message
 	protected:
 			Message();
 
-			const std::string	_http_version;
-			std::vector< std::pair< std::string, std::string > > _headers;
-			std::string			_body;
+			const std::string										_http_version;
+			std::vector< std::pair< std::string, std::string > >	_headers;
+			std::string												_body;
 	
 	public:
 			virtual ~Message() {}
 
 			virtual void	process() = 0;
 
-			void				setHeaderMap( const std::string headermap );
 			void				setHeaderValue( const std::string key, const std::string value );
 			void				addHeader( const std::string first, const std::string second );
 			void				setBody( const std::string body );
 			const std::string&	getHttpVersion() const;
-			std::string			getHeaderMap() const;
-			std::string			getHeaderValue( std::string key ) const;
-			std::string			getBody() const;
+			const std::string&	getHeaderMap() const;
+			const std::string&	getHeaderValue( const std::string& key ) const;
+			const std::string&	getBody() const;
 };

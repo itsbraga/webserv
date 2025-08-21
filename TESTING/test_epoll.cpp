@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 20:03:26 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/20 18:56:58 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/21 18:56:25 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 
 # define SUCCESS 0
 # define FAILURE 1
+
+# define MAX_EVENTS 512
+
 # define ERR_PREFIX "\033[1m\033[31mError: \033[0m"
 # define R "\e[0m"
 # define B "\e[1m"
@@ -122,7 +125,7 @@ static void	__acceptNewClients( int epollFd, int serverSocket )
 		int clientSocket = ::accept(serverSocket, NULL, NULL);
 		if (clientSocket == -1)
 		{
-			if (errno == EAGAIN/* || errno == EWOULDBLOCK*/)
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				break ;
 			std::cerr << ERR_PREFIX << PO "accept(): " R << strerror(errno) << std::endl;
 			break ;
@@ -161,17 +164,21 @@ static bool	__handleServerSocket( int epollFd, epoll_event& event)
 }
 
 // Faire la difference entre une requete complete et incomplete (attendre)
-static void	__handleClientData( int clientSocket )
+static void	__handleClientData( int epollFd, int clientSocket )
 {
-	char buffer[1024];
-
+	char buffer[8192];
+	
 	ssize_t nBytes = ::recv(clientSocket, buffer, sizeof(buffer), 0);
-	// std::cout << "nBytes: " << nBytes << std::endl;
-	if (nBytes <= 0)
+	if (nBytes > 0)
+		std::cout.write(buffer, nBytes), std::cout << std::endl;
+	else if (nBytes == 0)
+	{
+		epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSocket, NULL);
+		::close(clientSocket);
+		std::cout << PB "[INFO] " R << "client disconnected" << std::endl;
 		return ;
-
-	// std::cout << B "Body: " R;
-	std::cout.write(buffer, nBytes), std::cout << std::endl;
+	}
+	return ;
 }
 
 static bool	__handleClientSocket( int epollFd, epoll_event& event)
@@ -184,18 +191,18 @@ static bool	__handleClientSocket( int epollFd, epoll_event& event)
 		return (true);
 	}
 	if (event.events & EPOLLIN)
-		__handleClientData(event.data.fd);
+		__handleClientData(epollFd, event.data.fd);
 	return (true);
 }
 
 static void	__eventLoop( int epollFd, int serverSocket )
 {
-	epoll_event events[7]; // remplacer par MAX_EVENTS(512)
+	epoll_event events[MAX_EVENTS];
 	bool running = true;
 
 	while (running)
 	{
-		int nbReady = epoll_wait(epollFd, events, 7, -1);
+		int nbReady = epoll_wait(epollFd, events, MAX_EVENTS, -1);
 		if (nbReady == -1)
 		{
 			if (errno == EINTR)
@@ -227,7 +234,10 @@ int	main( void )
 
 	int epollFd = __createEpollInstance(serverSocket);
 	if (epollFd == -1)
-		::close(serverSocket), std::exit(FAILURE);
+	{
+		::close(serverSocket);
+		std::exit(FAILURE);
+	}
 
 	__eventLoop(epollFd, serverSocket);
 
