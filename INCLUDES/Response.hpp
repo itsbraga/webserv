@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/07/17 20:51:41 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/21 18:05:01 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 class Response : public Message
 {
 	private:
-			int				_status_code;
+			int				_status_code; // verifier si pas unsigned int
 			std::string		_status_name;
 			std::string		_ressource_path;
 
@@ -30,6 +30,9 @@ class Response : public Message
 			Response( const int status_code, const std::string status_name );
 			~Response();
 
+			static void			initBuilders();
+			static void			initContentTypes();
+
 			void				process();
 
 			void				setStatusCode( const int status_code );
@@ -40,18 +43,15 @@ class Response : public Message
 			void				setDate();
 			void				setLocation( const std::string location );
 			
-			int					getStatusCode() const;
-			std::string			getStatusName() const;
-			std::string			getRessourcePath() const;
-			std::string 		getDate() const;
-			std::string			getExtension( const std::string& URI ) const; 
+			const int&			getStatusCode() const;
+			const std::string&	getStatusName() const;
+			const std::string&	getRessourcePath() const;
+			const std::string& 	getDate() const;
+			const std::string&	getExtension( const std::string& URI ) const; 
 			const std::string&	getSerializedHeaders() const;
 			const std::string&	getSerializedResponse();
 
 			void				defineContentType();
-
-			static void			initBuilders();
-			static void			initContentTypes();
 
 			/********************************************\
 			 *	BUILDERS STATUS FUNCTIONS

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/20 18:20:36 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/21 20:18:17 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # include "Location.hpp"
 # include "LocationTree.hpp"
 # include "Message.hpp"
+# include "Request.hpp"
 # include "Response.hpp"
 
 // Other
