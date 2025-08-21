@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:43 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/10 22:14:06 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/21 21:01:11 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@
 
 # define SUCCESS 0
 # define FAILURE 1
+
+/**************************\
+ *	Parsing
+\**************************/
+
+# define IDENTIFIER 0
+# define KEYWORD 1
+# define NUMBER 2
+# define SEMICOLON 3
+# define LBRACE 4
+# define RBRACE 5
 
 /**************************\
  *	Server

@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/20 20:36:13 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/21 17:28:14 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ std::string	Parser::CheckPath(char *arg)
 		if (S_ISDIR(buff.st_mode))
 			throw std::invalid_argument("Is a directory");
 	}
+	if (path.substr(path.find_last_of('.')) != ".conf")
+		throw std::invalid_argument("Invalid file extension");
 	return (path);
 }
 
