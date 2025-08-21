@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/08/11 20:11:01 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/08/21 17:56:26 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,39 @@
 /*
 	---------------------- [ Object Manipulation ] -----------------------
 */
-Message::Message() : _http_version("1.1") {}
+Message::Message() : _http_version("HTTP/1.1") {}
 
 /*
 	----------------------------- [ Setters ] ----------------------------
 */
-void	Message::setHeaderMap( const std::string __attribute_maybe_unused__ headermap )
-{
-
-}
-
 // Si header non trouve ? 
 void	Message::setHeaderValue( std::string key, std::string value )
 {
-	std::vector< std::pair<std::string, std::string > >::iterator it;
+	std::vector< std::pair< std::string, std::string > >::iterator it;
+
 	for (it = this->_headers.begin(); it != this->_headers.end(); ++it)
 	{
 		if (it->first == key)
+		{
 			it->second = value;
+			return ;
+		}
 	}
+	this->_headers.push_back(std::make_pair(key, value));
 }
 
 void	Message::addHeader( const std::string first, const std::string second )
 {
-	_headers.push_back(std::make_pair(first, second));
+	this->_headers.push_back(std::make_pair(first, second));
 }
 
 void	Message::setBody( const std::string body )
 {
 	this->_body = body;
 	std::string length_str = toString(body.length());
-	
-	std::string ContentLength = getHeaderValue("content-length");
-	if (ContentLength.empty())
+	std::string contentLength = getHeaderValue("content-length");
+
+	if (contentLength.empty() == true)
 		addHeader("content-length", length_str);
 	else
 		setHeaderValue("content-length", length_str);
@@ -56,35 +56,35 @@ void	Message::setBody( const std::string body )
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-const std::string&		Message::getHttpVersion() const
+const std::string&	Message::getHttpVersion() const
 {
 	return (this->_http_version);
 }
 
-std::string		Message::getHeaderMap() const
+const std::string&	Message::getHeaderMap() const
 {
 	std::string result;
+
 	for (size_t i = 0; i < this->_headers.size(); ++i)
 		result += this->_headers[i].first + ": " + this->_headers[i].second + "\n";
-	if (result.empty())
+	if (result.empty() == true)
 		return ("No headers.\n");
 	return (result);
 }
 
-std::string		Message::getHeaderValue( std::string key ) const
+const std::string&	Message::getHeaderValue( const std::string& key ) const
 {
 	std::vector< std::pair< std::string, std::string > >::const_iterator it;
 
-	it = this->_headers.begin();
-    for (; it != this->_headers.end(); ++it)
+    for (it = this->_headers.begin(); it != this->_headers.end(); ++it)
 	{
         if (it->first == key)
             return (it->second);
     }
-    return ("");
+    throw std::runtime_error("Header not found: " + key);
 }
 
-std::string		Message::getBody() const
+const std::string&	Message::getBody() const
 {
 	return (this->_body);
 }

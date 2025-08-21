@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/11 20:11:01 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/08/21 18:03:48 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,47 +65,47 @@ void	Response::setRessourcePath( const std::string requested_ressource_path )
 
 void	Response::setContentLength( const std::string length )
 {
-	_headers.push_back(std::make_pair("content-length", length));
+	this->_headers.push_back(std::make_pair("content-length", length));
 }
 
 void	Response::setContentType( const std::string type )
 {
-	_headers.push_back(std::make_pair("content-type", type));
+	this->_headers.push_back(std::make_pair("content-type", type));
 }
 
 void	Response::setDate()
 {
-	_headers.push_back(std::make_pair("date", Response::getDate()));
+	this->_headers.push_back(std::make_pair("date", getDate()));
 }
 
 void	Response::setLocation( const std::string location )
 {
-	_headers.push_back(std::make_pair("location", location));
+	this->_headers.push_back(std::make_pair("location", location));
 }
 
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-int		Response::getStatusCode() const
+const int&	Response::getStatusCode() const
 {
 	return (this->_status_code);
 }
 
-std::string		Response::getStatusName() const
+const std::string&	Response::getStatusName() const
 {
 	return (this->_status_name);
 }
 
-std::string		Response::getRessourcePath() const
+const std::string&	Response::getRessourcePath() const
 {
 	return (this->_ressource_path);
 }
 
-std::string		Response::getExtension( const std::string& URI ) const
+const std::string&	Response::getExtension( const std::string& URI ) const
 {
 	std::size_t dot_pos = URI.find_last_of('.');
 	if (dot_pos == std::string::npos)
-		return ("");
+		throw std::runtime_error("No extension found for " + URI);
 	else
 	{
 		std::string extension = URI.substr(dot_pos + 1);
@@ -113,7 +113,7 @@ std::string		Response::getExtension( const std::string& URI ) const
 	}
 }
 
-std::string		Response::getDate() const
+const std::string&	Response::getDate() const
 {
 	char buffer[30];
 	buffer[29] = '\0';
@@ -131,7 +131,7 @@ const std::string&	Response::getSerializedHeaders() const
 	std::string result;
 	std::vector< std::pair< std::string, std::string > >::const_iterator it;
 
-	for (it = _headers.begin(); it != _headers.end(); it++)
+	for (it = this->_headers.begin(); it != this->_headers.end(); it++)
 		result += it->first + ": " + it->second + "\r\n";
 	return (result);
 }
@@ -142,9 +142,10 @@ const std::string&	Response::getSerializedResponse()
 	std::string response;
 
 	addHeader("date", getDate());
-	response += "HTTP/";
-	response += toString(this->_http_version);
-	response += " ";
+	// response += "HTTP/";
+	// response += toString(this->_http_version);
+	response += this->_http_version + " ";
+	// response += " ";
 	response += toString(this->_status_code) + " " + this->_status_name + "\r\n";
 	response += getSerializedHeaders() + "\r\n" + getBody() + "\n";
 	return (response);
@@ -152,15 +153,15 @@ const std::string&	Response::getSerializedResponse()
 
 void	Response::defineContentType()
 {
-	std::string extension = getExtension(this->getRessourcePath());
+	std::string extension = getExtension(getRessourcePath());
 	if (extension.empty())
 		throw InternalServerErrorException();
 	else
 	{
 		std::map< std::string, std::string >::const_iterator it;
 
-		it = _content_types.find(extension);
-		if (it != _content_types.end())
+		it = this->_content_types.find(extension);
+		if (it != this->_content_types.end())
 			addHeader("content-type", it->second);
 		else
 			addHeader("content-type", "application/octet-stream");
