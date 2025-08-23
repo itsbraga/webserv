@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseStatus.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/11 20:11:01 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/08/23 20:22:10 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void	Response::InternalServerError()
 	std::string body = "<!doctype html>\n";
 	body += "<head>\n	<title>500 Internal Server Error !</title>";
 	setBody(body);
-	// addHeader("content-length", toString(getBody().length()));
+	addHeader("content-length", toString(getBody().length()));
 }
 
 void	Response::NotImplemented()

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/21 20:22:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/23 20:10:06 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,8 @@ class Request : public Message
 			Request( const std::string& serialized );
 			~Request();
 
+			class SyntaxErrorException : public std::exception {};
+
+			void	requestLineCheck( const std::string& serialized );
 			void	deserializeRequest( const std::string& serialized );
 };

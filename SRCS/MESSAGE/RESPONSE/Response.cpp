@@ -6,14 +6,14 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/21 18:03:48 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/23 18:14:12 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-std::map< int, Response::ResponseFunction >	Response::_builders;
-std::map< std::string, std::string >		Response::_content_types;
+std::map<int, Response::ResponseFunction>	Response::_builders;
+std::map<std::string, std::string>			Response::_content_types;
 
 /*
 	---------------------- [ Object Manipulation ] -----------------------
@@ -129,7 +129,7 @@ const std::string&	Response::getDate() const
 const std::string&	Response::getSerializedHeaders() const
 {
 	std::string result;
-	std::vector< std::pair< std::string, std::string > >::const_iterator it;
+	std::vector< std::pair<std::string, std::string> >::const_iterator it;
 
 	for (it = this->_headers.begin(); it != this->_headers.end(); it++)
 		result += it->first + ": " + it->second + "\r\n";
@@ -158,7 +158,7 @@ void	Response::defineContentType()
 		throw InternalServerErrorException();
 	else
 	{
-		std::map< std::string, std::string >::const_iterator it;
+		std::map<std::string, std::string>::const_iterator it;
 
 		it = this->_content_types.find(extension);
 		if (it != this->_content_types.end())
