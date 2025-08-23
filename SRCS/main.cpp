@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/20 18:24:23 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/23 16:34:51 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main( int argc, char **argv )
 		return (err_msg(NULL, ERR_USAGE), FAILURE);
 	try
 	{
-		Parser::handle_file_config(argv[1]);
+		Parser::handleFileConfig(argv[1], &conf);
 	}
 	catch(const std::exception& e)
 	{

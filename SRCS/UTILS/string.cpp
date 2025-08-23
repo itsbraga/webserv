@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/21 18:36:44 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/23 15:59:39 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,21 @@ std::vector<std::string>	split(std::string str, char delimiter)
 	return (tokens);
 }
 
-void	erase_whitespace(std::string& str)
+void	erase_whitespace(std::string& str, std::string set)
 {
-	while (str.find("\n\r\t\v") != std::string::npos)
+	std::string::const_iterator set_it = set.begin();
+	std::string::iterator 		str_it = str.begin();
+	size_t						pos = std::string::npos;
+
+	while(set_it != set.end())
 	{
-		str.erase(str.find(" \n\r\t\v"));
+		pos = str.find(*set_it);
+		if (pos != std::string::npos)
+		{
+			str.erase(str_it + pos);
+			pos = std::string::npos;
+		}
+		else
+			set_it++;
 	}
 }
