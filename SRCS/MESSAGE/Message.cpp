@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/08/21 17:56:26 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/23 18:13:32 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Message::Message() : _http_version("HTTP/1.1") {}
 // Si header non trouve ? 
 void	Message::setHeaderValue( std::string key, std::string value )
 {
-	std::vector< std::pair< std::string, std::string > >::iterator it;
+	std::vector< std::pair<std::string, std::string> >::iterator it;
 
 	for (it = this->_headers.begin(); it != this->_headers.end(); ++it)
 	{
@@ -74,7 +74,7 @@ const std::string&	Message::getHeaderMap() const
 
 const std::string&	Message::getHeaderValue( const std::string& key ) const
 {
-	std::vector< std::pair< std::string, std::string > >::const_iterator it;
+	std::vector< std::pair<std::string, std::string> >::const_iterator it;
 
     for (it = this->_headers.begin(); it != this->_headers.end(); ++it)
 	{

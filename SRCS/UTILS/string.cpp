@@ -6,24 +6,24 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 15:59:39 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/08/23 20:42:07 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-std::vector<std::string>	split(std::string str, char delimiter)
+std::vector<std::string>	split( std::string str, char delimiter )
 {
-	std::vector<std::string> tokens;
-	std::string token;
-	std::stringstream ss(str);
+	std::vector<std::string>	tokens;
+	std::string					token;
+	std::stringstream			ss(str);
 
-	while(std::getline(ss, token, delimiter))
+	while (std::getline(ss, token, delimiter))
 		tokens.push_back(token);
 	return (tokens);
 }
 
-void	erase_whitespace(std::string& str, std::string set)
+void	erase_whitespace( std::string& str, std::string set )
 {
 	std::string::const_iterator set_it = set.begin();
 	std::string::iterator 		str_it = str.begin();
