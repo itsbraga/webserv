@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/21 18:05:01 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/23 19:43:52 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,17 @@ class Response : public Message
 			std::string		_ressource_path;
 
 			typedef void ( Response::*ResponseFunction )();
-			static std::map< int, ResponseFunction >	_builders;
-			static std::map< std::string, std::string >	_content_types;
+			static std::map<int, ResponseFunction>		_builders;
+			static std::map<std::string, std::string>	_content_types;
 	
 	public:
 			Response();
 			Response( const int status_code, const std::string status_name );
 			~Response();
+
+			class ResourceForbiddenException : public std::exception {};
+			class ResourceNotFoundException : public std::exception {};
+			class InternalServerErrorException : public std::exception {};
 
 			static void			initBuilders();
 			static void			initContentTypes();
@@ -82,10 +86,6 @@ class Response : public Message
 			void	ServiceUnavailable();		// 503
 			void	GatewayTimeout();			// 504
 			void	HttpVersionNotSupported();	// 505
-
-			class ResourceForbiddenException : public std::exception {};
-			class ResourceNotFoundException : public std::exception {};
-			class InternalServerErrorException : public std::exception {};
 };
 
 inline std::ostream		&operator<<( std::ostream& os, Response const& response );

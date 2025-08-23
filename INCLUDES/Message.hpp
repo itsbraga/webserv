@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/21 17:53:44 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/08/23 18:13:14 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ class Message
 	protected:
 			Message();
 
-			const std::string										_http_version;
-			std::vector< std::pair< std::string, std::string > >	_headers;
-			std::string												_body;
+			const std::string									_http_version;
+			std::vector< std::pair<std::string, std::string> >	_headers;
+			std::string											_body;
 	
 	public:
 			virtual ~Message() {}
