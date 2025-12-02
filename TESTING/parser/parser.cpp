@@ -11,6 +11,7 @@ Parser::Parser(char *arg)
 		if (infile.peek() == EOF)
 			throw std::invalid_argument("Configuration file is empty !");
 		this->fillBuffer(infile);
+		infile.close();
 	}
 	catch(const std::exception& e)
 	{
