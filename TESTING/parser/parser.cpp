@@ -1,46 +1,44 @@
 #include "parser.hpp"
 
-Parser::Parser(char *arg)
+Parser::Parser( char *arg )
 {
-	try
-	{
+	try {
 		this->checkPath(arg);
 		std::ifstream infile;
 		infile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 		infile.open(arg);
 		if (infile.peek() == EOF)
-			throw std::invalid_argument("Configuration file is empty !");
+			throw std::invalid_argument( "Configuration file is empty !" );
 		this->fillBuffer(infile);
 	}
-	catch(const std::exception& e)
-	{
-		throw;
+	catch (const std::exception& e) {
+		throw ;
 	}
 	
 }
 
 Parser::~Parser() {}
 
-std::string	Parser::checkPath(char *arg)
+std::string		Parser::checkPath( char *arg )
 {
 	std::string path = arg;
 	if (path.empty())
-		throw std::invalid_argument("No file path");
+		throw std::invalid_argument( "No file path" );
 	
 	struct stat buff;
 	if (stat(arg, &buff) == -1)
-		throw std::invalid_argument(strerror(errno));
+		throw std::invalid_argument( strerror(errno) );
 	else
 	{
 		if (S_ISDIR(buff.st_mode))
-			throw std::invalid_argument("Is a directory");
+			throw std::invalid_argument( "Is a directory" );
 	}
 	if (path.substr(path.find_last_of('.')) != ".conf")
-		throw std::invalid_argument("Invalid file extension");
+		throw std::invalid_argument( "Invalid file extension" );
 	return (path);
 }
 
-void	Parser::bufferTokenize( void )
+void	Parser::bufferTokenize()
 {
 	std::string::const_iterator start_tok = this->_buffer.begin();
 	std::string::const_iterator	end_tok;
@@ -67,13 +65,13 @@ void	Parser::bufferTokenize( void )
 	}
 }
 
-void		Parser::createTokenDelimiter(std::string::const_iterator it)
+void	Parser::createTokenDelimiter( std::string::const_iterator it )
 {
 	std::string token(it, it + 1);
 	this->_tokens.push_back(token);
 }
 
-void			Parser::fillBuffer(const std::ifstream& infile)
+void	Parser::fillBuffer( const std::ifstream& infile )
 {
 	std::ostringstream	buffer;
 	buffer << infile.rdbuf();
@@ -90,27 +88,27 @@ std::vector<std::string>&	Parser::getTokens()
 	return (this->_tokens);
 }
 
-const std::vector<std::string>&	Parser::getTokens() const
+const std::vector<std::string>&		Parser::getTokens() const
 {
 	return (this->_tokens);
 }
 
-bool	Parser::isSemiColon(char c) const
+bool	Parser::isSemiColon( char c ) const
 {
 	return (c == ';');
 }
 
-bool	Parser::isLeftBrace(char c) const
+bool	Parser::isLeftBrace( char c ) const
 {
 	return (c == '{');
 }
 
-bool	Parser::isRightBrace(char c) const
+bool	Parser::isRightBrace( char c ) const
 {
 	return (c == '}');
 }
 
-bool	Parser::isWhiteSpace(char c) const
+bool	Parser::isWhiteSpace( char c ) const
 {
 	if (c == ' ' || c == '\n' || c == '\t' || c == '\r')
 		return (true);

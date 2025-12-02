@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/23 20:41:05 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/02 19:40:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@
 # include "Request.hpp"
 # include "Response.hpp"
 
-// Other
 # include "defines.hpp"
 # include "colors.hpp"
 
@@ -60,23 +59,8 @@ typedef struct webserv_s
 }		webserv_t;
 
 /**************************\
- *	PARSING
+ *	Template functions
 \**************************/
-
-
-/**************************\
- *	UTILS
-\**************************/
-
-// initMethodMap.cpp
-void	init_method_map();
-
-//string.cpp
-std::vector<std::string>	split(std::string str, char delimiter);
-
-// err_msg.cpp
-void	err_msg( const std::string& context, const std::string& reason );
-void	err_msg_quoted( const std::string& context, const std::string& reason );
 
 template< typename T >
 std::string	toString( const T& value )
@@ -85,3 +69,21 @@ std::string	toString( const T& value )
 	oss << value;
 	return (oss.str());
 }
+
+/**************************\
+ *	UTILS
+\**************************/
+
+// string.cpp
+std::vector<std::string>	split(std::string str, char delimiter);
+
+// err_msg.cpp
+void	err_msg( const std::string& context, const std::string& reason );
+void	err_msg_quoted( const std::string& context, const std::string& reason );
+
+/**************************\
+ *	UTILS/INIT
+\**************************/
+
+// init_method_map.cpp
+void	init_method_map();

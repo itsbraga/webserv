@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   translate_ipv4.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 23:39:47 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/11 01:14:58 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/02 16:51:06 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,13 @@
 #include <sys/socket.h>
 #include <netinet/ip.h>
 
-int main(void)
+int	main( void )
 {
-	int gai_ret = 0;
-	struct addrinfo hints;
-	struct addrinfo *result;
-	std::string str_ip = "127.0.0.1";
+	int				gai_ret = 0;
+	struct addrinfo	hints;
+	struct addrinfo	*result;
+	std::string		str_ip = "127.0.0.1";
+
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;

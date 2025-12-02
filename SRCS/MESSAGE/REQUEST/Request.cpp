@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 20:11:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/02 17:29:53 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,10 @@
 /*
 	---------------------- [ Object Manipulation ] -----------------------
 */
-Request::Request() : Message() {}
-
 Request::Request( const std::string& serialized ) : Message()
 {
 	deserializeRequest(serialized);
 }
-
-Request::~Request() {}
 
 /*
 	----------------------------- [ Parsing ] ----------------------------

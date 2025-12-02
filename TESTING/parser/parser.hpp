@@ -10,7 +10,7 @@
  *	Modes
 \**************************/
 
-# define RESET			"\e[0m"
+# define NC			"\e[0m"
 # define BOLD			"\e[1m"
 # define ITAL			"\e[3m"
 # define UNDERLINE		"\e[4m"
@@ -47,28 +47,28 @@ class Parser
 		~Parser();
 
 		std::string	checkPath(char *arg);
-		void		bufferTokenize( void );
+		void		bufferTokenize();
 
-		void						fillBuffer(const std::ifstream &infile);
-		void						createTokenDelimiter(std::string::const_iterator it);
+		void		fillBuffer( const std::ifstream &infile);
+		void		createTokenDelimiter( std::string::const_iterator it);
 
-		std::string&				getBuffer();
-		std::vector<std::string>&	getTokens();
+		std::string&					getBuffer();
+		std::vector<std::string>&		getTokens();
 		const std::vector<std::string>&	getTokens() const;
 
-		bool	isSemiColon(char c) const;
-		bool	isLeftBrace(char c) const;
-		bool	isRightBrace(char c) const;
-		bool	isWhiteSpace(char c) const;
+		bool	isSemiColon( char c ) const;
+		bool	isLeftBrace( char c ) const;
+		bool	isRightBrace( char c ) const;
+		bool	isWhiteSpace( char c ) const;
 
 };
 
-inline std::ostream&	operator<<(std::ostream &os, const Parser& to_insert)
+inline std::ostream&	operator<<(std::ostream& os, const Parser& to_insert)
 {
 	std::vector<std::string>::const_iterator it = to_insert.getTokens().begin();
 	for (; it != to_insert.getTokens().end(); ++it)
 	{
-		os << RED << "[" << RESET << *it << RED << "]" << RESET << " - ";
+		os << RED << "[" << NC << *it << RED << "]" << NC << " - ";
 	}
 	os << std::endl;
 	return (os);

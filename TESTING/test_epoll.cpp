@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 20:03:26 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/21 18:56:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/02 19:01:48 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # define MAX_EVENTS 512
 
 # define ERR_PREFIX "\033[1m\033[31mError: \033[0m"
-# define R "\e[0m"
+# define NC "\e[0m"
 # define B "\e[1m"
 # define PO "\e[38;2;255;178;127m"
 # define PY "\e[38;2;255;234;150m"
@@ -44,19 +44,19 @@ static int	__setNonBlocking( int fd )
 	int flags = fcntl(fd, F_GETFL, 0);
 	if (flags == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "fcntl(F_GETFL): " R << strerror(errno) << std::endl;
+		std::cerr << ERR_PREFIX << PO "fcntl(F_GETFL): " NC << strerror(errno) << std::endl;
 		return (-1);
 	}
 	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "fcntl(F_SETFL | O_NONBLOCK): " R << strerror(errno)
+		std::cerr << ERR_PREFIX << PO "fcntl(F_SETFL | O_NONBLOCK): " NC << strerror(errno)
 				  << std::endl;
 		return (-1);
 	}
 	return (SUCCESS);
 }
 
-static int	__createServerSocket( void )
+static int	__createServerSocket()
 {
 	int			serverSocket; // listeningFd
 	sockaddr_in	serverAddr;
@@ -64,7 +64,7 @@ static int	__createServerSocket( void )
 	serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (serverSocket == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "socket(): " R << strerror(errno) << std::endl;
+		std::cerr << ERR_PREFIX << PO "socket(): " NC << strerror(errno) << std::endl;
 		return (-1);
 	}
 
@@ -76,14 +76,14 @@ static int	__createServerSocket( void )
 	// Associates the socket with a specific IP address and port
 	if (bind(serverSocket, reinterpret_cast< sockaddr* >(&serverAddr), sizeof(serverAddr)) == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "bind(): " R << strerror(errno) << std::endl;
+		std::cerr << ERR_PREFIX << PO "bind(): " NC << strerror(errno) << std::endl;
 		::close(serverSocket);
 		return (-1);
 	}
 	// Marks the socket as a passive socket for incoming connection requests (telephone switchboard)
 	if (listen(serverSocket, SOMAXCONN) == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "listen(): " R << strerror(errno) << std::endl;
+		std::cerr << ERR_PREFIX << PO "listen(): " NC << strerror(errno) << std::endl;
 		::close(serverSocket);
 		return (-1);
 	}
@@ -100,7 +100,7 @@ static int	__createEpollInstance( int serverSocket )
 	int epollFd = epoll_create(1);
 	if (epollFd == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "epoll_create(): " R << strerror(errno) << std::endl;
+		std::cerr << ERR_PREFIX << PO "epoll_create(): " NC << strerror(errno) << std::endl;
 		::close(serverSocket);
 		return (-1);
 	}
@@ -111,7 +111,7 @@ static int	__createEpollInstance( int serverSocket )
 	ev.data.fd = serverSocket;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, serverSocket, &ev) == -1)
 	{
-		std::cerr << ERR_PREFIX << PO "epoll_ctl(ADD listen): " R << strerror(errno) << std::endl;
+		std::cerr << ERR_PREFIX << PO "epoll_ctl(ADD listen): " NC << strerror(errno) << std::endl;
 		::close(epollFd), ::close(serverSocket);
 		return (-1);
 	}
@@ -127,7 +127,7 @@ static void	__acceptNewClients( int epollFd, int serverSocket )
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				break ;
-			std::cerr << ERR_PREFIX << PO "accept(): " R << strerror(errno) << std::endl;
+			std::cerr << ERR_PREFIX << PO "accept(): " NC << strerror(errno) << std::endl;
 			break ;
 		}
 		if (__setNonBlocking(clientSocket) == -1)
@@ -142,20 +142,20 @@ static void	__acceptNewClients( int epollFd, int serverSocket )
 		client_ev.data.fd = clientSocket;
 		if (epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &client_ev) == -1)
 		{
-			std::cerr << ERR_PREFIX << PO "epoll_ctl(ADD client): " R << strerror(errno) << std::endl;
+			std::cerr << ERR_PREFIX << PO "epoll_ctl(ADD client): " NC << strerror(errno) << std::endl;
 			::close(clientSocket);
 			continue ;
 		}
-		std::cout << PB "[INFO] client accepted" R << std::endl; 
+		std::cout << PB "[INFO] client accepted" NC << std::endl; 
 	}
 }
 
 static bool	__handleServerSocket( int epollFd, epoll_event& event)
 {
-	std::cout << PY "[SERVER] Waiting for connections..." R << std::endl;
+	std::cout << PY "[SERVER] Waiting for connections..." NC << std::endl;
 	if (event.events & EPOLLERR)
 	{
-		std::cerr << ERR_PREFIX << PO "listen socket error --> STOPPING" R << std::endl;
+		std::cerr << ERR_PREFIX << PO "listen socket error --> STOPPING" NC << std::endl;
 		return (false);
 	}
 	if (event.events & EPOLLIN)
@@ -175,9 +175,13 @@ static void	__handleClientData( int epollFd, int clientSocket )
 	{
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, clientSocket, NULL);
 		::close(clientSocket);
-		std::cout << PB "[INFO] " R << "client disconnected" << std::endl;
+		std::cout << PB "[INFO] " NC << "client disconnected" << std::endl;
 		return ;
 	}
+	else
+		std::cout << ERR_PREFIX << "recv(): fail" << std::endl;
+	const char	*response = "HTTP/1.1 200 OK\r\n\r\nHello World!\n";
+	::send(clientSocket, response, strlen(response), 0);
 	return ;
 }
 
@@ -187,7 +191,7 @@ static bool	__handleClientSocket( int epollFd, epoll_event& event)
 	{
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, event.data.fd, NULL);
 		::close(event.data.fd);
-		std::cout << PB "[INFO] client closed (EPOLLERR)" R << std::endl;
+		std::cout << PB "[INFO] client closed (EPOLLERR)" NC << std::endl;
 		return (true);
 	}
 	if (event.events & EPOLLIN)
@@ -207,7 +211,7 @@ static void	__eventLoop( int epollFd, int serverSocket )
 		{
 			if (errno == EINTR)
 				continue ;
-			std::cerr << ERR_PREFIX << PO "epoll_wait(): " R << strerror(errno) << std::endl;
+			std::cerr << ERR_PREFIX << PO "epoll_wait(): " NC << strerror(errno) << std::endl;
 			break ;
 		}
 		for (int i = 0; i < nbReady; i++)
@@ -225,6 +229,8 @@ static void	__eventLoop( int epollFd, int serverSocket )
 		}
 	}
 }
+
+/* ************************************************************************** */
 
 int	main( void )
 {
