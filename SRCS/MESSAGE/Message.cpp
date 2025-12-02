@@ -6,16 +6,11 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/08/23 18:13:32 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/02 17:24:33 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-/*
-	---------------------- [ Object Manipulation ] -----------------------
-*/
-Message::Message() : _http_version("HTTP/1.1") {}
 
 /*
 	----------------------------- [ Setters ] ----------------------------
@@ -24,7 +19,6 @@ Message::Message() : _http_version("HTTP/1.1") {}
 void	Message::setHeaderValue( std::string key, std::string value )
 {
 	std::vector< std::pair<std::string, std::string> >::iterator it;
-
 	for (it = this->_headers.begin(); it != this->_headers.end(); ++it)
 	{
 		if (it->first == key)
@@ -56,11 +50,6 @@ void	Message::setBody( const std::string body )
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-const std::string&	Message::getHttpVersion() const
-{
-	return (this->_http_version);
-}
-
 const std::string&	Message::getHeaderMap() const
 {
 	std::string result;
@@ -82,9 +71,4 @@ const std::string&	Message::getHeaderValue( const std::string& key ) const
             return (it->second);
     }
     throw std::runtime_error("Header not found: " + key);
-}
-
-const std::string&	Message::getBody() const
-{
-	return (this->_body);
 }

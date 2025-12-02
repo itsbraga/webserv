@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 20:03:31 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/02 19:41:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,55 +26,54 @@ class Token
 		std::string		_value; //template ?
 
 	public:			
-		Token(unsigned int type, std::string value) : _type(type), _value(value) {}
+		Token( unsigned int type, std::string value ) : _type(type), _value(value) {}
 		~Token(){}
 
-		void			setType(unsigned int type);
-		void			setValue(std::string value);
-		unsigned int	getType( void );
-		std::string		getValue( void );
+		void			setType( unsigned int type );
+		void			setValue( std::string value );
+		unsigned int	getType();
+		std::string		getValue();
 
 };
 
 class Parser
 {
 	private:
-		std::string	_conf_path;
-		std::string	_buffer;
+		std::string				_conf_path;
+		std::string				_buffer;
 		std::vector<Context>	_context_stack;
 		std::vector<Token>		_tokens;
 		std::set<std::string>	_keywords;
 
 	public:
-		Parser(char* arg);
+		Parser( char *arg );
 		~Parser(){}
 		
-		static void 		handleFileConfig(char *arg, webserv_s *data);
-		std::string 		checkPath(char *arg);
-		void				initKeywordSet( void );
-		void				bufferTokenize( void );
-		Token				createToken(unsigned int type, std::string value);
-		std::stringstream	createStringStream( void );
+		static void 		handleFileConfig( char *arg, webserv_s* data );
+		std::string 		checkPath( char *arg);
+		void				initKeywordSet();
+		void				bufferTokenize();
+		Token				createToken( unsigned int type, std::string value );
+		std::stringstream	createStringStream();
 
-		bool				isLeftBrace(char c);
-		bool				isRightBrace(char c);
-		bool				isSemiColon(char c);
-		bool				isKeyword(const std::string& to_compare);
-		bool				isNumber(const std::string& to_compare);
-		bool				isServer(const std::string& to_compare);
-		bool				isLocation(const std::string& to_compare);
+		bool		isLeftBrace( char c ) { return (c == '{'); }
+		bool		isRightBrace( char c ) { return (c== '}'); }
+		bool		isSemiColon( char c ) { return (c == ';'); }
+		bool		isKeyword( const std::string& to_compare );
+		bool		isNumber( const std::string& to_compare );
+		bool		isServer( const std::string& to_compare );
+		bool		isLocation( const std::string& to_compare );
 
-		void				enterContext(Context context);
-		void				exitContext( void );
-		Context				getCurrentContext( void );
+		void		enterContext(Context context);
+		void		exitContext();
+		Context		getCurrentContext();
 
-		std::string				getConfPath( void );
-		std::string				getBuffer( void );
-		std::vector<Context>	getContextStack( void );
+		std::string				getConfPath() { return (this->_conf_path); }
+		std::string				getBuffer() { return (this->_buffer); }
+		std::vector<Context>	getContextStack() { return (this->_context_stack); }
 
-		class SyntaxError : public std::exception
+		class SyntaxErrorException : public std::exception
 		{
-			const char *what( void ) const throw();	
+			const char	*what() const throw();
 		};
-		
 };

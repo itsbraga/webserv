@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/15 05:20:58 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/02 19:41:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,52 +19,50 @@ class ErrorPage
 		std::string 		_file;
 		
 	public: 
-		ErrorPage(std::vector<int> status, std::string file) : _status(status), _file(file) {}
-	 	~ErrorPage(){}
+		ErrorPage( std::vector<int> status, std::string file ) : _status(status), _file(file) {}
+	 	~ErrorPage() {}
 		
-		std::vector<int>	getStatus();
-		std::string 		getFile();
+		std::vector<int>	getStatus() { return (this->_status); }
+		std::string 		getFile() { return (this->_file); }
 
-		bool		findStatus(int target);
+		bool	findStatus(int target);
 };
 
 class Location
 {
 	private:
-		std::string 						_root;
-		std::string 							_index;
-		std::vector<ErrorPage>						 _epage;
-		std::vector<std::string> 						_allowed_methods;
-		std::vector<std::pair<std::string, std::string>>	_cgi_bin;
-		bool											_auto_index;
-		bool										_upload_allowed;
-		unsigned int							_return_code;
-		std::string							_return_uri;
+		std::string					_root;
+		std::string					_index;
+		std::vector<ErrorPage>		_epage;
+		std::vector<std::string>	_allowed_methods;
+		std::vector<std::pair<std::string, std::string> >	_cgi_bin;
+		bool						_auto_index;
+		bool						_upload_allowed;
+		unsigned int				_return_code;
+		std::string					_return_uri;
 
 	public:
 		Location(){}
 		~Location(){}
 
-		void					setRoot(std::string root);
-		void					setIndex(std::string index);
-		void					setErrorPage(std::vector<ErrorPage> error_page);
-		void					setAllowedMethods(std::vector<std::string> allowed_methods);
-		void					setCgiBin(std::vector<std::pair<std::string, std::string>> cgi_bin);
-		void					setAutoIndex(bool auto_index);
-		void					setUploadAllowed(bool upload_allowed);
-		void					setReturnCode(unsigned int return_code);
-		void					setReturnUri(std::string return_uri);
+		void			setRoot( std::string root );
+		void			setIndex( std::string index );
+		void			setErrorPage( std::vector<ErrorPage> error_page );
+		void			setAllowedMethods( std::vector<std::string> allowed_methods );
+		void			setCgiBin( std::vector<std::pair<std::string, std::string>> cgi_bin );
+		void			setAutoIndex( bool auto_index );
+		void			setUploadAllowed( bool upload_allowed );
+		void			setReturnCode( unsigned int return_code );
+		void			setReturnUri( std::string return_uri );
 		std::string											getRoot();
 		std::string 										getIndex();
 		std::vector<ErrorPage>								getErrorPage();
 		std::vector<std::string>							getAllowedMethods();
 		std::vector<std::pair<std::string, std::string>>	getCgiBin();
-		bool					getAutoIndex();
-		bool					getUploadAllowed();
-		unsigned int			getReturnCode();
-		std::string				getReturnUri();
-
-		
+		bool			getAutoIndex();
+		bool			getUploadAllowed();
+		unsigned int	getReturnCode();
+		std::string		getReturnUri();	
 };
 
 //hierarchie des directives nginx

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 
-void	erase_whitespace(std::string& str, std::string set)
+void	erase_whitespace( std::string& str, std::string set )
 {
 	std::string::const_iterator set_it = set.begin();
 	std::string::iterator 		str_it = str.begin();
@@ -21,7 +21,7 @@ void	erase_whitespace(std::string& str, std::string set)
 	}
 }
 
-int main(void)
+int main( void )
 {
 	std::string str = "               Server         { listen 8080; host localhost;\n Location /uploads\n {\n\tautonindex on;\n\tallow_uploads;\n   }           }";
 	std::cout << str << std::endl;

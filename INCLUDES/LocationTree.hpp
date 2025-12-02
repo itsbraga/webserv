@@ -3,46 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   LocationTree.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 23:27:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/17 23:15:12 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/02 19:38:43 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-
-
 typedef struct Node_s
 {
-	std::string 	segment;
-	// unsigned int	depth;
-	// std::string		full_uri;
-	Location		*location;
-	std::vector<Node_t*> children;
-	Node_t* 		parent;
-}	Node_t;
-
+	std::string				segment;
+	// unsigned int			depth;
+	// std::string				full_uri;
+	Location*				location;
+	std::vector<Node_t*>	children;
+	Node_t* 				parent;
+}				Node_t;
 
 class LocationTree
 {
 	private: 
-		Node_t* _root;
-		unsigned int _size;
+		Node_t*			_root;
+		unsigned int	_size;
 	
 	public : 
-		LocationTree(Node_t* root);
-		~LocationTree();
+		LocationTree( Node_t* root ) : _root(root), _size(1) {}
+		~LocationTree() {}
 
-		Node_t*					CreateNode(std::string segment, Location *location, Node_t *parent);
-		void 					AddNode(std::string full_uri, Location *location);
-		std::string				RebuildUri(std::vector<std::string> segments);
-		Node_t*					GetRoot();
-		unsigned int			GetSize();
-		void 					DeleteNode(Node_t *node);
+		Node_t*			getRoot() { return (this->_root); }
+		unsigned int	getSize() { return (this->_size); }
+
+		Node_t*			createNode( std::string segment, Location* location, Node_t* parent);
+		void 			addNode( std::string full_uri, Location* location );
+		std::string		rebuildUri( std::vector<std::string> segments );
+		void 			deleteNode( Node_t* node );
 	
-		class	LocationAlreadyExist: public std::exception {};
+		class	LocationAlreadyExist : public std::exception
+		{
+			const char	*what() const throw();
+		};
 };
 
 //creer arbre ? vide ? root ?

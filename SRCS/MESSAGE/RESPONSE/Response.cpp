@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 18:14:12 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/02 17:27:49 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ Response::Response( const int status_code, const std::string status_name )
 	this->initBuilders();
 	this->process();
 }
-
-Response::~Response() {}
 
 /*
 	------------------------ [ Polymorph function ] ----------------------
@@ -86,21 +84,6 @@ void	Response::setLocation( const std::string location )
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-const int&	Response::getStatusCode() const
-{
-	return (this->_status_code);
-}
-
-const std::string&	Response::getStatusName() const
-{
-	return (this->_status_name);
-}
-
-const std::string&	Response::getRessourcePath() const
-{
-	return (this->_ressource_path);
-}
-
 const std::string&	Response::getExtension( const std::string& URI ) const
 {
 	std::size_t dot_pos = URI.find_last_of('.');
