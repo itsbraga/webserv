@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 20:03:15 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/11/20 11:32:07 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ Context	Parser::getCurrentContext( void )
 {
 	if (this->_context_stack.empty() == false)
 		return (this->_context_stack.back());
+	//all path doesn't always return
 }
 
 std::string	Parser::getConfPath( void )
