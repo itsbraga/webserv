@@ -6,11 +6,11 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 23:41:14 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/02 17:21:10 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/03 17:27:49 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "LocationTree.hpp"
 
 Node_t*	LocationTree::createNode( std::string segment, Location* location, Node_t* parent )
 {
@@ -18,7 +18,7 @@ Node_t*	LocationTree::createNode( std::string segment, Location* location, Node_
 	new_node->segment = segment;
 	new_node->location = location;
 	new_node->parent = parent;
-	this->_size++;
+	_size++;
 }
 
 void	LocationTree::addNode( std::string full_uri, Location* location )
@@ -30,7 +30,7 @@ void	LocationTree::addNode( std::string full_uri, Location* location )
 	std::vector<Node_t *>::iterator		child_it;
 	Node_t								*current_match;
 
-	current = this->_root;
+	current = _root;
 	segments = split(full_uri, '/');
 	segment_to_add = segments.back();
 	segments.pop_back();

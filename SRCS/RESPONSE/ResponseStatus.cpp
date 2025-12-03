@@ -6,11 +6,11 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 20:22:10 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/03 17:30:26 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "Response.hpp"
 
 /*
 	For 200, 201, 202 : Body, Content-Length and Content-Type
@@ -26,8 +26,8 @@
 */
 void	Response::OK()
 {
-	this->_status_code = 200;
-	this->_status_name = "OK";
+	_status_code = 200;
+	_status_name = "OK";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "keep-alive");
 }
@@ -35,16 +35,16 @@ void	Response::OK()
 // 201 need a "location" header
 void	Response::Created()
 {
-	this->_status_code = 201;
-	this->_status_name = "Created";
+	_status_code = 201;
+	_status_name = "Created";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "keep-alive");
 }
 
 void	Response::Accepted()
 {
-	this->_status_code = 202;
-	this->_status_name = "Accepted";
+	_status_code = 202;
+	_status_name = "Accepted";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "keep-alive");
 }
@@ -55,8 +55,8 @@ void	Response::MovedPermanently()
 	std::string location = getHeaderValue("location");
 	if (location.empty())
 		(this->*_builders[500])();
-	this->_status_code = 301;
-	this->_status_name = "Moved Permanently";
+	_status_code = 301;
+	_status_name = "Moved Permanently";
 	addHeader("server", "Webserv/1.0");
 	addHeader("connection", "keep-alive");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -67,8 +67,8 @@ void	Response::MovedPermanently()
 
 void	Response::BadRequest()
 {
-	this->_status_code = 400;
-	this->_status_name = "Bad Request";
+	_status_code = 400;
+	_status_name = "Bad Request";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -79,8 +79,8 @@ void	Response::BadRequest()
 
 void	Response::Forbidden()
 {
-	this->_status_code = 403;
-	this->_status_name = "Forbidden";
+	_status_code = 403;
+	_status_name = "Forbidden";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -91,8 +91,8 @@ void	Response::Forbidden()
 
 void	Response::NotFound()
 {
-	this->_status_code = 404;
-	this->_status_name = "Not Found";
+	_status_code = 404;
+	_status_name = "Not Found";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -105,8 +105,8 @@ void	Response::NotFound()
 // Allow header depends ??
 void	Response::MethodNotAllowed()
 {
-	this->_status_code = 405;
-	this->_status_name = "Method Not Allowed";
+	_status_code = 405;
+	_status_name = "Method Not Allowed";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -115,8 +115,8 @@ void	Response::MethodNotAllowed()
 
 void	Response::LengthRequired()
 {
-	this->_status_code = 411;
-	this->_status_name = "Length Required";
+	_status_code = 411;
+	_status_name = "Length Required";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -127,8 +127,8 @@ void	Response::LengthRequired()
 
 void	Response::URITooLong()
 {
-	this->_status_code = 414;
-	this->_status_name = "URI Too Long";
+	_status_code = 414;
+	_status_name = "URI Too Long";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -139,8 +139,8 @@ void	Response::URITooLong()
 
 void	Response::ImATeapot()
 {
-	this->_status_code = 418;
-	this->_status_name = "I'm a teapot";
+	_status_code = 418;
+	_status_name = "I'm a teapot";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -152,8 +152,8 @@ void	Response::ImATeapot()
 // Need a "Retry-After" header 
 void	Response::TooManyRequest()
 {
-	this->_status_code = 429;
-	this->_status_name = "Too Many Request";
+	_status_code = 429;
+	_status_name = "Too Many Request";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("retry-after", "1800");
@@ -165,8 +165,8 @@ void	Response::TooManyRequest()
 
 void	Response::InternalServerError()
 {
-	this->_status_code = 500;
-	this->_status_name = "Internal Server Error";
+	_status_code = 500;
+	_status_name = "Internal Server Error";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -178,8 +178,8 @@ void	Response::InternalServerError()
 
 void	Response::NotImplemented()
 {
-	this->_status_code = 501;
-	this->_status_name = "Not Implemented";
+	_status_code = 501;
+	_status_name = "Not Implemented";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -187,8 +187,8 @@ void	Response::NotImplemented()
 
 void	Response::BadGateway()
 {
-	this->_status_code = 502;
-	this->_status_name = "Bad Gateway";
+	_status_code = 502;
+	_status_name = "Bad Gateway";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -199,8 +199,8 @@ void	Response::BadGateway()
 
 void	Response::ServiceUnavailable()
 {
-	this->_status_code = 503;
-	this->_status_name = "Service Unavailable";
+	_status_code = 503;
+	_status_name = "Service Unavailable";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -211,8 +211,8 @@ void	Response::ServiceUnavailable()
 
 void	Response::GatewayTimeout()
 {
-	this->_status_code = 504;
-	this->_status_name = "Gateway Timeout";
+	_status_code = 504;
+	_status_name = "Gateway Timeout";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");
@@ -223,8 +223,8 @@ void	Response::GatewayTimeout()
 
 void	Response::HttpVersionNotSupported()
 {
-	this->_status_code = 505;
-	this->_status_name = "HTTP Version Not Supported";
+	_status_code = 505;
+	_status_name = "HTTP Version Not Supported";
 	addHeader("server", "Webserv_420/1.0");
 	addHeader("connection", "close");
 	addHeader("content-type", "text/html ; charset=utf-8");

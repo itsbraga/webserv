@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   init_method_map.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/11 20:11:01 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/03 14:44:25 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "utils.hpp"
 
 void	init_method_map()
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/23 20:42:07 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/03 14:45:14 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "utils.hpp"
 
 std::vector<std::string>	split( std::string str, char delimiter )
 {
@@ -29,7 +29,7 @@ void	erase_whitespace( std::string& str, std::string set )
 	std::string::iterator 		str_it = str.begin();
 	size_t						pos = std::string::npos;
 
-	while(set_it != set.end())
+	while (set_it != set.end())
 	{
 		pos = str.find(*set_it);
 		if (pos != std::string::npos)

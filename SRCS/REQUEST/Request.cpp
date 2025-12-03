@@ -6,11 +6,11 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/02 17:29:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/03 18:37:24 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "Request.hpp"
 
 /*
 	---------------------- [ Object Manipulation ] -----------------------
@@ -60,22 +60,22 @@ void	Request::requestLineCheck( const std::string& serialized )
 		if (method[i] < 'A' || method[i] > 'Z')
 			throw SyntaxErrorException(); // 400 Bad Request: Method not in uppercase
 	}
-	if (method != "GET" || method != "POST" || method != "DELETE" || method != "HEAD")
+	if (method != "GET" && method != "POST" && method != "DELETE" && method != "HEAD")
 		throw SyntaxErrorException(); // 501 Not Implemented
 	if (URI.empty() == true || URI[0] != '/')
 		throw SyntaxErrorException(); // 400 Bad Request: URI must start with '/'
 	if (protocolVersion != "HTTP/1.1")
 		throw SyntaxErrorException(); // 505 HTTP Version Not Supported
 
-	this->_method = method;
-	this->_URI = URI;
+	_method = method;
+	_URI = URI;
 }
 
 void	Request::deserializeRequest( const std::string& serialized )
 {
 	requestLineCheck(serialized);
 	// headerCheck
-	if (this->_method == "POST")
+	// if (_method == "POST")
 		// bodyCheck
 }
 
