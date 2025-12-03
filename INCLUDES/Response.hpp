@@ -6,13 +6,28 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/02 19:40:46 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/03 18:01:15 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+/**************************\
+ *	Libraries
+\**************************/
+
+# include <iostream>
+# include <string>
+# include <map>
+# include <ctime>
+# include <sys/stat.h>
+
 # include "Message.hpp"
+# include "utils.hpp"
+
+/**************************\
+ *	Class
+\**************************/
 
 class Response : public Message
 {
@@ -26,22 +41,8 @@ class Response : public Message
 		static std::map<std::string, std::string>	_content_types;
 	
 	public:
-		Response();
 		Response( const int status_code, const std::string status_name );
 		~Response() {}
-
-		class ResourceForbiddenException : public std::exception
-		{
-			const char	*what() const throw();
-		};
-		class ResourceNotFoundException : public std::exception
-		{
-			const char	*what() const throw();
-		};
-		class InternalServerErrorException : public std::exception
-		{
-			const char	*what() const throw();
-		};
 
 		static void		initBuilders();
 		static void		initContentTypes();
@@ -56,9 +57,9 @@ class Response : public Message
 		void	setDate();
 		void	setLocation( const std::string location );
 		
-		const int&			getStatusCode() const { return (this->_status_code); }
-		const std::string&	getStatusName() const { return (this->_status_name); }
-		const std::string&	getRessourcePath() const { return (this->_ressource_path); }
+		const int&			getStatusCode() const { return (_status_code); }
+		const std::string&	getStatusName() const { return (_status_name); }
+		const std::string&	getRessourcePath() const { return (_ressource_path); }
 		const std::string& 	getDate() const;
 		const std::string&	getExtension( const std::string& URI ) const; 
 		const std::string&	getSerializedHeaders() const;
@@ -67,7 +68,7 @@ class Response : public Message
 		void	defineContentType();
 
 		/********************************************\
-		 *	BUILDERS STATUS FUNCTIONS
+		 *	Builders Status Functions
 		\********************************************/
 		
 		// 2xx : SUCCESS RESPONSE
@@ -95,6 +96,19 @@ class Response : public Message
 		void	ServiceUnavailable();		// 503
 		void	GatewayTimeout();			// 504
 		void	HttpVersionNotSupported();	// 505
+
+		class ResourceForbiddenException : public std::exception
+		{
+			const char	*what() const throw();
+		};
+		class ResourceNotFoundException : public std::exception
+		{
+			const char	*what() const throw();
+		};
+		class InternalServerErrorException : public std::exception
+		{
+			const char	*what() const throw();
+		};
 };
 
 inline std::ostream		&operator<<( std::ostream& os, Response const& response );

@@ -38,11 +38,9 @@ endef
 
 SRCS_DIR	:=	SRCS/
 SRCS		:=	$(sort $(shell find SRCS -type f -name '*.cpp'))
-#SRCS		:=	$(sort $(shell find SRCS -type f \( -name '*.cpp' -o -name '*.ipp' \)))
 
 OBJS_DIR	:=	OBJS/
 OBJS		:=	$(patsubst $(SRCS_DIR)%.cpp,$(OBJS_DIR)%.o,$(SRCS))
-#OBJS		+=	$(patsubst $(SRCS_DIR)%.ipp,$(OBJS_DIR)%.o,$(SRCS))
 DEPS		:=	$(OBJS:.o=.d)
 
 #————————————————————————————————————————————————————————

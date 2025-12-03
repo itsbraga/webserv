@@ -6,11 +6,11 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/02 17:27:49 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/03 17:39:14 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "Response.hpp"
 
 std::map<int, Response::ResponseFunction>	Response::_builders;
 std::map<std::string, std::string>			Response::_content_types;
@@ -18,11 +18,6 @@ std::map<std::string, std::string>			Response::_content_types;
 /*
 	---------------------- [ Object Manipulation ] -----------------------
 */
-Response::Response() : Message(), _status_code(0)
-{
-	this->initBuilders();
-}
-
 Response::Response( const int status_code, const std::string status_name )
 					: Message(), _status_code(status_code), _status_name(status_name)
 {
@@ -36,7 +31,7 @@ Response::Response( const int status_code, const std::string status_name )
 void	Response::process()
 {
 	try {
-		(this->*_builders.at(this->_status_code))();
+		(this->*_builders.at(_status_code))();
 	}
 	catch (const std::out_of_range&) {
 		(this->*_builders[500])();
@@ -48,37 +43,37 @@ void	Response::process()
 */
 void	Response::setStatusCode( const int status_code )
 {
-	this->_status_code = status_code;
+	_status_code = status_code;
 }
 
 void	Response::setStatusName( const std::string status_name )
 {
-	this->_status_name = status_name;
+	_status_name = status_name;
 }
 
 void	Response::setRessourcePath( const std::string requested_ressource_path )
 {
-	this->_ressource_path = requested_ressource_path;
+	_ressource_path = requested_ressource_path;
 }
 
 void	Response::setContentLength( const std::string length )
 {
-	this->_headers.push_back(std::make_pair("content-length", length));
+	_headers.push_back(std::make_pair("content-length", length));
 }
 
 void	Response::setContentType( const std::string type )
 {
-	this->_headers.push_back(std::make_pair("content-type", type));
+	_headers.push_back(std::make_pair("content-type", type));
 }
 
 void	Response::setDate()
 {
-	this->_headers.push_back(std::make_pair("date", getDate()));
+	_headers.push_back(std::make_pair("date", getDate()));
 }
 
 void	Response::setLocation( const std::string location )
 {
-	this->_headers.push_back(std::make_pair("location", location));
+	_headers.push_back(std::make_pair("location", location));
 }
 
 /*
@@ -114,7 +109,7 @@ const std::string&	Response::getSerializedHeaders() const
 	std::string result;
 	std::vector< std::pair<std::string, std::string> >::const_iterator it;
 
-	for (it = this->_headers.begin(); it != this->_headers.end(); it++)
+	for (it = _headers.begin(); it != _headers.end(); it++)
 		result += it->first + ": " + it->second + "\r\n";
 	return (result);
 }
@@ -126,10 +121,10 @@ const std::string&	Response::getSerializedResponse()
 
 	addHeader("date", getDate());
 	// response += "HTTP/";
-	// response += toString(this->_http_version);
-	response += this->_http_version + " ";
+	// response += toString(_http_version);
+	response += _http_version + " ";
 	// response += " ";
-	response += toString(this->_status_code) + " " + this->_status_name + "\r\n";
+	response += toString(_status_code) + " " + _status_name + "\r\n";
 	response += getSerializedHeaders() + "\r\n" + getBody() + "\n";
 	return (response);
 }
@@ -143,8 +138,8 @@ void	Response::defineContentType()
 	{
 		std::map<std::string, std::string>::const_iterator it;
 
-		it = this->_content_types.find(extension);
-		if (it != this->_content_types.end())
+		it = _content_types.find(extension);
+		if (it != _content_types.end())
 			addHeader("content-type", it->second);
 		else
 			addHeader("content-type", "application/octet-stream");

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Request.hpp                                        :+:      :+:    :+:   */
+/*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 18:01:27 by annabrag         ###   ########.fr       */
+/*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
+/*   Updated: 2025/12/03 19:26:29 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,31 +17,27 @@
 \**************************/
 
 # include <string>
-# include <fstream>
-# include <sstream>
-# include <cctype>
-
-# include "Message.hpp"
 
 /**************************\
  *	Class
 \**************************/
 
-class Request : public Message
+class Client
 {
 	private:
-		std::string	_method;
-		std::string	_URI;
-	
+		int			_socket;
+		std::string	_buffer;
+		bool		_requestComplete;
+
 	public:
-		Request( const std::string& serialized );
-		~Request() {}
+		Client( int socket ) : _socket(socket), _requestComplete(false) {}
+		~Client() {}
 
-		void	requestLineCheck( const std::string& serialized );
-		void	deserializeRequest( const std::string& serialized );
+		int					getSocket() const	{ return (_socket); }
+		std::string&		getBuffer()			{ return (_buffer); }
+		const std::string&	getBuffer() const	{ return (_buffer); }
 
-		class SyntaxErrorException : public std::exception
-		{
-			const char	*what() const throw();
-		};
+		void	appendToBuffer( const char *data, size_t len );
+		void	clearBuffer();
+		bool	isRequestComplete() const		{ return (_requestComplete); }
 };

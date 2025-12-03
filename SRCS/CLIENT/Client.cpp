@@ -1,21 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_method_map.cpp                                :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 14:44:25 by annabrag         ###   ########.fr       */
+/*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
+/*   Updated: 2025/12/03 19:26:12 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.hpp"
+#include "Client.hpp"
 
-void	init_method_map()
+void	Client::appendToBuffer( const char *data, size_t len )
 {
-	// method_map["HEAD"] = &HandleHEAD;
-	// method_map["GET"] = &HandleGET;
-	// method_map["POST"] = &HandlePOST;
-	// method_map["DELETE"] = &HandleDELETE;
+	_buffer.append(data, len);
+	if (_buffer.find("\r\n\r\n") != std::string::npos)
+		_requestComplete = true;
+}
+
+void	Client::clearBuffer()
+{
+	_buffer.clear();
+	_requestComplete = false;
 }
