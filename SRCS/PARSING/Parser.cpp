@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/02 19:30:25 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/03 19:22:57 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,18 @@ void	Parser::bufferTokenize( void )
 	{
 		end_tok = start_tok;
 		while (end_tok != this->_buffer.end() 
-			&& !isSemiColon(*end_tok)
-			&& !isLeftBrace(*end_tok)
-			&& !isRightBrace(*end_tok)
+			&& !isSymbol(*end_tok)
 			&& !isWhiteSpace(*end_tok))
 			end_tok++;
 		std::string	token_value(start_tok, end_tok);
 		if (start_tok != end_tok)
 		{
-			
+			Token token(createToken(token_value));
 			this->_tokens.push_back(token);
 		}
 		if (end_tok != this->_buffer.end())
 		{
-			if ((isSemiColon(*end_tok)) || isLeftBrace(*end_tok) || isRightBrace(*end_tok))
+			if (isSymbol(*end_tok) == true)
 				createTokenDelimiter(end_tok);
 		}
 		start_tok = end_tok;
@@ -98,7 +96,19 @@ void	Parser::bufferTokenize( void )
 
 Token		Parser::createToken(std::string value) const
 {
+	TokenType	type;
+
+	if (isKeyword(value) == true)
+		type = identifyKeyword(value);
+	else if (isSymbol(value) == true)
+		type = identifySymbol(value);
+	else if (isValue(value) == true)
+		type = identifyValue(value);
+	else
+		type = UNKNOW;
 	
+	Token token(type, value);
+	return (token);
 }
 
 TokenType	Parser::identifyKeyword(const std::string& to_identify) const
@@ -132,8 +142,8 @@ TokenType	Parser::identifyValue(const std::string& to_identify) const
 
 void		Parser::createTokenDelimiter(std::string::const_iterator it)
 {
-	std::string token(it, it + 1);
-	this->_tokens.push_back(token);
+	std::string token_value(it, it + 1);
+	this->_tokens.push_back(createToken(token_value));
 }
 
 void		Parser::fillBuffer(const std::ifstream& infile)
@@ -166,17 +176,17 @@ void	Parser::initKeywordMap( void )
 	this->_keywords["on"] = K_ON;
 }
 
-bool	Parser::isLeftBrace(char c)
+bool	Parser::isLeftBrace(char c) const
 {
 	return (c == '{');
 }
 
-bool	Parser::isRightBrace(char c)
+bool	Parser::isRightBrace(char c) const
 {
 	return (c == '}');
 }
 
-bool	Parser::isSemiColon(char c)
+bool	Parser::isSemiColon(char c) const
 {
 	return (c == ';');
 }
@@ -189,12 +199,27 @@ bool	Parser::isWhiteSpace(char c) const
 		return (false);
 }
 
-bool	Parser::isKeyword(const std::string& to_compare)
+bool	Parser::isKeyword(const std::string& to_compare) const
 {
 	return (this->_keywords.find(to_compare) != this->_keywords.end());
 }
 
-bool	Parser::isNumber(const std::string& to_compare)
+bool	Parser::isSymbol(const char c) const
+{
+	return (c == '{' || c == '}' || c == ';');
+}
+
+bool	Parser::isSymbol(const std::string& to_compare) const
+{
+	return (to_compare == "{" || to_compare == "}" || to_compare == ";");
+}
+
+bool	Parser::isValue(const std::string& to_compare) const
+{
+	return (isNumber(to_compare) || isString(to_compare) || isPath(to_compare));
+}
+
+bool	Parser::isNumber(const std::string& to_compare) const
 {
 	std::string::const_iterator it;
 	
@@ -206,12 +231,32 @@ bool	Parser::isNumber(const std::string& to_compare)
 	return (true);
 }
 
-bool	Parser::isServer(const std::string& to_compare)
+bool	Parser::isString(const std::string& to_compare) const
+{
+	std::string::const_iterator it;
+
+	for (it = to_compare.begin(); it != to_compare.end(); it++)
+	{
+		if (isalpha(static_cast<int>(*it)) == 0)
+			return (false);
+	}
+	return (true);
+}
+
+bool Parser::isPath(const std::string& to_compare) const
+{
+	if (to_compare.find('/') == std::string::npos)
+		return (false);
+	else
+		return (true);
+}
+
+bool	Parser::isServer(const std::string& to_compare) const
 {
 	return (to_compare == "server");
 }
 
-bool	Parser::isLocation(const std::string& to_compare)
+bool	Parser::isLocation(const std::string& to_compare) const
 {
 	return (to_compare == "location");
 }

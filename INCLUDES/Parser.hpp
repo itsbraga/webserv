@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/02 19:13:52 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/03 19:19:54 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,13 @@ class Token
 
 	public:			
 		Token(TokenType type, std::string value) : _type(type), _value(value) {}
-		~Token(){}
+		Token(const Token& to_copy) {this->_type = to_copy.getType(); this->_value = to_copy.getValue();}
+		~Token() {}
 
 		void			setType(TokenType type);
 		void			setValue(std::string value);
-		TokenType		getType( void );
-		std::string		getValue( void );
+		TokenType		getType( void ) const;
+		std::string		getValue( void ) const;
 
 };
 
@@ -97,6 +98,7 @@ class Parser
 		bool				isSemiColon(char c) const ;
 		bool				isWhiteSpace(char c) const;
 		bool				isKeyword(const std::string& to_compare) const;
+		bool				isSymbol(const char c) const;
 		bool				isSymbol(const std::string&	to_compare) const;
 		bool				isValue(const std::string& to_compare) const;
 		bool				isNumber(const std::string& to_compare) const;
