@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 17:27:45 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:18:00 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool	ErrorPage::findStatus( int target )
 {
-	if (*_status.cbegin() == target)
+	if (*_status.begin() == target)
 		return (true);
 	else
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   LocationTree.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 23:27:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 18:06:06 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:20:57 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <vector>
 
 # include "utils.hpp"
+
+class Location;
 
 typedef struct Node_s
 {
@@ -35,8 +37,6 @@ typedef struct Node_s
  *	Class
 \**************************/
 
-class Location;
-
 class LocationTree
 {
 	private: 
@@ -44,7 +44,7 @@ class LocationTree
 		unsigned int	_size;
 	
 	public: 
-		LocationTree( Node_t* root ) : _root(root), _size(1) {}
+		LocationTree( Node_t* root ) : _root( root ), _size( 1 ) {}
 		~LocationTree() {}
 
 		Node_t*			getRoot()	{ return (_root); }

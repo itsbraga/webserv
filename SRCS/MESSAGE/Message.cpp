@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/03 17:24:11 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:15:26 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 void	Message::setHeaderValue( std::string key, std::string value )
 {
 	std::vector< std::pair<std::string, std::string> >::iterator it;
+
 	for (it = _headers.begin(); it != _headers.end(); ++it)
 	{
 		if (it->first == key)
@@ -27,30 +28,30 @@ void	Message::setHeaderValue( std::string key, std::string value )
 			return ;
 		}
 	}
-	_headers.push_back(std::make_pair(key, value));
+	_headers.push_back( std::make_pair( key, value ) );
 }
 
 void	Message::addHeader( const std::string first, const std::string second )
 {
-	_headers.push_back(std::make_pair(first, second));
+	_headers.push_back( std::make_pair( first, second ) );
 }
 
 void	Message::setBody( const std::string body )
 {
 	_body = body;
-	std::string length_str = toString(body.length());
-	std::string contentLength = getHeaderValue("content-length");
+	std::string length_str = toString( body.length() );
+	std::string contentLength = getHeaderValue( "content-length" );
 
 	if (contentLength.empty() == true)
-		addHeader("content-length", length_str);
+		addHeader( "content-length", length_str );
 	else
-		setHeaderValue("content-length", length_str);
+		setHeaderValue( "content-length", length_str );
 }
 
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-const std::string&	Message::getHeaderMap() const
+const std::string	Message::getHeaderMap() const
 {
 	std::string result;
 
@@ -70,5 +71,5 @@ const std::string&	Message::getHeaderValue( const std::string& key ) const
         if (it->first == key)
             return (it->second);
     }
-    throw std::runtime_error("Header not found: " + key);
+    throw std::runtime_error( "Header not found: " + key );
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 18:21:39 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:04:47 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,19 @@ class Server
 		int				_socket;
 		sockaddr_in		_addr;
 
-		int			_setNonBlocking( int fd );
+		Server( const Server& );
+		Server&			operator=( const Server& );
+
+		bool			_setNonBlocking( int fd );
 		
 	public:
 		Server( uint16_t port, std::string server_name );
 		~Server();
 
-		int			init();
-		int			acceptNewClient();
+		bool			init();
+		int				acceptNewClient();
 
-		int			getSocket() const		{ return (_socket); }
-		uint16_t	getPort() const			{ return (_port); }
-		std::string	getServerName() const	{ return (_server_name); }
+		int				getSocket() const		{ return (_socket); }
+		uint16_t		getPort() const			{ return (_port); }
+		std::string		getServerName() const	{ return (_server_name); }
 };

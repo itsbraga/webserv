@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 18:05:00 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:45:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 // 		std::string		getValue();
 // };
 
-typedef enum Context
+enum Context
 {
 	HTTP,
 	SERVER_BLOCK,
@@ -60,7 +60,7 @@ class Parser
 		// std::vector<Token>		_tokens;
 		std::set<std::string>	_keywords;
 
-		std::string 			_checkPath( char *arg);
+		std::string 			_checkPath( char *arg );
 
 	public:
 		Parser( char *arg );
@@ -70,7 +70,7 @@ class Parser
 		std::string				getBuffer()			{ return (_buffer); }
 		std::vector<Context>	getContextStack()	{ return (_context_stack); }
 
-		static void 		handleFileConfig( char *arg, webserv_s* data );
+		// static void 		handleFileConfig( char *arg, webserv_s* data );
 		void				initKeywordSet();
 		void				bufferTokenize();
 		// Token			createToken( unsigned int type, std::string value );
