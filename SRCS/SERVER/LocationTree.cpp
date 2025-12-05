@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   LocationTree.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 23:41:14 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 17:27:49 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:44:18 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,12 @@
 Node_t*	LocationTree::createNode( std::string segment, Location* location, Node_t* parent )
 {
 	Node_t*	new_node = new Node_t(); // a proteger
+
 	new_node->segment = segment;
 	new_node->location = location;
 	new_node->parent = parent;
 	_size++;
+	return (new_node);
 }
 
 void	LocationTree::addNode( std::string full_uri, Location* location )
@@ -31,7 +33,7 @@ void	LocationTree::addNode( std::string full_uri, Location* location )
 	Node_t								*current_match;
 
 	current = _root;
-	segments = split(full_uri, '/');
+	segments = split( full_uri, '/' );
 	segment_to_add = segments.back();
 	segments.pop_back();
 	for (seg_it = segments.begin(); seg_it != segments.end(); seg_it++)
@@ -47,30 +49,30 @@ void	LocationTree::addNode( std::string full_uri, Location* location )
 		}
 		if (current_match == NULL)
 		{
-			current_match = LocationTree::createNode(*seg_it, NULL, current);
-			current->children.push_back(current_match);
+			current_match = LocationTree::createNode( *seg_it, NULL, current );
+			current->children.push_back( current_match );
 		}
 		current = current_match;
 	}
-	current->children.push_back(LocationTree::createNode(segment_to_add, location, current));
+	current->children.push_back( LocationTree::createNode( segment_to_add, location, current ) );
 }
 
 std::string		LocationTree::rebuildUri( std::vector<std::string> segments )
 {
-	std::string result;
-	result = "/";
-
+	std::string result = "/";
 	std::vector<std::string>::iterator it;
+
 	for (it = segments.begin(); it != segments.end(); ++it)
 	{
 		result += *it;
 		result += "/";
 	}
+	return (result);
 }
 
 void	LocationTree::deleteNode( Node_t *node )
 {
-	if (node->location != NULL)
-		delete node->location;
+	// if (node->location != NULL)
+	// 	delete node->location;
 	delete node;
 }

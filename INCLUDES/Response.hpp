@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 18:01:15 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/05 02:41:27 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 # include "Message.hpp"
 # include "utils.hpp"
+# include "colors.hpp"
 
 /**************************\
  *	Class
@@ -44,28 +45,28 @@ class Response : public Message
 		Response( const int status_code, const std::string status_name );
 		~Response() {}
 
-		static void		initBuilders();
-		static void		initContentTypes();
+		static void			initBuilders();
+		static void			initContentTypes();
 
-		void	process();
+		void				process();
 
-		void	setStatusCode( const int status_code );
-		void	setStatusName( const std::string status_name );
-		void	setRessourcePath( const std::string requested_ressource_path );
-		void	setContentLength( const std::string length );
-		void	setContentType( const std::string type );
-		void	setDate();
-		void	setLocation( const std::string location );
+		void				setStatusCode( const int status_code );
+		void				setStatusName( const std::string status_name );
+	void					setRessourcePath( const std::string requested_ressource_path );
+		void				setContentLength( const std::string length );
+		void				setContentType( const std::string type );
+		void				setDate();
+		void				setLocation( const std::string location );
 		
-		const int&			getStatusCode() const { return (_status_code); }
-		const std::string&	getStatusName() const { return (_status_name); }
-		const std::string&	getRessourcePath() const { return (_ressource_path); }
-		const std::string& 	getDate() const;
-		const std::string&	getExtension( const std::string& URI ) const; 
-		const std::string&	getSerializedHeaders() const;
-		const std::string&	getSerializedResponse();
+		const int&			getStatusCode() const		{ return (_status_code); }
+		const std::string&	getStatusName() const		{ return (_status_name); }
+		const std::string&	getRessourcePath() const	{ return (_ressource_path); }
+		const std::string 	getDate() const;
+		const std::string	getExtension( const std::string& URI ) const; 
+		const std::string	getSerializedHeaders() const;
+		const std::string	getSerializedResponse();
 
-		void	defineContentType();
+		void				defineContentType();
 
 		/********************************************\
 		 *	Builders Status Functions
@@ -97,11 +98,11 @@ class Response : public Message
 		void	GatewayTimeout();			// 504
 		void	HttpVersionNotSupported();	// 505
 
-		class ResourceForbiddenException : public std::exception
+		class RessourceForbiddenException : public std::exception
 		{
 			const char	*what() const throw();
 		};
-		class ResourceNotFoundException : public std::exception
+		class RessourceNotFoundException : public std::exception
 		{
 			const char	*what() const throw();
 		};
