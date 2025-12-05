@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:15:36 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/05 19:45:44 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,28 @@
 # include <utility>
 
 # include "utils.hpp"
+# include "colors.hpp"
+
+/**************************\
+ *	Exception
+\**************************/
+
+class SyntaxErrorException : public std::exception
+{
+	private:
+		std::string		_msg;
+
+	public:
+		SyntaxErrorException() : _msg( std::string( BOLD RED "Exception caught: " NC ) + "syntax error" ) {}
+
+		explicit SyntaxErrorException( const std::string& msg ) : _msg( std::string( BOLD RED "Exception caught: " NC ) + msg ) {}
+		virtual ~SyntaxErrorException() throw() {}
+		
+		virtual const char	*what() const throw()
+		{
+			return (_msg.c_str());
+		}
+};
 
 /**************************\
  *	Class
@@ -34,6 +56,9 @@ class Message
 		std::string											_body;
 
 		Message() : _http_version( "HTTP/1.1" ) {}
+
+		std::pair<std::string, std::string>		_parseHeaderLine( const std::string& line ) const;
+		bool									_hasHeader( const std::string& key ) const;
 	
 	public:
 		virtual ~Message() {}
