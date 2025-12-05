@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/05 03:13:27 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/05 03:18:53 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ bool	Webserv::addServer( uint16_t port, const std::string& server_name )
 	return (true);
 }
 
-bool	Webserv::init()
+bool	Webserv::init(/* config file */)
 {
 	_epollFd = epoll_create(1);
 	if (_epollFd == -1)
