@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/05 02:13:24 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/05 03:19:06 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,6 @@ class Webserv
 		~Webserv();
 
 		bool	addServer( uint16_t port, const std::string& server_name );
-		bool	init(/* config */);
-		void	run(); // main loop
+		bool	init(/* config file */);
+		void	run();
 };
