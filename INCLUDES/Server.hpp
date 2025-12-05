@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:04:47 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/05 17:25:44 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,11 @@ class Server
 		Server( const Server& );
 		Server&			operator=( const Server& );
 
+		bool			_createSocket();
+		bool			_configureSocket();
+		bool			_bindAndListen();
 		bool			_setNonBlocking( int fd );
+		void			_closeSocket();
 		
 	public:
 		Server( uint16_t port, std::string server_name );
