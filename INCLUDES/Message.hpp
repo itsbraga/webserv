@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 19:45:44 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/10 19:32:24 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ class Message
 
 		std::pair<std::string, std::string>		_parseHeaderLine( const std::string& line ) const;
 		bool									_hasHeader( const std::string& key ) const;
+
+		void				_unchunkBody( std::string body );
 	
 	public:
 		virtual ~Message() {}

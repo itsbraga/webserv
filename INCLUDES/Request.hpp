@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 20:16:28 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/10 20:53:17 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,15 @@ class Request : public Message
 	private:
 		std::string		_method;
 		std::string		_URI;
-	
-	public:
-		// Request( const std::string& serialized );
-		Request( const std::string& rawRequest );
-		~Request() {}
 
-		void				requestLineCheck( const std::string& serialized );
-		void				headerCheck( const std::string& serialized );
-		void				bodyCheck( const std::string& serialized );
-		void				deserializeRequest( const std::string& serialized );
+		void	_requestLineCheck( const std::string& line );
+		void	_headerCheck( const std::string& line );
+		void	_bodyCheck( const std::string& line );
+		void	_deserializeRequest( const std::string& line );
+
+	public:
+		Request( const std::string& serialized );
+		~Request() {}
 
 		const std::string&	getMethod() const	{ return (_method); }
 		const std::string&	getURI() const		{ return (_URI); }

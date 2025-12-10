@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/05 19:57:35 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/10 20:43:49 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 */
 static std::string	__toLower( const std::string& str )
 {
+	if (str.empty())
+		return (str);
+
 	std::string result = str;
 
 	for (size_t i = 0; i < result.size(); i++)
@@ -26,6 +29,12 @@ static std::string	__toLower( const std::string& str )
 
 void	Message::addHeader( const std::string first, const std::string second )
 {
+	if (first.empty() && second.empty())
+	{
+		std::cerr << ERR_PREFIX << "empty header_name, empty header_value" << std::endl;
+		return ;
+	}
+		
 	_headers.push_back( std::make_pair( first, second ) );
 }
 
@@ -48,6 +57,9 @@ bool	Message::_hasHeader( const std::string& key ) const
 
 std::pair<std::string, std::string>		Message::_parseHeaderLine( const std::string& line ) const
 {
+	if (line.empty())
+		throw SyntaxErrorException( "empty line" );
+
 	size_t colonPos = line.find( ':' );
 	if (colonPos == std::string::npos || colonPos == 0)
 		throw SyntaxErrorException( "400 Bad Request: Invalid header format" );
@@ -69,12 +81,21 @@ std::pair<std::string, std::string>		Message::_parseHeaderLine( const std::strin
 	return (std::make_pair( name, value ));
 }
 
+void	Message::_unchunkBody( std::string body )
+{
+	if (body.empty())
+		throw SyntaxErrorException( "empty body" );
+}
+
 /*
 	----------------------------- [ Setters ] ----------------------------
 */
 // Si header non trouve ? 
 void	Message::setHeaderValue( std::string key, std::string value )
 {
+	if (key.empty())
+		return ;
+
 	std::vector< std::pair<std::string, std::string> >::iterator it;
 
 	for (it = _headers.begin(); it != _headers.end(); ++it)
@@ -90,7 +111,11 @@ void	Message::setHeaderValue( std::string key, std::string value )
 
 void	Message::setBody( const std::string body )
 {
+	if (body.empty())
+		return ;
+
 	_body = body;
+
 	std::string length_str = toString( body.length() );
 	std::string contentLength = getHeaderValue( "content-length" );
 
@@ -110,12 +135,15 @@ const std::string	Message::getHeaderMap() const
 	for (size_t i = 0; i < _headers.size(); ++i)
 		result += _headers[i].first + ": " + _headers[i].second + "\n";
 	if (result.empty())
-		return ("No headers.\n");
+		return ("No header found\n");
 	return (result);
 }
 
 const std::string&	Message::getHeaderValue( const std::string& key ) const
 {
+	if (key.empty())
+		return ("empty key");
+
 	std::string lowerKey = __toLower(key);
 
 	std::vector< std::pair<std::string, std::string> >::const_iterator it;
@@ -125,5 +153,5 @@ const std::string&	Message::getHeaderValue( const std::string& key ) const
         if (__toLower( it->first ) == lowerKey)
             return (it->second);
     }
-    throw std::runtime_error( "Header not found: " + key );
+    throw std::runtime_error( "header not found: " + key );
 }
