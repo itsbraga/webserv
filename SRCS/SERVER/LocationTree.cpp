@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   LocationTree.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 23:41:14 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:44:18 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/10 19:50:01 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 Node_t*	LocationTree::createNode( std::string segment, Location* location, Node_t* parent )
 {
+	if (segment.empty())
+		return (NULL);
+
 	Node_t*	new_node = new Node_t(); // a proteger
 
 	new_node->segment = segment;
@@ -25,6 +28,9 @@ Node_t*	LocationTree::createNode( std::string segment, Location* location, Node_
 
 void	LocationTree::addNode( std::string full_uri, Location* location )
 {
+	if (full_uri.empty())
+		return ;
+
 	Node_t								*current;
 	std::vector<std::string>			segments;
 	std::string							segment_to_add;
@@ -60,6 +66,7 @@ void	LocationTree::addNode( std::string full_uri, Location* location )
 std::string		LocationTree::rebuildUri( std::vector<std::string> segments )
 {
 	std::string result = "/";
+
 	std::vector<std::string>::iterator it;
 
 	for (it = segments.begin(); it != segments.end(); ++it)
