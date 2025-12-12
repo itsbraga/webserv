@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/05 17:38:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/12 21:15:37 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 Server::Server( uint16_t port, std::string server_name )
 				: _port( port ), _server_name( server_name ), _tree( NULL ), _socket( -1 )
 {
+	if (server_name.empty())
+		return ;
+
 	std::memset( &_addr, 0, sizeof(_addr) );	
 }
 

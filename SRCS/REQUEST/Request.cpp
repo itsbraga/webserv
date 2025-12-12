@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 16:27:35 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 21:09:41 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 */
 Request::Request( const std::string& serialized ) : Message(), _raw_request( serialized )
 {
+	if (serialized.empty())
+		return ;
 	process();
 }
 
@@ -77,11 +79,11 @@ void	Request::_validateContentLength()
 	if (!_hasHeader( "Content-Length" ))
 		return ;
 
-	std::string value = getHeaderValue( "Content-Length" );
+	std::string cl_value = getHeaderValue( "Content-Length" );
 
-	for (size_t i = 0; i < value.size(); i++)
+	for (size_t i = 0; i < cl_value.size(); i++)
 	{
-		if (!std::isdigit( static_cast<unsigned char>( value[i] ) ))
+		if (!std::isdigit( static_cast<unsigned char>( cl_value[i] ) ))
 			throw SyntaxErrorException( "400 Bad Request: Invalid Content-Length" );
 	}
 }
@@ -102,10 +104,31 @@ void	Request::_bodyCheck( const std::string& serialized )
 	if (header_end == std::string::npos)
 		return ;
 
-	if (_hasHeader( "Transfer-Encoding" )) // chunked
-		_unchunkBody( _body );
-	// if (_hasHeader( "Content-Length" ))
-		// extraire exactement N octets
+	size_t body_start = header_end + 4;
+
+	if (_hasHeader( "Transfer-Encoding" ))
+	{
+		std::string encoding = getHeaderValue( "Transfer-Encoding" );
+
+		if (encoding.find( "chunked" ) != std::string::npos)
+		{
+			std::string chunked_data = serialized.substr( body_start );
+			_unchunkBody( chunked_data );
+		}
+	}
+	else if (_hasHeader( "Content-Length" ))
+	{
+		std::string cl_value = getHeaderValue( "Content-Length" );
+		int content_length = std::atoi( cl_value.c_str() );
+
+		if (content_length > 0)
+		{
+			if (body_start + content_length > serialized.size())
+				throw SyntaxErrorException( "400 Bad Request: Body shorter than Content-Length" );
+			
+			_body = serialized.substr( body_start, content_length );
+		}
+	}
 }
 
 /*
@@ -113,6 +136,9 @@ void	Request::_bodyCheck( const std::string& serialized )
 */
 void	Request::process()
 {
+	if (_raw_request.empty())
+		return ;
+
 	_requestLineCheck( _raw_request );
 	_headerCheck( _raw_request );
 	if (_method == "POST")

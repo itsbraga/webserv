@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/11 22:10:42 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 21:17:29 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,13 +129,13 @@ void	Webserv::_handleClientRead( int client_fd, Client* client )
 	}
 
 	// pour telnet
-	std::cout << P_ORANGE "[DEBUG] " NC "Received " << nBytes << " bytes from client_fd=" << client_fd << ": ";
-	std::cout.write(buffer, nBytes);
+	// std::cout << P_ORANGE "[DEBUG] " NC "Received " << nBytes << " bytes from client_fd=" << client_fd << ": ";
+	// std::cout.write(buffer, nBytes);
 
 	client->appendToReadBuffer( buffer, nBytes );
 
-	std::cout << P_ORANGE "[DEBUG] " NC "Buffer size: " << client->getReadBuffer().size()
-			  << ", complete: " << (client->hasCompleteRequest() ? "YES" : "NO") << std::endl;
+	// std::cout << P_ORANGE "[DEBUG] " NC "Buffer size: " << client->getReadBuffer().size()
+	// 		  << ", complete: " << (client->hasCompleteRequest() ? "YES" : "NO") << std::endl;
 
 	if (client->hasCompleteRequest())
 		_processRequest( client_fd, client );
@@ -143,13 +143,28 @@ void	Webserv::_handleClientRead( int client_fd, Client* client )
 
 void	Webserv::_processRequest( int client_fd, Client* client )
 {
-	std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
-	std::cout << client->getReadBuffer() << std::endl;
-	std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+	try {
+		Request request( client->getReadBuffer() );
 
-	// test
-	const char	*response = "Received your request\n";
-	::send( client_fd, response, strlen( response ), 0 );
+		std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
+		// std::cout << client->getReadBuffer() << std::endl;
+		std::cout << "Method: " << request.getMethod() << std::endl;
+		std::cout << "URI: " << request.getURI() << std::endl;
+		std::cout << "Headers:\n" << request.getHeaderMap() << std::endl;
+		// std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+
+		Response response( 200, "OK" );
+
+		std::string serialized = response.getSerializedResponse();
+		::send( client_fd, serialized.c_str(), serialized.size(), 0 );
+	}
+	catch (const SyntaxErrorException& e) {
+		std::cerr << e.what() << std::endl;
+		// Response response( 400, "Bad Request" );
+		// std::string serialized = response.getSerializedResponse();
+		// ::send( client_fd, serialized.c_str(), serialized.size(), 0 );
+	}
+
 	client->clearReadBuffer();
 }
 
