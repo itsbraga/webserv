@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:43:55 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:35:55 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ std::map<std::string, std::string>			Response::_content_types;
 Response::Response( const int status_code, const std::string status_name )
 					: Message(), _status_code( status_code ), _status_name( status_name )
 {
-	this->initBuilders();
-	this->process();
+	// initBuilders();
+	process();
 }
 
 /*
@@ -58,7 +58,7 @@ void	Response::setRessourcePath( const std::string requested_ressource_path )
 
 void	Response::setContentLength( const std::string length )
 {
-	_headers.push_back( std::make_pair( "content-length", length ) );
+	_headers.push_back( std::make_pair( "Content-Length", length ) );
 }
 
 void	Response::setContentType( const std::string type )
@@ -82,13 +82,11 @@ void	Response::setLocation( const std::string location )
 const std::string	Response::getExtension( const std::string& URI ) const
 {
 	std::size_t dot_pos = URI.find_last_of( '.'  );
+
 	if (dot_pos == std::string::npos)
 		throw std::runtime_error( "No extension found for " + URI );
-	else
-	{
-		std::string extension = URI.substr( dot_pos + 1 );
-		return (extension);
-	}
+	std::string extension = URI.substr( dot_pos + 1 );
+	return (extension);
 }
 
 const std::string	Response::getDate() const
@@ -140,9 +138,9 @@ void	Response::defineContentType()
 
 		it = _content_types.find( extension );
 		if (it != _content_types.end())
-			addHeader( "content-type", it->second );
+			addHeader( "Content-Type", it->second );
 		else
-			addHeader( "content-type", "application/octet-stream" );
+			addHeader( "Content-Type", "application/octet-stream" );
 	}
 }
 

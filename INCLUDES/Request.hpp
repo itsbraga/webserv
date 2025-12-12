@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/10 20:53:17 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/12 16:28:28 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <map>
 
 # include "Message.hpp"
+# include "utils.hpp"
 # include "colors.hpp"
 
 /**************************\
@@ -32,17 +33,22 @@
 class Request : public Message
 {
 	private:
+		std::string		_raw_request;
 		std::string		_method;
 		std::string		_URI;
 
-		void	_requestLineCheck( const std::string& line );
-		void	_headerCheck( const std::string& line );
-		void	_bodyCheck( const std::string& line );
-		void	_deserializeRequest( const std::string& line );
+		void			_requestLineCheck( const std::string& serialized );
+		void			_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end );
+		void			_validateRequiredHeaders();
+		void			_validateContentLength();
+		void			_headerCheck( const std::string& serialized );
+		void			_bodyCheck( const std::string& serialized );
 
 	public:
 		Request( const std::string& serialized );
 		~Request() {}
+
+		void				process();
 
 		const std::string&	getMethod() const	{ return (_method); }
 		const std::string&	getURI() const		{ return (_URI); }

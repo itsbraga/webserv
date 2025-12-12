@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/10 19:50:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/12 16:33:14 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,8 @@ std::vector<std::string>	split( std::string str, char delimiter )
 	return (tokens);
 }
 
-void	erase_whitespace( std::string& str, std::string set )
+void	erase_whitespace( std::string& str, std::string& set )
 {
-	if (str.empty() || set.empty())
-		return ;
-
 	std::string::const_iterator set_it = set.begin();
 	std::string::iterator 		str_it = str.begin();
 	size_t						pos = std::string::npos;

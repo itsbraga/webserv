@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/10 19:32:24 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/12 16:39:03 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,13 @@ class Message
 
 		virtual void		process() = 0;
 
-		void				setHeaderValue( const std::string key, const std::string value );
-		void				setBody( const std::string body );
-
-		void				addHeader( const std::string first, const std::string second );
-
+		void				setHeaderValue( const std::string& key, const std::string& value );
+		void				setBody( const std::string& body );
+		
 		const std::string&	getHttpVersion() const	{ return (_http_version); }
 		const std::string&	getBody() const			{ return (_body); }
-
 		const std::string	getHeaderMap() const;
 		const std::string&	getHeaderValue( const std::string& key ) const;
+
+		void				addHeader( const std::string& first, const std::string& second );
 };

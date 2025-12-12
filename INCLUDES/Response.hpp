@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:41:27 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/11 23:28:26 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Response : public Message
 		std::string		_ressource_path;
 
 		typedef void ( Response::*ResponseFunction )();
+
 		static std::map<int, ResponseFunction>		_builders;
 		static std::map<std::string, std::string>	_content_types;
 	
@@ -52,7 +53,7 @@ class Response : public Message
 
 		void				setStatusCode( const int status_code );
 		void				setStatusName( const std::string status_name );
-	void					setRessourcePath( const std::string requested_ressource_path );
+		void				setRessourcePath( const std::string requested_ressource_path );
 		void				setContentLength( const std::string length );
 		void				setContentType( const std::string type );
 		void				setDate();
