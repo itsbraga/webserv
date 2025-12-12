@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 19:19:54 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/12 17:29:01 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,30 @@
 
 #include "colors.hpp"
 
-typedef enum Context
+# include <cstdlib>
+# include <iostream>
+# include <fstream>
+# include <sstream> 
+# include <vector>
+# include <map>
+# include <set>
+# include <string>
+# include <cstring>
+# include <cctype>
+# include <cstdio>
+# include <ctime>
+# include <sys/stat.h>
+
+enum Context
 {
 	HTTP,
 	SERVER_BLOCK,
 	LOCATION_BLOCK,
+
+	EMPTY
 };
 
-typedef enum TokenType
+enum TokenType
 {
 	//Keywords
 	K_SERVER,
@@ -45,6 +61,7 @@ typedef enum TokenType
 	V_NUMBER,
 	V_STR,
 	V_PATH,
+	V_EXTENSION,
 	//Others
 	UNKNOW
 };
@@ -60,10 +77,11 @@ class Token
 		Token(const Token& to_copy) {this->_type = to_copy.getType(); this->_value = to_copy.getValue();}
 		~Token() {}
 
-		void			setType(TokenType type);
-		void			setValue(std::string value);
-		TokenType		getType( void ) const;
-		std::string		getValue( void ) const;
+		void			setType(TokenType type) {this->_type = type;}
+		void			setValue(std::string value) {this->_value = value;}
+		TokenType		getType( void ) const {return this->_type;}
+		std::string		getTypeStr( void ) const;
+		std::string		getValue( void ) const {return this->_value;}
 
 };
 
@@ -80,14 +98,14 @@ class Parser
 		Parser(char* arg);
 		~Parser(){}
 		
-		static void 		handleFileConfig(char *arg, webserv_s *data);
+		// static void 		handleFileConfig(char *arg, webserv_s *data);
 		std::string 		checkPath(char *arg);
 		void				initKeywordMap( void );
 		void				bufferTokenize( void );
 		void				fillBuffer(const std::ifstream &infile);
 		Token				createToken(std::string value) const;
 		void				createTokenDelimiter(std::string::const_iterator it);
-		std::stringstream	createStringStream( void );
+		// std::stringstream	createStringStream( void ); ???
 
 		TokenType			identifyKeyword(const std::string& to_identify) const;
 		TokenType			identifySymbol(const std::string& to_identify) const;
@@ -104,6 +122,7 @@ class Parser
 		bool				isNumber(const std::string& to_compare) const;
 		bool				isString(const std::string&	to_compare) const;
 		bool				isPath(const std::string& to_compare) const;
+		bool 				isExtension(const std::string& to_compare) const;
 		bool				isServer(const std::string& to_compare) const;
 		bool				isLocation(const std::string& to_compare) const;
 
@@ -126,11 +145,13 @@ class Parser
 
 inline std::ostream&	operator<<(std::ostream &os, const Parser& to_insert)
 {
-	std::vector<std::string>::const_iterator it = to_insert.getTokens().begin();
+	std::vector<Token>::const_iterator it = to_insert.getTokens().begin();
 	for (; it != to_insert.getTokens().end(); ++it)
 	{
-		os << RED << "[" << RESET << *it << RED << "]" << RESET << " - ";
+		os << "[" << RED << it->getTypeStr() << RESET << "[" << YELLOW << it ->getValue() << RESET << "]" << "]" << " - ";
 	}
 	os << std::endl;
 	return (os);
 }
+
+// - [server[KEYWORD]]

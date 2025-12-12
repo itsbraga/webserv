@@ -6,11 +6,11 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/03 19:22:57 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/12 17:47:10 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "../../INCLUDES/Parser.hpp"
 
 // void	Parser::handleFileConfig(char *arg, webserv_s *data)
 // {
@@ -136,8 +136,10 @@ TokenType	Parser::identifyValue(const std::string& to_identify) const
 		return (V_NUMBER);
 	else if (isString(to_identify) == true)
 		return (V_STR);
-	else
+	else if (isPath(to_identify) == true)
 		return (V_PATH);
+	else
+		return (V_EXTENSION);
 }
 
 void		Parser::createTokenDelimiter(std::string::const_iterator it)
@@ -153,11 +155,11 @@ void		Parser::fillBuffer(const std::ifstream& infile)
 	this->_buffer = buffer.str();
 }
 
-std::stringstream	Parser::createStringStream( void )
-{
-	std::stringstream ss(this->_buffer);
-	return (ss);
-}
+// std::stringstream	Parser::createStringStream( void )
+// {
+// 	std::stringstream ss(this->_buffer);
+// 	return (ss);
+// }
 
 void	Parser::initKeywordMap( void )
 {
@@ -216,7 +218,7 @@ bool	Parser::isSymbol(const std::string& to_compare) const
 
 bool	Parser::isValue(const std::string& to_compare) const
 {
-	return (isNumber(to_compare) || isString(to_compare) || isPath(to_compare));
+	return (isNumber(to_compare) || isString(to_compare) || isPath(to_compare) || isExtension(to_compare));
 }
 
 bool	Parser::isNumber(const std::string& to_compare) const
@@ -251,6 +253,14 @@ bool Parser::isPath(const std::string& to_compare) const
 		return (true);
 }
 
+bool Parser::isExtension(const std::string& to_compare) const
+{
+	if (to_compare.find_last_of('.') == std::string::npos)
+		return (false);
+	else
+		return (true);
+}
+
 bool	Parser::isServer(const std::string& to_compare) const
 {
 	return (to_compare == "server");
@@ -276,7 +286,8 @@ Context	Parser::getCurrentContext( void )
 {
 	if (this->_context_stack.empty() == false)
 		return (this->_context_stack.back());
-	//all path doesn't always return
+	else
+		return (EMPTY);
 }
 
 std::string	Parser::getConfPath( void )
@@ -302,4 +313,35 @@ const std::vector<Token>&	Parser::getTokens() const
 std::vector<Context>	Parser::getContextStack( void )
 {
 	return (this->_context_stack);
+}
+
+std::string	Token::getTypeStr( void ) const
+{
+	static std::map<TokenType, std::string>	type_map;
+	
+	if (type_map.empty() == true)
+	{
+		type_map[K_SERVER] = "K_SERVER";
+		type_map[K_LOCATION] = "K_LOCATION";
+		type_map[K_LISTEN] = "K_LISTEN";
+		type_map[K_SERVERNAME] = "K_SERVERNAME";
+		type_map[K_ROOT] = "K_ROOT";
+		type_map[K_INDEX] = "K_INDEX";
+		type_map[K_ERRORPAGE] = "K_ERRORPAGE";
+		type_map[K_ALLOWEDMETHODS] = "K_ALLOWEDMETHODS";
+		type_map[K_CGI] = "K_CGI";
+		type_map[K_AUTOINDEX] = "K_AUTOINDEX";
+		type_map[K_UPLOADALLOWED] = "K_UPLOADALLOWED";
+		type_map[K_RETURN] = "K_RETURN";
+		type_map[K_ON] = "K_ON";
+		type_map[S_LBRACE] = "S_LBRACE";
+		type_map[S_RBRACE] = "S_RBRACE";
+		type_map[S_SEMICOLON] = "S_SEMICOLON";
+		type_map[V_NUMBER] = "V_NUMBER";
+		type_map[V_STR] = "V_STR";
+		type_map[V_PATH] = "V_PATH";
+		type_map[V_EXTENSION] = "V_EXTENSION";
+		type_map[UNKNOW] = "UNKNOW";
+	}
+	return (type_map[this->_type]);
 }
