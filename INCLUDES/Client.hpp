@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/11 22:11:18 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 20:59:51 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ class Client
 		std::string		_read_buffer;		// donnees recues en attente de parsing
 		std::string		_write_buffer;		// reponse en attente d'envoi
 		Server*			_server;
+
+		bool			_isChunkedComplete( size_t body_start ) const;
+		bool			_isContentLengthComplete( size_t header_end, size_t body_start ) const;
 
 	public:
 		Client( int socket, Server* server ) : _socket( socket ), _server( server ) {}

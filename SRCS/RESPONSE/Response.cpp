@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 16:35:55 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 21:11:57 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,32 +48,47 @@ void	Response::setStatusCode( const int status_code )
 
 void	Response::setStatusName( const std::string status_name )
 {
+	if (status_name.empty())
+		return ;
+
 	_status_name = status_name;
 }
 
 void	Response::setRessourcePath( const std::string requested_ressource_path )
 {
+	if (requested_ressource_path.empty())
+		return ;
+
 	_ressource_path = requested_ressource_path;
 }
 
 void	Response::setContentLength( const std::string length )
 {
+	if (length.empty())
+		return ;
+
 	_headers.push_back( std::make_pair( "Content-Length", length ) );
 }
 
 void	Response::setContentType( const std::string type )
 {
-	_headers.push_back( std::make_pair( "content-type", type ) );
+	if (type.empty())
+		return ;
+
+	_headers.push_back( std::make_pair( "Content-Type", type ) );
 }
 
 void	Response::setDate()
 {
-	_headers.push_back( std::make_pair( "date", getDate() ) );
+	_headers.push_back( std::make_pair( "Date", getDate() ) );
 }
 
 void	Response::setLocation( const std::string location )
 {
-	_headers.push_back( std::make_pair( "location", location ) );
+	if (location.empty())
+		return ;
+
+	_headers.push_back( std::make_pair( "Location", location ) );
 }
 
 /*
@@ -81,6 +96,9 @@ void	Response::setLocation( const std::string location )
 */
 const std::string	Response::getExtension( const std::string& URI ) const
 {
+	if (URI.empty())
+		return (ERR_PREFIX "empty URI");
+
 	std::size_t dot_pos = URI.find_last_of( '.'  );
 
 	if (dot_pos == std::string::npos)
@@ -118,10 +136,7 @@ const std::string	Response::getSerializedResponse()
 	std::string response;
 
 	addHeader( "date", getDate() );
-	// response += "HTTP/";
-	// response += toString(_http_version);
 	response += _http_version + " ";
-	// response += " ";
 	response += toString( _status_code ) + " " + _status_name + "\r\n";
 	response += getSerializedHeaders() + "\r\n" + getBody() + "\n";
 	return (response);

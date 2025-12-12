@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 16:28:28 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 20:39:54 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@
 class Request : public Message
 {
 	private:
-		std::string		_raw_request;
-		std::string		_method;
-		std::string		_URI;
+		const std::string&	_raw_request;
+		std::string			_method;
+		std::string			_URI;
 
 		void			_requestLineCheck( const std::string& serialized );
 		void			_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end );

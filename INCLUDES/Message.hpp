@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 16:39:03 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 21:14:30 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,20 @@ class Message
 		std::pair<std::string, std::string>		_parseHeaderLine( const std::string& line ) const;
 		bool									_hasHeader( const std::string& key ) const;
 
-		void				_unchunkBody( std::string body );
+		void				_unchunkBody( const std::string& chunked_data );
 	
 	public:
 		virtual ~Message() {}
 
 		virtual void		process() = 0;
 
+		void				addHeader( const std::string& first, const std::string& second );
 		void				setHeaderValue( const std::string& key, const std::string& value );
 		void				setBody( const std::string& body );
-		
+
 		const std::string&	getHttpVersion() const	{ return (_http_version); }
 		const std::string&	getBody() const			{ return (_body); }
 		const std::string	getHeaderMap() const;
-		const std::string&	getHeaderValue( const std::string& key ) const;
+		const std::string	getHeaderValue( const std::string& key ) const;
 
-		void				addHeader( const std::string& first, const std::string& second );
 };

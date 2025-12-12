@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/11 23:28:26 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 19:05:53 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,15 @@ class Response : public Message
 		 *	Builders Status Functions
 		\********************************************/
 		
-		// 2xx : SUCCESS RESPONSE
+		// 2xx : Successful
 		void	OK();						// 200
 		void	Created();					// 201
 		void	Accepted();					// 202
 		
-		// 3xx : REDIRECTION RESPONSE
+		// 3xx : Redirection
 		void	MovedPermanently(); 		// 301
 		
-		// 4xx : CLIENT ERROR RESPONSE
+		// 4xx : Client Error
 		void	BadRequest();				// 400
 		void	Forbidden();				// 403
 		void	NotFound();					// 404
@@ -91,7 +91,7 @@ class Response : public Message
 		void	ImATeapot();				// 418
 		void	TooManyRequest();			// 429
 
-		// 5xx : SERVER ERROR RESPONSE
+		// 5xx : Server Error
 		void	InternalServerError();		// 500
 		void	NotImplemented();			// 501
 		void	BadGateway();				// 502

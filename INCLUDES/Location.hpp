@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/11 22:06:08 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/12 21:13:14 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <string>
 # include <vector>
 # include <sys/stat.h>
+# include <algorithm>
 
 /**************************\
  *	Classes
