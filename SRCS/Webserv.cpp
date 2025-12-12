@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/05 03:18:53 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/11 22:10:42 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 */
 Webserv::~Webserv()
 {
-	if (_epollFd != -1)
-		::close( _epollFd );
+	if (_epoll_fd != -1)
+		::close( _epoll_fd );
 
 	std::map<int, Client*>::iterator it;
 
@@ -44,7 +44,7 @@ bool	Webserv::_addServerToEpoll( Server* server )
 	ev.events = EPOLLIN;
 	ev.data.fd = server->getSocket();
 
-	if (epoll_ctl( _epollFd, EPOLL_CTL_ADD, ev.data.fd, &ev ) == -1)
+	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, ev.data.fd, &ev ) == -1)
 	{
 		std::cerr << ERR_PREFIX << P_ORANGE "epoll_ctl(ADD server): " NC << strerror( errno ) << std::endl;
 		return (false);
@@ -52,14 +52,14 @@ bool	Webserv::_addServerToEpoll( Server* server )
 	return (true);
 }
 
-bool	Webserv::_addClientToEpoll( int clientFd )
+bool	Webserv::_addClientToEpoll( int client_fd )
 {
 	epoll_event ev;
 	std::memset( &ev, 0, sizeof( ev ) );
 	ev.events = EPOLLIN;
-	ev.data.fd = clientFd;
+	ev.data.fd = client_fd;
 
-	if (epoll_ctl( _epollFd, EPOLL_CTL_ADD, clientFd, &ev ) == -1)
+	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, client_fd, &ev ) == -1)
 	{
 		std::cerr << ERR_PREFIX << P_ORANGE "epoll_ctl(ADD client): " NC << strerror( errno ) << std::endl;
 		return (false);
@@ -67,54 +67,54 @@ bool	Webserv::_addClientToEpoll( int clientFd )
 	return (true);
 }
 
-void	Webserv::_removeClient( int clientFd )
+void	Webserv::_removeClient( int client_fd )
 {
-	epoll_ctl( _epollFd, EPOLL_CTL_DEL, clientFd, NULL );
-	::close( clientFd );
-	delete _clients[clientFd];
-	_clients.erase( clientFd );
+	epoll_ctl( _epoll_fd, EPOLL_CTL_DEL, client_fd, NULL );
+	::close( client_fd );
+	delete _clients[client_fd];
+	_clients.erase( client_fd );
 }
 
-void	Webserv::_handleServerEvent( int serverFd )
+void	Webserv::_handleServerEvent( int server_fd )
 {
-	Server* server = _servers[serverFd];
+	Server* server = _servers[server_fd];
 
 	while (true)
 	{
-		int clientFd = server->acceptNewClient();
-		if (clientFd == -1)
+		int client_fd = server->acceptNewClient();
+		if (client_fd == -1)
 			break ;		
-		if (_addClientToEpoll( clientFd ) == false)
+		if (_addClientToEpoll( client_fd ) == false)
 		{
-			::close( clientFd );
+			::close( client_fd );
 			continue ;
 		}
-		_clients.insert( std::make_pair( clientFd, new Client( clientFd, server ) ) );
-		std::cout << P_BLUE "[INFO] " NC "Client accepted (fd=" << clientFd << ")" << std::endl; 
+		_clients.insert( std::make_pair( client_fd, new Client( client_fd, server ) ) );
+		std::cout << P_BLUE "[INFO] " NC "Client accepted (fd=" << client_fd << ")" << std::endl; 
 	}
 }
 
-void	Webserv::_handleClientEvent( int clientFd, uint32_t events )
+void	Webserv::_handleClientEvent( int client_fd, uint32_t events )
 {
-	if (_clients.find( clientFd ) == _clients.end() )
+	if (_clients.find( client_fd ) == _clients.end() )
 		return ;
 
-	Client*	client = _clients[clientFd];
+	Client*	client = _clients[client_fd];
 
 	if (events & EPOLLERR)
 	{
-		_removeClient( clientFd );
+		_removeClient( client_fd );
 		std::cout << P_BLUE "[INFO] " NC "Client closed (EPOLLERR)" << std::endl;
 		return ;
 	}
 	if (events & EPOLLIN)
-		_handleClientRead( clientFd, client );
+		_handleClientRead( client_fd, client );
 }
 
-void	Webserv::_handleClientRead( int clientFd, Client* client )
+void	Webserv::_handleClientRead( int client_fd, Client* client )
 {
 	char buffer[8192];
-	ssize_t nBytes = ::recv( clientFd, buffer, sizeof( buffer ), 0 );
+	ssize_t nBytes = ::recv( client_fd, buffer, sizeof( buffer ), 0 );
 
 	if (nBytes < 0)
 	{
@@ -123,13 +123,13 @@ void	Webserv::_handleClientRead( int clientFd, Client* client )
 	}
 	if (nBytes == 0)
 	{
-		_removeClient( clientFd );
-		std::cout << P_BLUE "[INFO] " NC "Client disconnected (fd=" << clientFd << ")" << std::endl;
+		_removeClient( client_fd );
+		std::cout << P_BLUE "[INFO] " NC "Client disconnected (fd=" << client_fd << ")" << std::endl;
 		return ;
 	}
 
 	// pour telnet
-	std::cout << P_ORANGE "[DEBUG] " NC "Received " << nBytes << " bytes from clientFd=" << clientFd << ": ";
+	std::cout << P_ORANGE "[DEBUG] " NC "Received " << nBytes << " bytes from client_fd=" << client_fd << ": ";
 	std::cout.write(buffer, nBytes);
 
 	client->appendToReadBuffer( buffer, nBytes );
@@ -138,10 +138,10 @@ void	Webserv::_handleClientRead( int clientFd, Client* client )
 			  << ", complete: " << (client->hasCompleteRequest() ? "YES" : "NO") << std::endl;
 
 	if (client->hasCompleteRequest())
-		_processRequest( clientFd, client );
+		_processRequest( client_fd, client );
 }
 
-void	Webserv::_processRequest( int clientFd, Client* client )
+void	Webserv::_processRequest( int client_fd, Client* client )
 {
 	std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
 	std::cout << client->getReadBuffer() << std::endl;
@@ -149,7 +149,7 @@ void	Webserv::_processRequest( int clientFd, Client* client )
 
 	// test
 	const char	*response = "Received your request\n";
-	::send( clientFd, response, strlen( response ), 0 );
+	::send( client_fd, response, strlen( response ), 0 );
 	client->clearReadBuffer();
 }
 
@@ -171,8 +171,11 @@ bool	Webserv::addServer( uint16_t port, const std::string& server_name )
 
 bool	Webserv::init(/* config file */)
 {
-	_epollFd = epoll_create(1);
-	if (_epollFd == -1)
+	Response::initBuilders();
+	Response::initContentTypes();
+
+	_epoll_fd = epoll_create(1);
+	if (_epoll_fd == -1)
 	{
 		std::cerr << ERR_PREFIX << P_ORANGE "epoll_create(): " NC << strerror( errno ) << std::endl;
 		return (false);
@@ -196,7 +199,7 @@ void	Webserv::run()
 
 	while (true)
 	{
-		int nbReady = epoll_wait( _epollFd, events, MAX_EVENTS, -1 );
+		int nbReady = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
 		if (nbReady == -1)
 		{
 			if (errno == EINTR)

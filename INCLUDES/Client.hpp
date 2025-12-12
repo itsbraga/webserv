@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/05 02:07:30 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/11 22:11:18 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class Client
 {
 	private:
 		int				_socket;
-		std::string		_readBuffer;		// donnees recues en attente de parsing
-		std::string		_writeBuffer;		// reponse en attente d'envoi
+		std::string		_read_buffer;		// donnees recues en attente de parsing
+		std::string		_write_buffer;		// reponse en attente d'envoi
 		Server*			_server;
 
 	public:
@@ -39,8 +39,8 @@ class Client
 
 		int				getSocket() const	{ return (_socket); }
 		Server*			getServer() const	{ return (_server); }
-		std::string&	getReadBuffer()		{ return (_readBuffer); }
-		std::string&	getWriteBuffer()	{ return (_writeBuffer); }
+		std::string&	getReadBuffer()		{ return (_read_buffer); }
+		std::string&	getWriteBuffer()	{ return (_write_buffer); }
 
 		void			appendToReadBuffer( const char *data, size_t len );
 		bool			hasCompleteRequest() const;

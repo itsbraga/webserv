@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/05 01:01:59 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/11 23:09:45 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,34 @@
 
 void	Client::appendToReadBuffer( const char *data, size_t len )
 {
-	_readBuffer.append( data, len );
+	_read_buffer.append( data, len );
 }
 
 bool	Client::hasCompleteRequest() const
 {
-	size_t headerEnd = _readBuffer.find( "\r\n\r\n" );
-	if (headerEnd == std::string::npos)
+	size_t header_end = _read_buffer.find( "\r\n\r\n" );
+	if (header_end == std::string::npos)
 		return (false);
 
-	size_t clPOST = _readBuffer.find( "Content-Length:" );
-	if (clPOST == std::string::npos)
+	size_t cl_POST = _read_buffer.find( "Content-Length:" );
+	if (cl_POST == std::string::npos)
 		return (true);	// Pas de body
 
-	size_t clEnd = _readBuffer.find( "\r\n", clPOST );
-	std::string clValue = _readBuffer.substr( clPOST + 15, clEnd - clPOST - 15 );
+	size_t cl_end = _read_buffer.find( "\r\n", cl_POST );
+	std::string cl_value = _read_buffer.substr( cl_POST + 15, cl_end - cl_POST - 15 );
 
-	size_t start = clValue.find_first_not_of( " " );
+	size_t start = cl_value.find_first_not_of( " " );
 	if (start == std::string::npos)
 		return (true);
 
-	int contentLength = std::atoi( clValue.c_str() + start);
-	size_t bodyStart = headerEnd + 4;
-	size_t bodyReceived = _readBuffer.size() - bodyStart;
+	int content_length = std::atoi( cl_value.c_str() + start);
+	size_t body_start = header_end + 4;
+	size_t body_received = _read_buffer.size() - body_start;
 
-	return (bodyReceived >= static_cast<size_t>( contentLength ));
+	return (body_received >= static_cast<size_t>( content_length ));
 }
 
 void	Client::clearReadBuffer()
 {
-	_readBuffer.clear();
+	_read_buffer.clear();
 }

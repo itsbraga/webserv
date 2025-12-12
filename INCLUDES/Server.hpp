@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 17:25:44 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/11 22:08:58 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ class LocationTree;
 class Server
 {
 	private:
-		uint16_t 		_port;
-		std::string 	_server_name;
-		LocationTree*	_tree;
 		int				_socket;
 		sockaddr_in		_addr;
+		std::string 	_server_name;
+		uint16_t 		_port;
+		LocationTree*	_tree;
 
 		Server( const Server& );
 		Server&			operator=( const Server& );
@@ -60,7 +60,9 @@ class Server
 		bool			init();
 		int				acceptNewClient();
 
-		int				getSocket() const		{ return (_socket); }
-		uint16_t		getPort() const			{ return (_port); }
-		std::string		getServerName() const	{ return (_server_name); }
+		int				getSocket() const			{ return (_socket); }
+		sockaddr_in		getAddress() const			{ return (_addr); }
+		std::string		getServerName() const		{ return (_server_name); }
+		uint16_t		getPort() const				{ return (_port); }
+		LocationTree*	getLocationTree() const		{ return (_tree); }
 };

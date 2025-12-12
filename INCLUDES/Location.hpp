@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:18:55 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/11 22:06:08 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ class ErrorPage
 		
 	public: 
 		ErrorPage( std::vector<int> status, std::string file ) : _status( status ), _file( file ) {}
-	 	~ErrorPage() {}
+		~ErrorPage() {}
 		
-		std::vector<int>	getStatus()	{ return (_status); }
-		std::string 		getFile()	{ return (_file); }
+		const std::vector<int>&		getStatus() const	{ return (_status); }
+		const std::string&			getFile() const		{ return (_file); }
 
-		bool				findStatus( int target );
+		bool		findStatus( int target ) const;
 };
 
 class Location
@@ -67,15 +67,15 @@ class Location
 		void		setReturnCode( unsigned int return_code );
 		void		setReturnUri( std::string return_uri );
 
-		std::string											getRoot();
-		std::string 										getIndex();
-		std::vector<ErrorPage>								getErrorPage();
-		std::vector<std::string>							getAllowedMethods();
-		std::vector<std::pair<std::string, std::string> >	getCgiBin();
-		bool												getAutoIndex();
-		bool												getUploadAllowed();
-		unsigned int										getReturnCode();
-		std::string											getReturnUri();	
+		std::string&										getRoot() const;
+		std::string&										getIndex() const;
+		std::vector<ErrorPage>&								getErrorPage() const;
+		std::vector<std::string>&							getAllowedMethods() const;
+		std::vector<std::pair<std::string, std::string> >&	getCgiBin() const;
+		bool&												getAutoIndex() const;
+		bool&												getUploadAllowed() const;
+		unsigned int&										getReturnCode() const;
+		std::string&										getReturnUri() const;	
 };
 
 //hierarchie des directives nginx
