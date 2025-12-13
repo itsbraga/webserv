@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/13 23:58:34 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 00:02:33 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /*
 	---------------------- [ Object Manipulation ] -----------------------
 */
-Server::Server( std::string server_name, uint16_t port )
+Server::Server( const std::string& server_name, uint16_t port )
 				: _socket( -1 ), _server_name( server_name ), _port( port ), _tree( NULL )
 {
 	if (server_name.empty())

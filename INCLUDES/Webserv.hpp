@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/12 16:19:01 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 00:00:59 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class Webserv
 		Webserv() : _epoll_fd( -1 ) {}
 		~Webserv();
 
-		bool	addServer( uint16_t port, const std::string& server_name );
+		bool	addServer( const std::string& server_name, uint16_t port );
 		bool	init(/* config file */);
 		void	run();
 };

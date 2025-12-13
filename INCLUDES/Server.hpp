@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/13 23:57:54 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 00:02:20 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class Server
 		void			_closeSocket();
 		
 	public:
-		Server( std::string server_name, uint16_t port );
+		Server( const std::string& server_name, uint16_t port );
 		~Server();
 
 		bool			init();
