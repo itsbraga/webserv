@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/05 20:12:16 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 00:03:38 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	main( void )
 {
 	Webserv	webserv;
 
-	if (webserv.addServer(8080, "destination_finale") == false)
+	if (webserv.addServer( "destination_finale", 8080 ) == false)
 		return (FAILURE);
 	if (webserv.init() == false)
 		return (FAILURE);
