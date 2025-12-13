@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/11 23:36:26 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/13 23:49:57 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,12 @@
 
 bool	ErrorPage::findStatus( int target ) const
 {
-	return (std::find( _status.begin(), _status.end(), target ) != _status.end());
+	std::vector<int>::const_iterator it;
+
+	for (it = _status.begin(); it != _status.end(); it++)
+	{
+		if (*it == target)
+			return (true);
+	}
+	return (false);
 }
