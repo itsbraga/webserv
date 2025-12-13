@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/12 21:17:29 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 00:02:01 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,9 +171,9 @@ void	Webserv::_processRequest( int client_fd, Client* client )
 /*
 	------------------------- [ Public methods ] -------------------------
 */
-bool	Webserv::addServer( uint16_t port, const std::string& server_name )
+bool	Webserv::addServer( const std::string& server_name, uint16_t port )
 {
-	Server* server = new Server( port, server_name );
+	Server* server = new Server( server_name, port );
 
 	if (server->init() == false)
 	{
