@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 19:05:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:37:41 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Response : public Message
 		static std::map<std::string, std::string>	_content_types;
 	
 	public:
-		Response( const int status_code, const std::string status_name );
+		Response( const int status_code, const std::string& status_name );
 		~Response() {}
 
 		static void			initBuilders();
@@ -52,14 +52,14 @@ class Response : public Message
 		void				process();
 
 		void				setStatusCode( const int status_code );
-		void				setStatusName( const std::string status_name );
-		void				setRessourcePath( const std::string requested_ressource_path );
-		void				setContentLength( const std::string length );
-		void				setContentType( const std::string type );
+		void				setStatusName( const std::string& status_name );
+		void				setRessourcePath( const std::string& requested_ressource_path );
+		void				setContentLength( const std::string& length );
+		void				setContentType( const std::string& type );
 		void				setDate();
-		void				setLocation( const std::string location );
+		void				setLocation( const std::string& location );
 		
-		const int&			getStatusCode() const		{ return (_status_code); }
+		const int			getStatusCode() const		{ return (_status_code); }
 		const std::string&	getStatusName() const		{ return (_status_name); }
 		const std::string&	getRessourcePath() const	{ return (_ressource_path); }
 		const std::string 	getDate() const;

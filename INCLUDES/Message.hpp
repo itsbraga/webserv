@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 21:14:30 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:12:13 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ class Message
 
 		virtual void		process() = 0;
 
-		void				addHeader( const std::string& first, const std::string& second );
+		void				addHeader( const std::string& key, const std::string& value );
 		void				setHeaderValue( const std::string& key, const std::string& value );
 		void				setBody( const std::string& body );
 

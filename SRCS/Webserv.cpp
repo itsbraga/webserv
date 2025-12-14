@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/14 00:02:01 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 02:13:33 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,14 @@ void	Webserv::_handleServerEvent( int server_fd )
 	{
 		int client_fd = server->acceptNewClient();
 		if (client_fd == -1)
-			break ;		
-		if (_addClientToEpoll( client_fd ) == false)
+			break ;
+
+		if (!_addClientToEpoll( client_fd ))
 		{
 			::close( client_fd );
 			continue ;
 		}
+
 		_clients.insert( std::make_pair( client_fd, new Client( client_fd, server ) ) );
 		std::cout << P_BLUE "[INFO] " NC "Client accepted (fd=" << client_fd << ")" << std::endl; 
 	}
@@ -128,14 +130,7 @@ void	Webserv::_handleClientRead( int client_fd, Client* client )
 		return ;
 	}
 
-	// pour telnet
-	// std::cout << P_ORANGE "[DEBUG] " NC "Received " << nBytes << " bytes from client_fd=" << client_fd << ": ";
-	// std::cout.write(buffer, nBytes);
-
 	client->appendToReadBuffer( buffer, nBytes );
-
-	// std::cout << P_ORANGE "[DEBUG] " NC "Buffer size: " << client->getReadBuffer().size()
-	// 		  << ", complete: " << (client->hasCompleteRequest() ? "YES" : "NO") << std::endl;
 
 	if (client->hasCompleteRequest())
 		_processRequest( client_fd, client );
@@ -147,11 +142,10 @@ void	Webserv::_processRequest( int client_fd, Client* client )
 		Request request( client->getReadBuffer() );
 
 		std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
-		// std::cout << client->getReadBuffer() << std::endl;
-		std::cout << "Method: " << request.getMethod() << std::endl;
-		std::cout << "URI: " << request.getURI() << std::endl;
-		std::cout << "Headers:\n" << request.getHeaderMap() << std::endl;
-		// std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+		std::cout << BOLD PINK "Method: " NC << request.getMethod() << std::endl;
+		std::cout << BOLD PINK "URL: " NC << request.getURI() << std::endl;
+		std::cout << BOLD PINK "Headers:\n" NC << request.getHeaderMap() << std::endl;
+		std::cout << P_YELLOW "------------------------\n" NC << std::endl;
 
 		Response response( 200, "OK" );
 
@@ -175,11 +169,12 @@ bool	Webserv::addServer( const std::string& server_name, uint16_t port )
 {
 	Server* server = new Server( server_name, port );
 
-	if (server->init() == false)
+	if (!server->init())
 	{
 		delete server;
 		return (false);
 	}
+
 	_servers.insert( std::make_pair( server->getSocket(), server ) );
 	return (true);
 }
@@ -200,7 +195,7 @@ bool	Webserv::init(/* config file */)
 
 	for (it = _servers.begin(); it != _servers.end(); ++it)
 	{
-		if (_addServerToEpoll( it->second ) == false)
+		if (!_addServerToEpoll( it->second ))
 			return (false);
 	}
 	return (true);

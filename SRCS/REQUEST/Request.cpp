@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 21:09:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:59:50 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Request::Request( const std::string& serialized ) : Message(), _raw_request( ser
 {
 	if (serialized.empty())
 		return ;
+
 	process();
 }
 
@@ -31,6 +32,7 @@ void	Request::_requestLineCheck( const std::string& serialized )
 {
 	std::string request_line = extractRequestLine( serialized );
 	std::string method, URI, protocol_version;
+
 
 	parseRequestLine( request_line, method, URI, protocol_version );
 	validateMethod( method );
@@ -98,6 +100,31 @@ void	Request::_headerCheck( const std::string& serialized )
 	_validateContentLength();
 }
 
+void	Request::_chunkedBodyCase( const std::string& serialized, size_t body_start )
+{
+	std::string encoding = getHeaderValue( "Transfer-Encoding" );
+
+	if (encoding.find( "chunked" ) != std::string::npos)
+	{
+		std::string chunked_data = serialized.substr( body_start );
+		_unchunkBody( chunked_data );
+	}
+}
+
+void	Request::_fullBodyCase( const std::string& serialized, size_t body_start )
+{
+	std::string cl_value = getHeaderValue( "Content-Length" );
+
+	int content_length = std::atoi( cl_value.c_str() );
+	if (content_length > 0)
+	{
+		if (body_start + static_cast<size_t>( content_length ) > serialized.size())
+			throw SyntaxErrorException( "400 Bad Request: Body shorter than Content-Length" );
+		
+		_body = serialized.substr( body_start, content_length );
+	}
+}
+
 void	Request::_bodyCheck( const std::string& serialized )
 {
 	size_t header_end = serialized.find( "\r\n\r\n" );
@@ -107,28 +134,9 @@ void	Request::_bodyCheck( const std::string& serialized )
 	size_t body_start = header_end + 4;
 
 	if (_hasHeader( "Transfer-Encoding" ))
-	{
-		std::string encoding = getHeaderValue( "Transfer-Encoding" );
-
-		if (encoding.find( "chunked" ) != std::string::npos)
-		{
-			std::string chunked_data = serialized.substr( body_start );
-			_unchunkBody( chunked_data );
-		}
-	}
+		_chunkedBodyCase( serialized, body_start );
 	else if (_hasHeader( "Content-Length" ))
-	{
-		std::string cl_value = getHeaderValue( "Content-Length" );
-		int content_length = std::atoi( cl_value.c_str() );
-
-		if (content_length > 0)
-		{
-			if (body_start + content_length > serialized.size())
-				throw SyntaxErrorException( "400 Bad Request: Body shorter than Content-Length" );
-			
-			_body = serialized.substr( body_start, content_length );
-		}
-	}
+		_fullBodyCase( serialized, body_start );
 }
 
 /*
@@ -141,6 +149,7 @@ void	Request::process()
 
 	_requestLineCheck( _raw_request );
 	_headerCheck( _raw_request );
+
 	if (_method == "POST")
 		_bodyCheck( _raw_request );
 }

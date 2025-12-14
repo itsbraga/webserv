@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseStatus.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 18:52:39 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:14:56 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	Response::OK()
 {
 	_status_code = 200;
 	_status_name = "OK";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "keep-alive" );
 }
 
@@ -37,7 +37,7 @@ void	Response::Created()
 {
 	_status_code = 201;
 	_status_name = "Created";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "keep-alive" );
 }
 
@@ -45,7 +45,7 @@ void	Response::Accepted()
 {
 	_status_code = 202;
 	_status_name = "Accepted";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "keep-alive" );
 }
 
@@ -71,7 +71,7 @@ void	Response::BadRequest()
 {
 	_status_code = 400;
 	_status_name = "Bad Request";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 	addHeader( "content-length", toString( getBody().length() ) );
@@ -84,7 +84,7 @@ void	Response::Forbidden()
 {
 	_status_code = 403;
 	_status_name = "Forbidden";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 	addHeader( "content-length", toString( getBody().length() ) );
@@ -97,11 +97,11 @@ void	Response::NotFound()
 {
 	_status_code = 404;
 	_status_name = "Not Found";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 
-	std::string body = "<!doctype html>\n";
+	std::string body = "<!DOCTYPE html>\n";
 	body += "<head>\n	<title>404 Not Found </title>";
 
 	setBody( body );
@@ -113,7 +113,7 @@ void	Response::MethodNotAllowed()
 {
 	_status_code = 405;
 	_status_name = "Method Not Allowed";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 	addHeader( "allow", "GET, POST, HEAD, DELETE" );
@@ -123,7 +123,7 @@ void	Response::LengthRequired()
 {
 	_status_code = 411;
 	_status_name = "Length Required";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 	addHeader( "content-length", toString( getBody().length() ) );
@@ -136,7 +136,7 @@ void	Response::URITooLong()
 {
 	_status_code = 414;
 	_status_name = "URI Too Long";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 	addHeader( "content-length", toString( getBody().length() ) );
@@ -149,7 +149,7 @@ void	Response::ImATeapot()
 {
 	_status_code = 418;
 	_status_name = "I'm a teapot";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 	addHeader( "content-length", toString( getBody().length() ) );
@@ -163,7 +163,7 @@ void	Response::TooManyRequest()
 {
 	_status_code = 429;
 	_status_name = "Too Many Request";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "retry-after", "1800" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
@@ -177,11 +177,11 @@ void	Response::InternalServerError()
 {
 	_status_code = 500;
 	_status_name = "Internal Server Error";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 
-	std::string body = "<!doctype html>\n";
+	std::string body = "<!DOCTYPE html>\n";
 	body += "<head>\n	<title>500 Internal Server Error !</title>";
 
 	setBody( body );
@@ -192,7 +192,7 @@ void	Response::NotImplemented()
 {
 	_status_code = 501;
 	_status_name = "Not Implemented";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 }
@@ -201,11 +201,11 @@ void	Response::BadGateway()
 {
 	_status_code = 502;
 	_status_name = "Bad Gateway";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 
-	std::string body = "<!doctype html>\n";
+	std::string body = "<!DOCTYPE html>\n";
 	body += "<head>\n	<title>502 Bad Gateway</title>";
 
 	setBody( body );
@@ -215,11 +215,11 @@ void	Response::ServiceUnavailable()
 {
 	_status_code = 503;
 	_status_name = "Service Unavailable";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 
-	std::string body = "<!doctype html>\n";
+	std::string body = "<!DOCTYPE html>\n";
 	body += "<head>\n	<title>503 Service Unavailable</title>";
 
 	setBody( body );
@@ -229,11 +229,11 @@ void	Response::GatewayTimeout()
 {
 	_status_code = 504;
 	_status_name = "Gateway Timeout";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 
-	std::string body = "<!doctype html>\n";
+	std::string body = "<!DOCTYPE html>\n";
 	body += "<head>\n	<title>504 Gateway Timeout</title>";
 
 	setBody( body );
@@ -243,11 +243,11 @@ void	Response::HttpVersionNotSupported()
 {
 	_status_code = 505;
 	_status_name = "HTTP Version Not Supported";
-	addHeader( "server", "Webserv_420/1.0" );
+	addHeader( "server", "WEBSERV/1.0" );
 	addHeader( "connection", "close" );
 	addHeader( "content-type", "text/html ; charset=utf-8" );
 
-	std::string body = "<!doctype html>\n";
+	std::string body = "<!DOCTYPE html>\n";
 	body += "<head>\n	<title>505 HTTP Version Not Supported</title>";
 
 	setBody( body );

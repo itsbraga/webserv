@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/14 00:02:33 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 02:04:46 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,9 @@ void	Server::_closeSocket()
 */
 bool	Server::init()
 {
-	if (_createSocket() == false)
+	if (!_createSocket())
 		return (false);
-	if (_configureSocket() == false || _bindAndListen() == false || _setNonBlocking( _socket ) == false)
+	if (!_configureSocket() || !_bindAndListen() || !_setNonBlocking( _socket ))
 	{
 		_closeSocket();
 		return (false);
@@ -121,7 +121,7 @@ int		Server::acceptNewClient()
 			std::cerr << ERR_PREFIX << P_ORANGE "accept(): " NC << strerror( errno ) << std::endl;
 		return (-1);
 	}
-	if (_setNonBlocking( clientSocket ) == false)
+	if (!_setNonBlocking( clientSocket ))
 	{
 		::close( clientSocket );
 		return (-1);

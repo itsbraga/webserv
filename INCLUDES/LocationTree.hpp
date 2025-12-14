@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   LocationTree.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 23:27:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:20:57 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/14 01:55:27 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ class LocationTree
 		LocationTree( Node_t* root ) : _root( root ), _size( 1 ) {}
 		~LocationTree() {}
 
-		Node_t*			getRoot()	{ return (_root); }
-		unsigned int	getSize()	{ return (_size); }
+		Node_t*			getRoot() const		{ return (_root); }
+		unsigned int	getSize() const		{ return (_size); }
 
-		Node_t*			createNode( std::string segment, Location* location, Node_t* parent);
-		void 			addNode( std::string full_uri, Location* location );
-		std::string		rebuildUri( std::vector<std::string> segments );
+		Node_t*			createNode( const std::string& segment, Location* location, Node_t* parent);
+		void 			addNode( const std::string& full_uri, Location* location );
+		std::string		rebuildUri( const std::vector<std::string>& segments );
 		void 			deleteNode( Node_t* node );
 	
 		class	LocationAlreadyExist : public std::exception
