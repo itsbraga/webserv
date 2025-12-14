@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 23:41:14 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/17 23:16:18 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/14 03:24:36 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,18 @@ LocationTree::LocationTree(Node_t* root)
 	this->_size = 1;
 }
 
+LocationTree::~LocationTree( void )
+{
+	this->DestroyTree(this->_root);
+}
+
 Node_t*	LocationTree::CreateNode(std::string segment, Location *location, Node_t *parent)
 {
 	Node_t*	new_node = new Node_t(); // a proteger
 	new_node->segment = segment;
 	new_node->location = location;
 	new_node->parent = parent;
-	this->_size++;
+	++this->_size;
 }
 
 void	LocationTree::AddNode(std::string full_uri, Location *location)
@@ -87,6 +92,26 @@ unsigned int	LocationTree::GetSize( void )
 void	LocationTree::DeleteNode(Node_t *node)
 {
 	if (node->location != NULL)
+	{
 		delete node->location;
+		node->location == NULL;
+	}
 	delete node;
+	if (this->_size > 0)
+		--this->_size;
+}
+
+void	LocationTree::DestroyTree(Node_t *parent)
+{
+	if (parent == NULL)
+		return ;
+	for (int i = 0; i < parent->children.size(); ++i)
+		DeleteNode(parent->children[i]);
+	
+	if (parent->location != NULL)
+	{
+		delete parent->location;
+		parent->location == NULL;
+	}
+	delete parent;
 }
