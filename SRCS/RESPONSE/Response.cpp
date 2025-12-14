@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 21:11:57 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:41:14 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,14 @@ std::map<std::string, std::string>			Response::_content_types;
 /*
 	---------------------- [ Object Manipulation ] -----------------------
 */
-Response::Response( const int status_code, const std::string status_name )
+Response::Response( const int status_code, const std::string& status_name )
 					: Message(), _status_code( status_code ), _status_name( status_name )
 {
+	if (status_name.empty())
+		return ;
+
 	// initBuilders();
 	process();
-}
-
-/*
-	------------------------ [ Polymorph function ] ----------------------
-*/
-void	Response::process()
-{
-	try {
-		(this->*_builders.at( _status_code ))();
-	}
-	catch (const std::out_of_range&) {
-		(this->*_builders[500])();
-	}
 }
 
 /*
@@ -46,7 +36,7 @@ void	Response::setStatusCode( const int status_code )
 	_status_code = status_code;
 }
 
-void	Response::setStatusName( const std::string status_name )
+void	Response::setStatusName( const std::string& status_name )
 {
 	if (status_name.empty())
 		return ;
@@ -54,7 +44,7 @@ void	Response::setStatusName( const std::string status_name )
 	_status_name = status_name;
 }
 
-void	Response::setRessourcePath( const std::string requested_ressource_path )
+void	Response::setRessourcePath( const std::string& requested_ressource_path )
 {
 	if (requested_ressource_path.empty())
 		return ;
@@ -62,33 +52,24 @@ void	Response::setRessourcePath( const std::string requested_ressource_path )
 	_ressource_path = requested_ressource_path;
 }
 
-void	Response::setContentLength( const std::string length )
+void	Response::setContentLength( const std::string& length )
 {
-	if (length.empty())
-		return ;
-
-	_headers.push_back( std::make_pair( "Content-Length", length ) );
+	addHeader( "content-length", length );
 }
 
-void	Response::setContentType( const std::string type )
+void	Response::setContentType( const std::string& type )
 {
-	if (type.empty())
-		return ;
-
-	_headers.push_back( std::make_pair( "Content-Type", type ) );
+	addHeader( "content-type", type );
 }
 
 void	Response::setDate()
 {
-	_headers.push_back( std::make_pair( "Date", getDate() ) );
+	addHeader( "date", getDate() );
 }
 
-void	Response::setLocation( const std::string location )
+void	Response::setLocation( const std::string& location )
 {
-	if (location.empty())
-		return ;
-
-	_headers.push_back( std::make_pair( "Location", location ) );
+	addHeader( "location", location );
 }
 
 /*
@@ -147,16 +128,14 @@ void	Response::defineContentType()
 	std::string extension = getExtension( getRessourcePath() );
 	if (extension.empty())
 		throw InternalServerErrorException();
-	else
-	{
-		std::map<std::string, std::string>::const_iterator it;
 
-		it = _content_types.find( extension );
-		if (it != _content_types.end())
-			addHeader( "Content-Type", it->second );
-		else
-			addHeader( "Content-Type", "application/octet-stream" );
-	}
+	std::map<std::string, std::string>::const_iterator it;
+
+	it = _content_types.find( extension );
+	if (it != _content_types.end())
+		addHeader( "content-type", it->second );
+	else
+		addHeader( "content-type", "application/octet-stream" );
 }
 
 /*
@@ -176,4 +155,17 @@ const char*		Response::RessourceNotFoundException::what() const throw()
 const char*		Response::InternalServerErrorException::what() const throw()
 {
 	return (BOLD RED "Exception caught: " NC "Internal server error: ???");
+}
+
+/*
+	------------------------ [ Polymorph function ] ----------------------
+*/
+void	Response::process()
+{
+	try {
+		(this->*_builders.at( _status_code ))();
+	}
+	catch (const std::out_of_range&) {
+		(this->*_builders[500])();
+	}
 }

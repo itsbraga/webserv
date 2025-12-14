@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/12 21:16:51 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 00:31:29 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	parseRequestLine( const std::string& request_line, std::string& method, std
 	std::stringstream	ss( request_line );
 
 	if (!(ss >> method >> URI >> protocol_version))
-		throw SyntaxErrorException( "400 Bad Request: Malformed request" );
+		throw SyntaxErrorException( "400 Bad Request: Incomplete request line" );
 
 	std::string extra;
 	if (ss >> extra)

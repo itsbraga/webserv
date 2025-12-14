@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/14 00:03:38 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 02:05:05 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ int	main( void )
 {
 	Webserv	webserv;
 
-	if (webserv.addServer( "destination_finale", 8080 ) == false)
+	if (!webserv.addServer( "destination_finale", 8080 ))
 		return (FAILURE);
-	if (webserv.init() == false)
+	if (!webserv.init())
 		return (FAILURE);
 	webserv.run();
 	return (SUCCESS);

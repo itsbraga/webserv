@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 00:02:20 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 01:45:44 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ class Server
 		bool			init();
 		int				acceptNewClient();
 
-		int				getSocket() const			{ return (_socket); }
-		sockaddr_in		getAddress() const			{ return (_addr); }
-		std::string		getServerName() const		{ return (_server_name); }
-		uint16_t		getPort() const				{ return (_port); }
-		LocationTree*	getLocationTree() const		{ return (_tree); }
+		int						getSocket() const			{ return (_socket); }
+		const sockaddr_in&		getAddress() const			{ return (_addr); }
+		const std::string&		getServerName() const		{ return (_server_name); }
+		uint16_t				getPort() const				{ return (_port); }
+		LocationTree*			getLocationTree() const		{ return (_tree); }
 };

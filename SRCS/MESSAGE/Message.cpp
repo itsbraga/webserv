@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/12 21:14:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:24:43 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,17 +139,16 @@ void	Message::_unchunkBody( const std::string& chunked_data )
 /*
 	-------------------------- [ Setter tool ] ---------------------------
 */
-void	Message::addHeader( const std::string& first, const std::string& second )
+void	Message::addHeader( const std::string& key, const std::string& value )
 {
-	if (first.empty() && second.empty())
+	if (key.empty() || value.empty())
 		return ;
-	_headers.push_back( std::make_pair( first, second ) );
+	_headers.push_back( std::make_pair( key, value ) );
 }
 
 /*
 	----------------------------- [ Setters ] ----------------------------
 */
-// Si header non trouve ? 
 void	Message::setHeaderValue( const std::string& key, const std::string& value )
 {
 	if (key.empty())
@@ -165,22 +164,15 @@ void	Message::setHeaderValue( const std::string& key, const std::string& value )
 			return ;
 		}
 	}
-	_headers.push_back( std::make_pair( key, value ) );
+	addHeader( key, value );
 }
 
 void	Message::setBody( const std::string& body )
 {
-	if (body.empty())
-		return ;
-
 	_body = body;
 
 	std::string length_str = toString( _body.length() );
-
-	if (_hasHeader( "Content-Length" ))
-		setHeaderValue( "Content-Length", length_str );
-	else
-		addHeader( "Content-Length", length_str );
+	setHeaderValue( "Content-Length", length_str );
 }
 
 /*
@@ -192,6 +184,7 @@ const std::string	Message::getHeaderMap() const
 
 	for (size_t i = 0; i < _headers.size(); ++i)
 		result += _headers[i].first + ": " + _headers[i].second + "\n";
+
 	if (result.empty())
 		return (ERR_PREFIX "No header found\n");
 	return (result);

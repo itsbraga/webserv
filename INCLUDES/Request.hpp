@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/13 23:51:34 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 01:27:40 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,14 @@ class Request : public Message
 		std::string			_URI;
 
 		void			_requestLineCheck( const std::string& serialized );
+
 		void			_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end );
 		void			_validateRequiredHeaders();
 		void			_validateContentLength();
 		void			_headerCheck( const std::string& serialized );
+
+		void			_chunkedBodyCase( const std::string& serialized, size_t body_start );
+		void			_fullBodyCase( const std::string& serialized, size_t body_start );
 		void			_bodyCheck( const std::string& serialized );
 
 	public:

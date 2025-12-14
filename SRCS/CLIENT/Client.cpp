@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/12 21:00:54 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/14 02:03:20 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,7 @@ void	Client::appendToReadBuffer( const char *data, size_t len )
 
 bool	Client::_isChunkedComplete( size_t body_start ) const
 {
-	if (_read_buffer.find( "\r\n0\r\n\r\n", body_start ) != std::string::npos)
-		return (true);
-	return (false);
+	return (_read_buffer.find( "\r\n0\r\n\r\n", body_start ) != std::string::npos);
 }
 
 bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) const
@@ -42,9 +40,7 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 		return (true);
 
 	size_t body_received = _read_buffer.size() - body_start;
-	if (body_received >= static_cast<size_t>( content_length ))
-		return (true);
-	return (false);
+	return (body_received >= static_cast<size_t>( content_length ));
 }
 
 bool	Client::hasCompleteRequest() const
