@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 23:27:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/08/17 23:15:12 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/14 03:13:09 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class LocationTree
 		Node_t*					GetRoot();
 		unsigned int			GetSize();
 		void 					DeleteNode(Node_t *node);
+		void					DestroyTree(Node_t *parent);
 	
 		class	LocationAlreadyExist: public std::exception {};
 };

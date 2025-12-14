@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 17:47:10 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/14 02:55:17 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ Parser::Parser(char *arg)
 			throw std::invalid_argument("Configuration file is empty !");
 		this->fillBuffer(infile);
 		infile.close();
+		this->initKeywordMap();
 	}
 	catch(const std::exception& e)
 	{
@@ -94,10 +95,16 @@ void	Parser::bufferTokenize( void )
 	}
 }
 
+void	Parser::parse( void )
+{
+	
+}
+
 Token		Parser::createToken(std::string value) const
 {
 	TokenType	type;
-
+	
+	Parser::lowerStr(value);
 	if (isKeyword(value) == true)
 		type = identifyKeyword(value);
 	else if (isSymbol(value) == true)
@@ -344,4 +351,11 @@ std::string	Token::getTypeStr( void ) const
 		type_map[UNKNOW] = "UNKNOW";
 	}
 	return (type_map[this->_type]);
+}
+
+void	Parser::lowerStr(std::string& str)
+{
+	std::string::iterator it = str.begin();
+	for (; it != str.end(); ++it)
+		*it = std::tolower(*it);
 }
