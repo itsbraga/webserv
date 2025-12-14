@@ -6,7 +6,7 @@
 /*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 01:37:41 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/14 02:16:40 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Response : public Message
 		void				setDate();
 		void				setLocation( const std::string& location );
 		
-		const int			getStatusCode() const		{ return (_status_code); }
+		int					getStatusCode() const		{ return (_status_code); }
 		const std::string&	getStatusName() const		{ return (_status_name); }
 		const std::string&	getRessourcePath() const	{ return (_ressource_path); }
 		const std::string 	getDate() const;
