@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/14 01:24:43 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:39:00 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Message.hpp"
 
 /*
-	----------------------------- [ Helpers ] ----------------------------
+	---------------------------- [ Utilities ] ---------------------------
 */
 static std::string	__toLower( const std::string& str )
 {
@@ -51,8 +51,7 @@ static int	__hexToInt( const std::string& hex )
 bool	Message::_hasHeader( const std::string& key ) const
 {
 	std::string lowerKey = __toLower( key );
-
-	std::vector< std::pair<std::string, std::string> >::const_iterator	it;
+	std::vector< std::pair<std::string, std::string> >::const_iterator it;
 
 	for (it = _headers.begin(); it != _headers.end(); ++it)
 	{
@@ -66,11 +65,11 @@ std::pair<std::string, std::string>		Message::_parseHeaderLine( const std::strin
 {
 	size_t colonPos = line.find( ':' );
 	if (colonPos == std::string::npos || colonPos == 0)
-		throw SyntaxErrorException( "400 Bad Request: Invalid header format" );
+		throw BadRequestException( "Invalid header format" );
 
 	std::string name = line.substr( 0, colonPos);
 	if (name.find( ' ' ) != std::string::npos || name.find( '\t' ) != std::string::npos)
-		throw SyntaxErrorException( "400 Bad Request: Space in header name" );
+		throw BadRequestException( "Space in header name" );
 
 	size_t value_start = colonPos + 1;
 	while (value_start < line.size() && (line[value_start] == ' ' || line[value_start] == '\t'))
@@ -111,7 +110,7 @@ void	Message::_unchunkBody( const std::string& chunked_data )
 	{
 		size_t line_end = chunked_data.find( "\r\n", pos );
 		if (line_end == std::string::npos)
-			throw SyntaxErrorException( "400 Bad Request: Malformd chunked body" );
+			throw BadRequestException( "Malformed chunked body" );
 	
 		std::string line_size = chunked_data.substr( pos, line_end - pos );
 
@@ -121,13 +120,13 @@ void	Message::_unchunkBody( const std::string& chunked_data )
 
 		int chunk_size = __hexToInt( line_size );
 		if (chunk_size < 0)
-			throw SyntaxErrorException( "400 Bad Request: Invalid chunk size" );
+			throw BadRequestException( "Invalid chunk size" );
 		if (chunk_size == 0) // end chunk
 			break ;
 
 		size_t data_start = line_end + 2;
 		if (data_start + chunk_size > chunked_data.size())
-			throw SyntaxErrorException( "400 Bad Request: Incomplete chunk" );
+			throw BadRequestException( "Incomplete chunk" );
 
 		result.append( chunked_data, data_start, chunk_size );
 		pos = data_start + chunk_size + 2;
@@ -171,8 +170,8 @@ void	Message::setBody( const std::string& body )
 {
 	_body = body;
 
-	std::string length_str = toString( _body.length() );
-	setHeaderValue( "Content-Length", length_str );
+	// std::string length_str = toString( _body.length() );
+	// setHeaderValue( "Content-Length", length_str );
 }
 
 /*
@@ -193,10 +192,9 @@ const std::string	Message::getHeaderMap() const
 const std::string	Message::getHeaderValue( const std::string& key ) const
 {
 	if (key.empty())
-		return (ERR_PREFIX "empty key");
+		return ("");
 
 	std::string lower_key = __toLower(key);
-
 	std::vector< std::pair<std::string, std::string> >::const_iterator it;
 
     for (it = _headers.begin(); it != _headers.end(); ++it)

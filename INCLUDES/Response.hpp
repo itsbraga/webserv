@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 02:16:40 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:18:06 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 /**************************\
- *	Libraries
+ *	Used libraries
 \**************************/
 
 # include <iostream>
@@ -23,7 +23,7 @@
 # include <sys/stat.h>
 
 # include "Message.hpp"
-# include "utils.hpp"
+# include "utilities.hpp"
 # include "colors.hpp"
 
 /**************************\
@@ -33,14 +33,17 @@
 class Response : public Message
 {
 	private:
-		int				_status_code; // verifier si pas unsigned int
+		int				_status_code;
 		std::string		_status_name;
-		std::string		_ressource_path;
+		std::string		_resource_path;
 
 		typedef void ( Response::*ResponseFunction )();
 
 		static std::map<int, ResponseFunction>		_builders;
 		static std::map<std::string, std::string>	_content_types;
+
+		void			_setBaseHeaders( bool keepAlive );
+		void			_setErrorPage( const std::string& title );
 	
 	public:
 		Response( const int status_code, const std::string& status_name );
@@ -53,7 +56,7 @@ class Response : public Message
 
 		void				setStatusCode( const int status_code );
 		void				setStatusName( const std::string& status_name );
-		void				setRessourcePath( const std::string& requested_ressource_path );
+		void				setResourcePath( const std::string& requested_resource_path );
 		void				setContentLength( const std::string& length );
 		void				setContentType( const std::string& type );
 		void				setDate();
@@ -61,13 +64,14 @@ class Response : public Message
 		
 		int					getStatusCode() const		{ return (_status_code); }
 		const std::string&	getStatusName() const		{ return (_status_name); }
-		const std::string&	getRessourcePath() const	{ return (_ressource_path); }
+		const std::string&	getResourcePath() const		{ return (_resource_path); }
 		const std::string 	getDate() const;
 		const std::string	getExtension( const std::string& URI ) const; 
 		const std::string	getSerializedHeaders() const;
 		const std::string	getSerializedResponse();
 
 		void				defineContentType();
+		void				loadContent( const std::string& body, const std::string& path );
 
 		/********************************************\
 		 *	Builders Status Functions
@@ -81,7 +85,7 @@ class Response : public Message
 		// 3xx : Redirection
 		void	MovedPermanently(); 		// 301
 		
-		// 4xx : Client Error
+		// 4xx : Client error
 		void	BadRequest();				// 400
 		void	Forbidden();				// 403
 		void	NotFound();					// 404
@@ -91,26 +95,11 @@ class Response : public Message
 		void	ImATeapot();				// 418
 		void	TooManyRequest();			// 429
 
-		// 5xx : Server Error
+		// 5xx : Server error
 		void	InternalServerError();		// 500
 		void	NotImplemented();			// 501
 		void	BadGateway();				// 502
 		void	ServiceUnavailable();		// 503
 		void	GatewayTimeout();			// 504
 		void	HttpVersionNotSupported();	// 505
-
-		class RessourceForbiddenException : public std::exception
-		{
-			const char	*what() const throw();
-		};
-		class RessourceNotFoundException : public std::exception
-		{
-			const char	*what() const throw();
-		};
-		class InternalServerErrorException : public std::exception
-		{
-			const char	*what() const throw();
-		};
 };
-
-inline std::ostream		&operator<<( std::ostream& os, Response const& response );

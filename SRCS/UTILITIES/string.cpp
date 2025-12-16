@@ -3,20 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/12 16:33:14 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:59:54 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.hpp"
+#include "utilities.hpp"
 
-std::vector<std::string>	split( std::string str, char delimiter )
+std::vector<std::string>	split( const std::string& str, char delimiter )
 {
-	// if (str.empty())
-	// 	return (NULL);
-
 	std::vector<std::string>	tokens;
 	std::string					token;
 	std::stringstream			ss(str);
@@ -26,21 +23,10 @@ std::vector<std::string>	split( std::string str, char delimiter )
 	return (tokens);
 }
 
-void	erase_whitespace( std::string& str, std::string& set )
+void	erase_whitespace( std::string& str, const std::string& set )
 {
-	std::string::const_iterator set_it = set.begin();
-	std::string::iterator 		str_it = str.begin();
-	size_t						pos = std::string::npos;
+	size_t pos = 0;
 
-	while (set_it != set.end())
-	{
-		pos = str.find(*set_it);
-		if (pos != std::string::npos)
-		{
-			str.erase(str_it + pos);
-			pos = std::string::npos;
-		}
-		else
-			set_it++;
-	}
+	while ((pos = str.find_first_of( set, pos )) != std::string::npos)
+		str.erase( pos, 1 );
 }

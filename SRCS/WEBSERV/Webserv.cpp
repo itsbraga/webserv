@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/14 02:13:33 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:24:56 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
 /*
-	---------------------- [ Object Manipulation ] -----------------------
+	---------------------- [ Object manipulation ] -----------------------
 */
 Webserv::~Webserv()
 {
@@ -71,10 +71,12 @@ void	Webserv::_removeClient( int client_fd )
 {
 	epoll_ctl( _epoll_fd, EPOLL_CTL_DEL, client_fd, NULL );
 	::close( client_fd );
+
 	delete _clients[client_fd];
 	_clients.erase( client_fd );
 }
 
+// ajouter verif MAX_CONNECTIONS
 void	Webserv::_handleServerEvent( int server_fd )
 {
 	Server* server = _servers[server_fd];
@@ -96,6 +98,7 @@ void	Webserv::_handleServerEvent( int server_fd )
 	}
 }
 
+// EPOLLET a implementer
 void	Webserv::_handleClientEvent( int client_fd, uint32_t events )
 {
 	if (_clients.find( client_fd ) == _clients.end() )
@@ -110,14 +113,14 @@ void	Webserv::_handleClientEvent( int client_fd, uint32_t events )
 		return ;
 	}
 	if (events & EPOLLIN)
-		_handleClientRead( client_fd, client );
+		_handleClientData( client_fd, client );
 }
 
-void	Webserv::_handleClientRead( int client_fd, Client* client )
+void	Webserv::_handleClientData( int client_fd, Client* client )
 {
 	char buffer[8192];
-	ssize_t nBytes = ::recv( client_fd, buffer, sizeof( buffer ), 0 );
 
+	ssize_t nBytes = ::recv( client_fd, buffer, sizeof( buffer ), 0 );
 	if (nBytes < 0)
 	{
 		std::cout << ERR_PREFIX << P_ORANGE "recv(): " NC << strerror( errno ) << std::endl;
@@ -131,6 +134,7 @@ void	Webserv::_handleClientRead( int client_fd, Client* client )
 	}
 
 	client->appendToReadBuffer( buffer, nBytes );
+	client->updateLastActivity();
 
 	if (client->hasCompleteRequest())
 		_processRequest( client_fd, client );
@@ -138,28 +142,47 @@ void	Webserv::_handleClientRead( int client_fd, Client* client )
 
 void	Webserv::_processRequest( int client_fd, Client* client )
 {
+	Response* response = NULL;
+
 	try {
 		Request request( client->getReadBuffer() );
 
 		std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
 		std::cout << BOLD PINK "Method: " NC << request.getMethod() << std::endl;
-		std::cout << BOLD PINK "URL: " NC << request.getURI() << std::endl;
+		std::cout << BOLD PINK "URI: " NC << request.getURI() << std::endl;
 		std::cout << BOLD PINK "Headers:\n" NC << request.getHeaderMap() << std::endl;
 		std::cout << P_YELLOW "------------------------\n" NC << std::endl;
 
-		Response response( 200, "OK" );
-
-		std::string serialized = response.getSerializedResponse();
-		::send( client_fd, serialized.c_str(), serialized.size(), 0 );
+		response = handleMethod( *client->getServer(), request );
 	}
-	catch (const SyntaxErrorException& e) {
-		std::cerr << e.what() << std::endl;
-		// Response response( 400, "Bad Request" );
-		// std::string serialized = response.getSerializedResponse();
-		// ::send( client_fd, serialized.c_str(), serialized.size(), 0 );
+	catch (const std::exception& e) {
+		response = handleHttpException( e );
+	}
+	catch (...) {
+		response = new Response( 500, "Internal Server Error" );
 	}
 
+	std::string serialized = response->getSerializedResponse();
+	::send( client_fd, serialized.c_str(), serialized.size(), 0 );
+	delete response;
 	client->clearReadBuffer();
+}
+
+void	Webserv::_checkClientTimeout()
+{
+	std::map<int, Client*>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if (it->second->isTimedOut( TIMEOUT ))
+		{
+			int client_fd = it->first;
+			++it;
+			std::cout << P_BLUE "[INFO] " NC "Client timeout (fd=" << client_fd << ")" << std::endl;
+			_removeClient( client_fd );
+		}
+		else
+			++it;
+	}
 }
 
 /*
@@ -181,9 +204,6 @@ bool	Webserv::addServer( const std::string& server_name, uint16_t port )
 
 bool	Webserv::init(/* config file */)
 {
-	Response::initBuilders();
-	Response::initContentTypes();
-
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
 	{
@@ -192,7 +212,6 @@ bool	Webserv::init(/* config file */)
 	}
 
 	std::map<int, Server*>::iterator it;
-
 	for (it = _servers.begin(); it != _servers.end(); ++it)
 	{
 		if (!_addServerToEpoll( it->second ))
@@ -201,6 +220,7 @@ bool	Webserv::init(/* config file */)
 	return (true);
 }
 
+// handle signals & cleanup
 void	Webserv::run()
 {
 	epoll_event events[MAX_EVENTS];
@@ -218,6 +238,7 @@ void	Webserv::run()
 			break ;
 		}
 
+		_checkClientTimeout();
 		for (int i = 0; i < nbReady; i++)
 		{
 			int fd = events[i].data.fd;

@@ -3,20 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/14 02:03:20 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:22:49 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-void	Client::appendToReadBuffer( const char *data, size_t len )
-{
-	_read_buffer.append( data, len );
-}
-
+/*
+	------------------------ [ Private methods ] -------------------------
+*/
 bool	Client::_isChunkedComplete( size_t body_start ) const
 {
 	return (_read_buffer.find( "\r\n0\r\n\r\n", body_start ) != std::string::npos);
@@ -43,6 +41,19 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 	return (body_received >= static_cast<size_t>( content_length ));
 }
 
+/*
+	------------------------- [ Public methods ] -------------------------
+*/
+void	Client::appendToReadBuffer( const char *data, size_t len )
+{
+	_read_buffer.append( data, len );
+}
+
+void	Client::updateLastActivity()
+{
+	_last_activity = time( NULL );
+}
+
 bool	Client::hasCompleteRequest() const
 {
 	size_t header_end = _read_buffer.find( "\r\n\r\n" );
@@ -67,4 +78,9 @@ bool	Client::hasCompleteRequest() const
 void	Client::clearReadBuffer()
 {
 	_read_buffer.clear();
+}
+
+bool	Client::isTimedOut( int timeout ) const
+{
+	return ((time( NULL ) - _last_activity) > timeout);
 }

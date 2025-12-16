@@ -6,14 +6,14 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/05 02:45:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:46:27 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 /**************************\
- *	Libraries
+ *	Used libraries
 \**************************/
 
 # include <string>
@@ -88,9 +88,4 @@ class Parser
 		void				enterContext(Context context);
 		void				exitContext();
 		Context				getCurrentContext();
-
-		// class SyntaxErrorException : public std::exception
-		// {
-		// 	const char	*what() const throw();
-		// };
 };

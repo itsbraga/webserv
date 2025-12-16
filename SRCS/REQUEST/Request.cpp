@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 01:59:50 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:49:20 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
 /*
-	---------------------- [ Object Manipulation ] -----------------------
+	---------------------- [ Object manipulation ] -----------------------
 */
 Request::Request( const std::string& serialized ) : Message(), _raw_request( serialized )
 {
@@ -25,14 +25,11 @@ Request::Request( const std::string& serialized ) : Message(), _raw_request( ser
 
 /*
 	-------------------- [ Parsing private methods ] ---------------------
-
-	REMPLACER les SyntaxErrorException par les ResponseStatus
 */
 void	Request::_requestLineCheck( const std::string& serialized )
 {
 	std::string request_line = extractRequestLine( serialized );
 	std::string method, URI, protocol_version;
-
 
 	parseRequestLine( request_line, method, URI, protocol_version );
 	validateMethod( method );
@@ -58,7 +55,7 @@ void	Request::_parseAllHeaders( const std::string& serialized, size_t header_sta
 			std::pair<std::string, std::string> header = _parseHeaderLine( line );
 
 			if (!isValidHeaderName( header.first ))
-				throw SyntaxErrorException( "400 Bad Request: Invalid header name" );
+				throw BadRequestException( "Invalid header name" );
 			addHeader( header.first, header.second );
 		}
 		pos = line_end + 2;
@@ -68,11 +65,11 @@ void	Request::_parseAllHeaders( const std::string& serialized, size_t header_sta
 void	Request::_validateRequiredHeaders()
 {
 	if (!_hasHeader( "Host" ))
-		throw SyntaxErrorException( "400 Bad Request: Missing 'Host' header" ); // changer d'exception
+		throw BadRequestException( "Missing 'Host' header" );
 	if (_method == "POST")
 	{
 		if (!_hasHeader( "Content-Length") && !_hasHeader( "Transfer-Encoding" ))
-			throw SyntaxErrorException( "411 Length Required" ); // changer d'exception
+			throw LengthRequiredException(); // Peut-être ailleurs
 	}
 }
 
@@ -86,7 +83,7 @@ void	Request::_validateContentLength()
 	for (size_t i = 0; i < cl_value.size(); i++)
 	{
 		if (!std::isdigit( static_cast<unsigned char>( cl_value[i] ) ))
-			throw SyntaxErrorException( "400 Bad Request: Invalid Content-Length" );
+			throw BadRequestException( "Invalid Content-Length" );
 	}
 }
 
@@ -119,7 +116,7 @@ void	Request::_fullBodyCase( const std::string& serialized, size_t body_start )
 	if (content_length > 0)
 	{
 		if (body_start + static_cast<size_t>( content_length ) > serialized.size())
-			throw SyntaxErrorException( "400 Bad Request: Body shorter than Content-Length" );
+			throw BadRequestException( "Body shorter than Content-Length" );
 		
 		_body = serialized.substr( body_start, content_length );
 	}
