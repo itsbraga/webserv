@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 01:41:14 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:04:43 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ std::map<int, Response::ResponseFunction>	Response::_builders;
 std::map<std::string, std::string>			Response::_content_types;
 
 /*
-	---------------------- [ Object Manipulation ] -----------------------
+	---------------------- [ Object manipulation ] -----------------------
 */
 Response::Response( const int status_code, const std::string& status_name )
 					: Message(), _status_code( status_code ), _status_name( status_name )
@@ -24,7 +24,6 @@ Response::Response( const int status_code, const std::string& status_name )
 	if (status_name.empty())
 		return ;
 
-	// initBuilders();
 	process();
 }
 
@@ -44,12 +43,12 @@ void	Response::setStatusName( const std::string& status_name )
 	_status_name = status_name;
 }
 
-void	Response::setRessourcePath( const std::string& requested_ressource_path )
+void	Response::setResourcePath( const std::string& requested_resource_path )
 {
-	if (requested_ressource_path.empty())
+	if (requested_resource_path.empty())
 		return ;
 
-	_ressource_path = requested_ressource_path;
+	_resource_path = requested_resource_path;
 }
 
 void	Response::setContentLength( const std::string& length )
@@ -78,12 +77,12 @@ void	Response::setLocation( const std::string& location )
 const std::string	Response::getExtension( const std::string& URI ) const
 {
 	if (URI.empty())
-		return (ERR_PREFIX "empty URI");
+		throw InternalServerErrorException();
 
 	std::size_t dot_pos = URI.find_last_of( '.'  );
-
 	if (dot_pos == std::string::npos)
-		throw std::runtime_error( "No extension found for " + URI );
+		throw InternalServerErrorException();
+
 	std::string extension = URI.substr( dot_pos + 1 );
 	return (extension);
 }
@@ -125,7 +124,7 @@ const std::string	Response::getSerializedResponse()
 
 void	Response::defineContentType()
 {
-	std::string extension = getExtension( getRessourcePath() );
+	std::string extension = getExtension( getResourcePath() );
 	if (extension.empty())
 		throw InternalServerErrorException();
 
@@ -138,23 +137,12 @@ void	Response::defineContentType()
 		addHeader( "content-type", "application/octet-stream" );
 }
 
-/*
-	--------------------------- [ Exceptions ] ---------------------------
-*/
-const char*		Response::RessourceForbiddenException::what() const throw()
+void	Response::loadContent( const std::string& body, const std::string& path )
 {
-	return (BOLD RED "Exception caught: " NC "Ressource forbidden");
-}
-
-const char*		Response::RessourceNotFoundException::what() const throw()
-{
-	return (BOLD RED "Exception caught: " NC "Ressource not found");
-}
-
-// Ajuster le detail de l'exception
-const char*		Response::InternalServerErrorException::what() const throw()
-{
-	return (BOLD RED "Exception caught: " NC "Internal server error: ???");
+	setResourcePath( path );
+	setBody( body );
+	setContentLength( toString( body.size() ) );
+	defineContentType();
 }
 
 /*

@@ -103,5 +103,5 @@ void	Response::initContentTypes()
 	Response::_content_types["zip"] = "application/zip";
 	Response::_content_types["3gp"] = "video/3gpp";
 	Response::_content_types["3g2"] = "video/3gpp2";
-	Response::_content_types[".7z"] = "application/x-7z-compressed";
+	Response::_content_types["7z"] = "application/x-7z-compressed";
 }

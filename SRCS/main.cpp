@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/14 02:05:05 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:53:52 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@
 // 	return (SUCCESS);
 // }
 
+static void	__initUtilities()
+{
+	init_method_map();
+	Response::initBuilders();
+	Response::initContentTypes();
+}
+
 int	main( void )
 {
 	Webserv	webserv;
@@ -35,6 +42,8 @@ int	main( void )
 		return (FAILURE);
 	if (!webserv.init())
 		return (FAILURE);
+
+	__initUtilities();
 	webserv.run();
 	return (SUCCESS);
 }

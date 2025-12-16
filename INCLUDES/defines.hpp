@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   defines.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:43 by art3mis           #+#    #+#             */
-/*   Updated: 2025/08/21 21:01:11 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/16 01:23:22 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@
 
 # define SERVERNAME_UNDEFINED ""
 # define ANY_INTERFACE 0
+
+/**************************\
+ *	Client
+\**************************/
+
+# define TIMEOUT 75
+# define MAX_CONNECTIONS 1000
 
 /**************************\
  *	Epoll

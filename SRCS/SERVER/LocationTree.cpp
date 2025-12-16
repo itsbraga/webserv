@@ -3,15 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   LocationTree.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 23:41:14 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 01:57:30 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:33:56 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "LocationTree.hpp"
 
+/*
+	------------------------- [ Public methods ] -------------------------
+*/
 Node_t*	LocationTree::createNode( const std::string& segment, Location* location, Node_t* parent )
 {
 	if (segment.empty())
@@ -63,10 +66,9 @@ void	LocationTree::addNode( const std::string& full_uri, Location* location )
 	current->children.push_back( createNode( segment_to_add, location, current ) );
 }
 
-std::string		LocationTree::rebuildUri( const std::vector<std::string>& segments )
+std::string		LocationTree::rebuildURI( const std::vector<std::string>& segments )
 {
 	std::string result = "/";
-
 	std::vector<std::string>::const_iterator it;
 
 	for (it = segments.begin(); it != segments.end(); ++it)

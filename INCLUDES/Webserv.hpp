@@ -3,32 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/14 00:00:59 by panther          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:24:51 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 /**************************\
- *	Libraries
+ *	Used libraries
 \**************************/
 
-// C++
+// External
 # include <iostream>
 # include <map>
 # include <set>
-
-// C
 # include <sys/wait.h>		// waitpid()
 
 // Project
 # include "defines.hpp"
 # include "colors.hpp"
-# include "utils.hpp"
+# include "utilities.hpp"
+# include "Exceptions.hpp"
 # include "Parser.hpp"
+# include "ErrorPage.hpp"
 # include "Location.hpp"
 # include "LocationTree.hpp"
 # include "Server.hpp"
@@ -36,6 +36,18 @@
 # include "Message.hpp"
 # include "Request.hpp"
 # include "Response.hpp"
+
+/**************************\
+ *	Method Handler
+\**************************/
+
+class Server;
+class Request;
+class Response;
+
+typedef Response* (*MethodHandler)( Server& server, Request& request );
+
+extern std::map<std::string, MethodHandler> g_method_map;
 
 /**************************\
  *	Class
@@ -56,8 +68,9 @@ class Webserv
 
 		void	_handleServerEvent( int server_fd );
 		void	_handleClientEvent( int client_fd, uint32_t events );
-		void	_handleClientRead( int client_fd, Client* client );
+		void	_handleClientData( int client_fd, Client* client );
 		void	_processRequest( int client_fd, Client* client );
+		void	_checkClientTimeout();
 
 	public:
 		Webserv() : _epoll_fd( -1 ) {}
@@ -69,8 +82,15 @@ class Webserv
 };
 
 /**************************\
- *	Functions
+ *	METHODS
 \**************************/
 
-// init_method_map.cpp
-void	init_method_map();
+// method_map.cpp
+void		init_method_map();
+Response*	handleMethod( Server& server, Request& request );
+
+// handleGET.cpp
+Response*	handleGET( Server& server, Request& request );
+
+// handlePOST.cpp
+Response*	handlePOST( Server& server, Request& request );
