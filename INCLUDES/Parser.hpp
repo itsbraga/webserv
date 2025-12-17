@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 15:16:41 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 22:14:57 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ enum TokenType
 	V_STR,
 	V_PATH,
 	V_EXTENSION,
-	V_RETURNSTATUSCODE,
+	V_STATUSCODE,
 	//Others
 	UNKNOW
 };
@@ -95,6 +95,7 @@ class Parser
 		std::vector<Context>	_context_stack;
 		std::vector<Token>		_tokens;
 		std::map<std::string, TokenType>	_keywords;
+		std::vector<unsigned int>	_status_codes;
 
 	public:
 		Parser(char* arg);
@@ -103,6 +104,7 @@ class Parser
 		// static void 		handleFileConfig(char *arg, webserv_s *data);
 		std::string 		checkPath(char *arg);
 		void				initKeywordMap( void );
+		void				initStatusCodesVector( void );
 		void				bufferTokenize( void );
 		void				parse( void );
 		void				fillBuffer(const std::ifstream &infile);
@@ -118,6 +120,8 @@ class Parser
 		bool				isLeftBrace(char c) const ;
 		bool				isRightBrace(char c) const ;
 		bool				isSemiColon(char c) const ;
+		bool				isServer(const std::string& to_compare) const;
+		bool				isLocation(const std::string& to_compare) const;
 		bool				isWhiteSpace(char c) const;
 		bool				isKeyword(const std::string& to_compare) const;
 		bool				isSymbol(const char c) const;
@@ -127,9 +131,12 @@ class Parser
 		bool				isString(const std::string&	to_compare) const;
 		bool				isPath(const std::string& to_compare) const;
 		bool 				isExtension(const std::string& to_compare) const;
-		bool 				isReturnStatusCode(const std::string& to_compare) const;
-		bool				isServer(const std::string& to_compare) const;
-		bool				isLocation(const std::string& to_compare) const;
+		bool 				isStatusCode(const std::string& to_compare) const;
+		bool 				isErrorStatusCode(const std::string& to_compare) const;
+		bool				isReturnStatusCode(const std::string& to_compare) const;
+		bool				isValidPort(const std::string& to_check) const;
+		bool				isValidMethod(const std::string& to_check) const;
+		bool 				isValidBodySize(const std::string& value) const;
 
 		void				enterContext(Context ctx);
 		void				exitContext( void );
@@ -152,6 +159,18 @@ class Parser
 				virtual ~SyntaxErrorException() throw() {}
 				virtual const char *what( void ) const throw()
 				{ return (_detail.c_str()); }	
+		};
+
+		class ConfigurationErrorException : public std::exception
+		{
+			private:
+				std::string _detail;
+
+			public:
+				explicit ConfigurationErrorException( const std::string& detail) : _detail("Configuration Error: " + _detail) {}
+				virtual ~ConfigurationErrorException() throw() {}
+				virtual const char *what( void ) const throw()
+				{ return (_detail.c_str()); }
 		};
 		
 };
