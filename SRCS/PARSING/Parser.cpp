@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 15:58:15 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 22:21:46 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,16 +111,18 @@ void	Parser::parse( void )
 				 	throw SyntaxErrorException("A SERVER_BLOCK is only expected in a HTTP context");
 				else if ((current + 1)->getType() != S_LBRACE)
 					throw SyntaxErrorException("The keyword SERVER need to be followed by a LBRACE token");
+				enterContext(SERVER_BLOCK);
 				current += 2;
 				break;
 			
 			case K_LOCATION :
 				if (isInContext(SERVER_BLOCK) == false)
-					throw SyntaxErrorException("A LOCATION_BLOCK can't be outside a SERVER_BLOCK");
+					throw SyntaxErrorException("A LOCATION_BLOCK can't be outside a SERVER_BLOCK context");
 				else if ((current + 1)->getType() != V_PATH)
 					throw SyntaxErrorException("The keyword LOCATION need to be followed by a PATH token");
 				else if ((current + 2)->getType() != S_LBRACE)
 					throw SyntaxErrorException("A LOCATION_BLOCK can't be opened without a LBRACE token after PATH");
+				enterContext(LOCATION_BLOCK);
 				current += 3;
 				break;
 			
@@ -128,14 +130,18 @@ void	Parser::parse( void )
 				if (getCurrentContext() != SERVER_BLOCK)
 					throw SyntaxErrorException("The keyword LISTEN is only expected in a SERVER_BLOCK context");
 				else if ((current + 1)->getType() != V_NUMBER)
-					throw SyntaxErrorException("The keyword LOCATION need to be followed by a NUMBER token");
+					throw SyntaxErrorException("The keyword LOCATION need to be followed by an UNSIGNED NUMBER token");
 				else if ((current + 2)->getType() != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after LISTEN keyword");
+				else if (isValidPort((current + 1)->getValue()) == false)
+					throw ConfigurationErrorException("The port given after LISTEN keyword is not a valid port");
 				current += 3;
 				break;
 			
 			case K_ROOT :
-				if ((current + 1)->getType() != V_PATH)
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_PATH)
 					throw SyntaxErrorException("The keyword ROOT need to be followed by a PATH token");
 				else if ((current + 2)->getType() != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after ROOT keyword");
@@ -143,7 +149,9 @@ void	Parser::parse( void )
 				break;
 
 			case K_INDEX :
-				if ((current + 1)->getType() != V_STR)
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_STR)
 					throw SyntaxErrorException("The keyword INDEX need to be followed by a STR token representing a file name");
 				else if ((current + 2)->getType() != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after INDEX keyword");
@@ -160,11 +168,134 @@ void	Parser::parse( void )
 				current += 3;
 				break;
 
-			case K_ERRORPAGE :
+			case K_ERRORPAGE : {
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("The keyword ERROR_PAGE is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_STATUSCODE)
+						throw SyntaxErrorException("The keyword ERROR_PAGE need to be followed by a STATUS_CODE token");
+				++current;
+				int i = 0;
+				while (current->getType() != V_PATH)
+				{
+					if (current->getType() != V_STATUSCODE)
+						throw SyntaxErrorException("Only STATUS_CODE are expected between ERROR_PAGE keyword and PATH");
+					if (isErrorStatusCode(current->getValue()) == false)
+						throw ConfigurationErrorException("Only ERROR STATUS_CODE (400-599) are expected for ERROR_PAGE keyword");
+					else if (i >= 8)
+						throw SyntaxErrorException("No more than 8 STATUS_CODE can be assigned to only one ERROR_PAGE, you also need to check if PATH or SEMICOLON are missing");
+					++current, ++i;
+				}
+				if ((current + 1)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after ERROR_PAGE keyword");
+				current += 2;
+				break;
+			}
 				
-				
+			case K_UPLOADALLOWED :
+				if (getCurrentContext() != LOCATION_BLOCK)
+					throw SyntaxErrorException("The keyword UPLOAD_ALLOWED is only expected in a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after UPLOAD_ALLOWED keyword");
+				current += 2;
+				break;
+
+			case K_CLIENTMAXSIZEBODY :
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("The keyword CLIENT_MAX_SIZE_BODY is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_STR)
+					throw SyntaxErrorException("The keyword CLIENT_MAX_SIZE_BODY need to be followed by a STR token");
+				else if (isValidBodySize((current + 1)->getValue()) == false)
+					throw ConfigurationErrorException("Value for CLIENT_MAX_SIZE_BODY isn't valid");
+				else if ((current + 2)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after CLIENT_MAX_SIZE_BODY keyword");
+				current += 3;
+				break;
+			
+			case K_AUTOINDEX :
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("The keyword AUTO_INDEX is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != K_ON)
+					throw SyntaxErrorException("The keyword AUTO_INDEX need to be followed by an 'ON' keyword");
+				else if ((current + 2)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON is missing after AUTO_INDEX keyword");
+				current += 3;
+				break;
+
+			case K_ALLOWEDMETHODS : {
+				if (getCurrentContext() != LOCATION_BLOCK)
+					throw SyntaxErrorException("The keyword ALLOWED_METHODS is only expected in a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_STR)
+					throw SyntaxErrorException("The keyword ALLOWED_METHODS need to be followed by a STR token");
+				++current;
+				int i = 0;
+				while (current->getType() != S_SEMICOLON)
+				{
+					if (current->getType() != V_STR)
+						throw SyntaxErrorException("Only STR are expected between ALLOWED_METHODS and SEMICOLON");
+					else if (isValidMethod(current->getValue()) == false)
+						throw ConfigurationErrorException("There is a invalid METHOD name between ALLOWED_METHODS keyword and SEMICOLON");
+					else if (i >= 4)
+						throw SyntaxErrorException("No more than 4 METHODS can be allowed in a LOCATION_BLOCK context, you need also to check if SEMICOLON is missing");
+					++current, ++i;
+				}
+				if (current->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON is missing after ALLOWED_METHODS keyword");
+				++current;
+				break;
+			}
+
+			case K_CGI :
+				if (getCurrentContext() != LOCATION_BLOCK)
+					throw SyntaxErrorException("The keyword CGI is only expected in a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_EXTENSION)
+					throw SyntaxErrorException("The keyword CGI need to be followed by an EXTENSION keyword");
+				else if ((current + 2)->getType() != V_PATH)
+					throw SyntaxErrorException("Only a PATH token is expected between EXTENSION and SEMICOLON for CGI");
+				else if ((current + 3)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON is missing after CGI keyword");
+				current += 4;
+				break;
+
+			case K_RETURN : 
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("The keyword RETURN is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
+				else if ((current + 1)->getType() != V_STATUSCODE)
+					throw SyntaxErrorException("The keyword RETURN need to be followed by a STATUS_CODE token");
+				else if (isReturnStatusCode((current + 1)->getValue()) == false)
+					throw ConfigurationErrorException("The STATUS_CODE given after RETURN token isn't accepted for a return directive");
+				if ((current + 1)->getValue() == "301")
+				{
+					if ((current + 2)->getType() != V_PATH)
+						throw ConfigurationErrorException("A PATH is needed between 301 STATUS_CODE and SEMICOLON for a RETURN");
+					if ((current + 3)->getType() != S_SEMICOLON)
+						throw SyntaxErrorException("A SEMICOLON is missing after RETURN keyword");
+					current += 4;
+				}
+				else
+				{
+					if ((current + 2)->getType() != S_SEMICOLON)
+						throw SyntaxErrorException("A SEMICOLON is missing after RETURN keyword");
+					current += 3;
+				}
+				break;
+
+			case S_LBRACE : 
+				if(getCurrentContext() == HTTP)
+					throw SyntaxErrorException("Trying to close a BLOCK when no-one is open");
+				else
+				{
+					exitContext();
+					current++;
+				}
+				break;
+			
+			default :
+				throw SyntaxErrorException("An unknow syntax error has occured");	
+					
 		}
 	}
+	if (getCurrentContext() != HTTP)
+		throw SyntaxErrorException("A BLOCK has not been closed properly");
 }
 
 Token		Parser::createToken(std::string value) const
@@ -206,8 +337,8 @@ TokenType	Parser::identifySymbol(const std::string& to_identify) const
 
 TokenType	Parser::identifyValue(const std::string& to_identify) const
 {
-	if (isReturnStatusCode(to_identify) == true)
-		return (V_RETURNSTATUSCODE);
+	if (isStatusCode(to_identify) == true)
+		return (V_STATUSCODE);
 	else if (isNumber(to_identify) == true)
 		return (V_NUMBER);
 	else if (isString(to_identify) == true)
@@ -236,6 +367,28 @@ void		Parser::fillBuffer(const std::ifstream& infile)
 // 	std::stringstream ss(this->_buffer);
 // 	return (ss);
 // }
+
+void	Parser::initStatusCodesVector( void )
+{
+	this->_status_codes.push_back(200);
+	this->_status_codes.push_back(201);
+	this->_status_codes.push_back(202);
+	this->_status_codes.push_back(301);
+	this->_status_codes.push_back(400);
+	this->_status_codes.push_back(403);
+	this->_status_codes.push_back(404);
+	this->_status_codes.push_back(405);
+	this->_status_codes.push_back(411);
+	this->_status_codes.push_back(414);
+	this->_status_codes.push_back(418);
+	this->_status_codes.push_back(429);
+	this->_status_codes.push_back(500);
+	this->_status_codes.push_back(501);
+	this->_status_codes.push_back(502);
+	this->_status_codes.push_back(503);
+	this->_status_codes.push_back(504);
+	this->_status_codes.push_back(505);
+}
 
 void	Parser::initKeywordMap( void )
 {
@@ -297,7 +450,7 @@ bool	Parser::isValue(const std::string& to_compare) const
 {
 	return (isNumber(to_compare) || isString(to_compare) \
 			|| isPath(to_compare) || isExtension(to_compare) \
-			|| isReturnStatusCode(to_compare));
+			|| isStatusCode(to_compare));
 }
 
 bool	Parser::isNumber(const std::string& to_compare) const
@@ -318,7 +471,7 @@ bool	Parser::isString(const std::string& to_compare) const
 
 	for (it = to_compare.begin(); it != to_compare.end(); it++)
 	{
-		if (isalpha(static_cast<int>(*it)) == 0)
+		if (isalpha(static_cast<int>(*it)) == 0 && *it != '.')
 			return (false);
 	}
 	return (true);
@@ -340,15 +493,83 @@ bool Parser::isExtension(const std::string& to_compare) const
 		return (true);
 }
 
-bool Parser::isReturnStatusCode(const std::string& to_compare) const
+bool Parser::isStatusCode(const std::string& to_compare) const
 {
 	if (isNumber(to_compare) == false && to_compare.length() != 3)
 		return (false);
-	if (to_compare == "301" || to_compare == "403" \
-		|| to_compare == "404" || to_compare == "418" || to_compare == "503")
+	std::stringstream ss(to_compare);
+	unsigned int to_find;
+	ss >> to_find;
+	std::vector<unsigned int>::const_iterator it = _status_codes.begin();
+	for (; it != _status_codes.end(); ++it)
+	{
+		if (*it == to_find)
+			return (true);
+	}
+	return (false);
+}
+
+bool 	Parser::isErrorStatusCode(const std::string& to_compare) const
+{
+	unsigned int code;
+	std::stringstream ss(to_compare);
+	ss >> code;
+	if (code >= 400 && code <= 599)
 		return (true);
 	else
 		return (false);
+}
+
+
+bool	Parser::isReturnStatusCode(const std::string& to_compare) const
+{
+	if (to_compare == "301" || to_compare == "403" || to_compare == "404" \
+		|| to_compare == "418" || to_compare == "503")
+		return (true);
+	else
+		return (false);
+}
+
+bool	Parser::isValidPort(const std::string& to_check) const
+{
+	unsigned int port;
+	std::stringstream ss(to_check);
+	ss >> port;
+	if (port == 0 || port > 65536)
+		return false;
+	else
+		return true;
+}
+
+bool	Parser::isValidMethod(const std::string& to_check) const
+{
+	if (to_check == "GET" || to_check == "HEAD" || to_check == "POST" || to_check == "DELETE")
+		return (true);
+	else
+		return (false);
+}
+
+bool Parser::isValidBodySize(const std::string& value) const
+{
+    if (value[0] == '-')
+        return false;
+    
+    size_t i = 0;
+    
+    while (i < value.length() && isdigit(value[i]))
+        i++;
+    
+    if (i == 0)
+        return false;
+    else if (i == value.length())
+        return true;
+    else if (i != value.length() - 1)
+        return false;
+
+    char unit = value[i];
+    return (unit == 'k' || unit == 'K' || 
+            unit == 'm' || unit == 'M' || 
+            unit == 'g' || unit == 'G');
 }
 
 bool	Parser::isServer(const std::string& to_compare) const
@@ -384,7 +605,7 @@ bool	Parser::isInContext(Context ctx) const
 }
 
 Context	Parser::getCurrentContext( void ) const
-{
+ {
 	if (this->_context_stack.empty() == false)
 		return (this->_context_stack.back());
 	else
@@ -443,7 +664,7 @@ std::string	Token::getTypeStr( void ) const
 		type_map[V_STR] = "V_STR";
 		type_map[V_PATH] = "V_PATH";
 		type_map[V_EXTENSION] = "V_EXTENSION";
-		type_map[V_RETURNSTATUSCODE] = "V_RETURNSTATUSCODE";
+		type_map[V_STATUSCODE] = "V_STATUSCODE";
 		type_map[UNKNOW] = "UNKNOW";
 	}
 	return (type_map[this->_type]);
