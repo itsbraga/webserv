@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/16 02:49:20 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/17 16:00:48 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,9 @@ void	Request::_headerCheck( const std::string& serialized )
 
 void	Request::_chunkedBodyCase( const std::string& serialized, size_t body_start )
 {
-	std::string encoding = getHeaderValue( "Transfer-Encoding" );
+	std::string te_value = getHeaderValue( "Transfer-Encoding" );
 
-	if (encoding.find( "chunked" ) != std::string::npos)
+	if (te_value.find( "chunked" ) != std::string::npos)
 	{
 		std::string chunked_data = serialized.substr( body_start );
 		_unchunkBody( chunked_data );

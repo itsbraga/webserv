@@ -1,0 +1,26 @@
+------geckoformboundary7f0fb8341bdeef7684216d3531d477e3
+Content-Disposition: form-data; name="fichier"; filename="webserv.conf"
+Content-Type: application/octet-stream
+
+Location /index
+{
+	
+}
+
+Server
+{
+	listen	1212;
+	host	localhost;
+	Location /image
+	{
+		autoindex on;
+		upload_allowed;
+		methods_allowed GET PUT;
+
+	}
+}
+
+
+Server{ listen 1313; host localhost; Location /index {autoindex on; cgi .py 
+																	/cgi-bin/python}
+------geckoformboundary7f0fb8341bdeef7684216d3531d477e3--

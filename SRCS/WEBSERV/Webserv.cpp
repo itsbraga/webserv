@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/16 03:24:56 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/17 15:41:06 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,9 +157,6 @@ void	Webserv::_processRequest( int client_fd, Client* client )
 	}
 	catch (const std::exception& e) {
 		response = handleHttpException( e );
-	}
-	catch (...) {
-		response = new Response( 500, "Internal Server Error" );
 	}
 
 	std::string serialized = response->getSerializedResponse();
