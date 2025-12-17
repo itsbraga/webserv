@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleGET.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/16 02:36:53 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/17 15:44:53 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ Response*	handleGET( Server& server, Request& request )
 		throw NotFoundException();
 	if (!isReadable( path ))
 		throw ForbiddenException();
+
 	if (isDirectory( path ))
 		return (__handleDirectoryRequest( server, path, URI ));
-
 	return (__handleFileRequest( path ));
 }

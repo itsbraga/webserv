@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/16 02:33:29 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/17 16:02:15 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 \**************************/
 
 class LocationTree;
+class Request;
 
 class Server
 {
@@ -74,4 +75,6 @@ class Server
 		const std::string&		getRoot() const				{ return (_root); }
 		const std::string&		getIndex() const			{ return (_index); }
 		LocationTree*			getLocationTree() const		{ return (_tree); }
+
+		bool			handleUpload( Request& request );
 };
