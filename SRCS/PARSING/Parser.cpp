@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 02:55:17 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 13:33:05 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,16 @@ void	Parser::bufferTokenize( void )
 
 void	Parser::parse( void )
 {
-	
+	std::vector<Token>::const_iterator current = _tokens.begin();
+	std::vector<Token>::const_iterator end = _tokens.end();
+
+	for (; current != end; ++current)
+	{
+		switch (current->getType())
+		{
+			case S_LBRACE : 
+		}
+	}
 }
 
 Token		Parser::createToken(std::string value) const
@@ -139,7 +148,9 @@ TokenType	Parser::identifySymbol(const std::string& to_identify) const
 
 TokenType	Parser::identifyValue(const std::string& to_identify) const
 {
-	if (isNumber(to_identify) == true)
+	if (isReturnStatusCode(to_identify) == true)
+		return (V_RETURNSTATUSCODE);
+	else if (isNumber(to_identify) == true)
 		return (V_NUMBER);
 	else if (isString(to_identify) == true)
 		return (V_STR);
@@ -178,6 +189,7 @@ void	Parser::initKeywordMap( void )
 	this->_keywords["index"] = K_INDEX;
 	this->_keywords["error_page"] = K_ERRORPAGE;
 	this->_keywords["allowed_methods"] = K_ALLOWEDMETHODS;
+	this->_keywords["client_max_size_body"] = K_CLIENTMAXSIZEBODY;
 	this->_keywords["cgi"] = K_CGI;
 	this->_keywords["autoindex"] = K_AUTOINDEX;
 	this->_keywords["upload_allowed"] = K_UPLOADALLOWED;
@@ -225,7 +237,9 @@ bool	Parser::isSymbol(const std::string& to_compare) const
 
 bool	Parser::isValue(const std::string& to_compare) const
 {
-	return (isNumber(to_compare) || isString(to_compare) || isPath(to_compare) || isExtension(to_compare));
+	return (isNumber(to_compare) || isString(to_compare) \
+			|| isPath(to_compare) || isExtension(to_compare) \
+			|| isReturnStatusCode(to_compare));
 }
 
 bool	Parser::isNumber(const std::string& to_compare) const
@@ -266,6 +280,17 @@ bool Parser::isExtension(const std::string& to_compare) const
 		return (false);
 	else
 		return (true);
+}
+
+bool Parser::isReturnStatusCode(const std::string& to_compare) const
+{
+	if (isNumber(to_compare) == false && to_compare.length() != 3)
+		return (false);
+	if (to_compare == "301" || to_compare == "403" \
+		|| to_compare == "404" || to_compare == "418" || to_compare == "503")
+		return (true);
+	else
+		return (false);
 }
 
 bool	Parser::isServer(const std::string& to_compare) const
@@ -336,6 +361,7 @@ std::string	Token::getTypeStr( void ) const
 		type_map[K_INDEX] = "K_INDEX";
 		type_map[K_ERRORPAGE] = "K_ERRORPAGE";
 		type_map[K_ALLOWEDMETHODS] = "K_ALLOWEDMETHODS";
+		type_map[K_CLIENTMAXSIZEBODY] = "K_CLIENTMAXSIZEBODY";
 		type_map[K_CGI] = "K_CGI";
 		type_map[K_AUTOINDEX] = "K_AUTOINDEX";
 		type_map[K_UPLOADALLOWED] = "K_UPLOADALLOWED";
@@ -348,6 +374,7 @@ std::string	Token::getTypeStr( void ) const
 		type_map[V_STR] = "V_STR";
 		type_map[V_PATH] = "V_PATH";
 		type_map[V_EXTENSION] = "V_EXTENSION";
+		type_map[V_RETURNSTATUSCODE] = "V_RETURNSTATUSCODE";
 		type_map[UNKNOW] = "UNKNOW";
 	}
 	return (type_map[this->_type]);

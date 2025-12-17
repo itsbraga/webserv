@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/14 02:53:23 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 13:23:51 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ enum TokenType
 	K_INDEX,
 	K_ERRORPAGE,
 	K_ALLOWEDMETHODS,
+	K_CLIENTMAXSIZEBODY,
 	K_CGI,
 	K_AUTOINDEX,
 	K_UPLOADALLOWED,
@@ -62,6 +63,7 @@ enum TokenType
 	V_STR,
 	V_PATH,
 	V_EXTENSION,
+	V_RETURNSTATUSCODE,
 	//Others
 	UNKNOW
 };
@@ -125,6 +127,7 @@ class Parser
 		bool				isString(const std::string&	to_compare) const;
 		bool				isPath(const std::string& to_compare) const;
 		bool 				isExtension(const std::string& to_compare) const;
+		bool 				isReturnStatusCode(const std::string& to_compare) const;
 		bool				isServer(const std::string& to_compare) const;
 		bool				isLocation(const std::string& to_compare) const;
 
