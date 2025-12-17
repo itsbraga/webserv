@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 22:21:46 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 22:50:18 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void	Parser::parse( void )
 			case K_SERVER :
 				if (getCurrentContext() != HTTP)
 				 	throw SyntaxErrorException("A SERVER_BLOCK is only expected in a HTTP context");
-				else if ((current + 1)->getType() != S_LBRACE)
+				else if (peekType(current, 1) != S_LBRACE)
 					throw SyntaxErrorException("The keyword SERVER need to be followed by a LBRACE token");
 				enterContext(SERVER_BLOCK);
 				current += 2;
@@ -118,9 +118,9 @@ void	Parser::parse( void )
 			case K_LOCATION :
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("A LOCATION_BLOCK can't be outside a SERVER_BLOCK context");
-				else if ((current + 1)->getType() != V_PATH)
+				else if (peekType(current, 1) != V_PATH)
 					throw SyntaxErrorException("The keyword LOCATION need to be followed by a PATH token");
-				else if ((current + 2)->getType() != S_LBRACE)
+				else if (peekType(current, 2) != S_LBRACE)
 					throw SyntaxErrorException("A LOCATION_BLOCK can't be opened without a LBRACE token after PATH");
 				enterContext(LOCATION_BLOCK);
 				current += 3;
@@ -129,9 +129,9 @@ void	Parser::parse( void )
 			case K_LISTEN :
 				if (getCurrentContext() != SERVER_BLOCK)
 					throw SyntaxErrorException("The keyword LISTEN is only expected in a SERVER_BLOCK context");
-				else if ((current + 1)->getType() != V_NUMBER)
+				else if (peekType(current, 1) != V_NUMBER)
 					throw SyntaxErrorException("The keyword LOCATION need to be followed by an UNSIGNED NUMBER token");
-				else if ((current + 2)->getType() != S_SEMICOLON)
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after LISTEN keyword");
 				else if (isValidPort((current + 1)->getValue()) == false)
 					throw ConfigurationErrorException("The port given after LISTEN keyword is not a valid port");
@@ -141,9 +141,9 @@ void	Parser::parse( void )
 			case K_ROOT :
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_PATH)
+				else if (peekType(current, 1) != V_PATH)
 					throw SyntaxErrorException("The keyword ROOT need to be followed by a PATH token");
-				else if ((current + 2)->getType() != S_SEMICOLON)
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after ROOT keyword");
 				current += 3;
 				break;
@@ -151,9 +151,9 @@ void	Parser::parse( void )
 			case K_INDEX :
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_STR)
+				else if (peekType(current, 1) != V_STR)
 					throw SyntaxErrorException("The keyword INDEX need to be followed by a STR token representing a file name");
-				else if ((current + 2)->getType() != S_SEMICOLON)
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after INDEX keyword");
 				current += 3;
 				break;
@@ -161,9 +161,9 @@ void	Parser::parse( void )
 			case K_SERVERNAME :
 				if (getCurrentContext() != SERVER_BLOCK)
 					throw SyntaxErrorException("The keyword SERVER_NAME is only expected in a SERVER_BLOCK context");
-				else if ((current + 1)->getType() != V_STR)
+				else if (peekType(current, 1) != V_STR)
 					throw SyntaxErrorException("The keyword SERVER_NAME need to be followed by a STR token");
-				else if ((current + 2)->getType() != S_SEMICOLON)
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after SERVER_NAME keyword");
 				current += 3;
 				break;
@@ -171,11 +171,11 @@ void	Parser::parse( void )
 			case K_ERRORPAGE : {
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("The keyword ERROR_PAGE is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_STATUSCODE)
+				else if (peekType(current, 1) != V_STATUSCODE)
 						throw SyntaxErrorException("The keyword ERROR_PAGE need to be followed by a STATUS_CODE token");
 				++current;
 				int i = 0;
-				while (current->getType() != V_PATH)
+				while (current != end && current->getType() != V_PATH)
 				{
 					if (current->getType() != V_STATUSCODE)
 						throw SyntaxErrorException("Only STATUS_CODE are expected between ERROR_PAGE keyword and PATH");
@@ -185,7 +185,9 @@ void	Parser::parse( void )
 						throw SyntaxErrorException("No more than 8 STATUS_CODE can be assigned to only one ERROR_PAGE, you also need to check if PATH or SEMICOLON are missing");
 					++current, ++i;
 				}
-				if ((current + 1)->getType() != S_SEMICOLON)
+				if (current == end)
+					throw SyntaxErrorException("Unexpected end of file");
+				if (peekType(current, 1) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after ERROR_PAGE keyword");
 				current += 2;
 				break;
@@ -194,7 +196,7 @@ void	Parser::parse( void )
 			case K_UPLOADALLOWED :
 				if (getCurrentContext() != LOCATION_BLOCK)
 					throw SyntaxErrorException("The keyword UPLOAD_ALLOWED is only expected in a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != S_SEMICOLON)
+				else if (peekType(current, 1) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after UPLOAD_ALLOWED keyword");
 				current += 2;
 				break;
@@ -202,11 +204,11 @@ void	Parser::parse( void )
 			case K_CLIENTMAXSIZEBODY :
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("The keyword CLIENT_MAX_SIZE_BODY is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_STR)
+				else if (peekType(current, 1) != V_STR)
 					throw SyntaxErrorException("The keyword CLIENT_MAX_SIZE_BODY need to be followed by a STR token");
 				else if (isValidBodySize((current + 1)->getValue()) == false)
 					throw ConfigurationErrorException("Value for CLIENT_MAX_SIZE_BODY isn't valid");
-				else if ((current + 2)->getType() != S_SEMICOLON)
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after CLIENT_MAX_SIZE_BODY keyword");
 				current += 3;
 				break;
@@ -214,9 +216,9 @@ void	Parser::parse( void )
 			case K_AUTOINDEX :
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("The keyword AUTO_INDEX is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != K_ON)
+				else if (peekType(current, 1) != K_ON)
 					throw SyntaxErrorException("The keyword AUTO_INDEX need to be followed by an 'ON' keyword");
-				else if ((current + 2)->getType() != S_SEMICOLON)
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON is missing after AUTO_INDEX keyword");
 				current += 3;
 				break;
@@ -224,11 +226,11 @@ void	Parser::parse( void )
 			case K_ALLOWEDMETHODS : {
 				if (getCurrentContext() != LOCATION_BLOCK)
 					throw SyntaxErrorException("The keyword ALLOWED_METHODS is only expected in a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_STR)
+				else if (peekType(current, 1) != V_STR)
 					throw SyntaxErrorException("The keyword ALLOWED_METHODS need to be followed by a STR token");
 				++current;
 				int i = 0;
-				while (current->getType() != S_SEMICOLON)
+				while (current != end && current->getType() != S_SEMICOLON)
 				{
 					if (current->getType() != V_STR)
 						throw SyntaxErrorException("Only STR are expected between ALLOWED_METHODS and SEMICOLON");
@@ -238,6 +240,8 @@ void	Parser::parse( void )
 						throw SyntaxErrorException("No more than 4 METHODS can be allowed in a LOCATION_BLOCK context, you need also to check if SEMICOLON is missing");
 					++current, ++i;
 				}
+				if (current == end)
+					throw SyntaxErrorException("Unexpected end of file");
 				if (current->getType() != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON is missing after ALLOWED_METHODS keyword");
 				++current;
@@ -247,11 +251,11 @@ void	Parser::parse( void )
 			case K_CGI :
 				if (getCurrentContext() != LOCATION_BLOCK)
 					throw SyntaxErrorException("The keyword CGI is only expected in a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_EXTENSION)
+				else if (peekType(current, 1) != V_EXTENSION)
 					throw SyntaxErrorException("The keyword CGI need to be followed by an EXTENSION keyword");
-				else if ((current + 2)->getType() != V_PATH)
+				else if (peekType(current, 2) != V_PATH)
 					throw SyntaxErrorException("Only a PATH token is expected between EXTENSION and SEMICOLON for CGI");
-				else if ((current + 3)->getType() != S_SEMICOLON)
+				else if (peekType(current, 3) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON is missing after CGI keyword");
 				current += 4;
 				break;
@@ -259,27 +263,27 @@ void	Parser::parse( void )
 			case K_RETURN : 
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("The keyword RETURN is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context");
-				else if ((current + 1)->getType() != V_STATUSCODE)
+				else if (peekType(current, 1) != V_STATUSCODE)
 					throw SyntaxErrorException("The keyword RETURN need to be followed by a STATUS_CODE token");
 				else if (isReturnStatusCode((current + 1)->getValue()) == false)
 					throw ConfigurationErrorException("The STATUS_CODE given after RETURN token isn't accepted for a return directive");
 				if ((current + 1)->getValue() == "301")
 				{
-					if ((current + 2)->getType() != V_PATH)
+					if (peekType(current, 2) != V_PATH)
 						throw ConfigurationErrorException("A PATH is needed between 301 STATUS_CODE and SEMICOLON for a RETURN");
-					if ((current + 3)->getType() != S_SEMICOLON)
+					if (peekType(current, 3) != S_SEMICOLON)
 						throw SyntaxErrorException("A SEMICOLON is missing after RETURN keyword");
 					current += 4;
 				}
 				else
 				{
-					if ((current + 2)->getType() != S_SEMICOLON)
+					if (peekType(current, 2) != S_SEMICOLON)
 						throw SyntaxErrorException("A SEMICOLON is missing after RETURN keyword");
 					current += 3;
 				}
 				break;
 
-			case S_LBRACE : 
+			case S_RBRACE : 
 				if(getCurrentContext() == HTTP)
 					throw SyntaxErrorException("Trying to close a BLOCK when no-one is open");
 				else
@@ -580,6 +584,20 @@ bool	Parser::isServer(const std::string& to_compare) const
 bool	Parser::isLocation(const std::string& to_compare) const
 {
 	return (to_compare == "location");
+}
+
+TokenType	Parser::peekType(std::vector<Token>::const_iterator it, size_t offset) const
+{
+	if (it + offset >= _tokens.end())
+        throw SyntaxErrorException("Unexpected end of file");
+    return (it + offset)->getType();
+}
+
+TokenType	Parser::peekValue(std::vector<Token>::const_iterator it, size_t offset) const
+{
+	if (it + offset >= _tokens.end())
+        throw SyntaxErrorException("Unexpected end of file");
+    return (it + offset)->getValue();
 }
 
 void	Parser::enterContext(Context context)
