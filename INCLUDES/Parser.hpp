@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 13:23:51 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 15:16:41 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,10 @@ class Parser
 		bool				isServer(const std::string& to_compare) const;
 		bool				isLocation(const std::string& to_compare) const;
 
-		void				enterContext(Context context);
+		void				enterContext(Context ctx);
 		void				exitContext( void );
-		Context				getCurrentContext( void );
+		bool 				isInContext(Context ctx) const;
+		Context				getCurrentContext( void ) const;
 
 		std::string						getConfPath( void );
 		std::string&					getBuffer( void );
@@ -141,9 +142,16 @@ class Parser
 		const std::vector<Token>&		getTokens() const;
 		std::vector<Context>			getContextStack( void );
 
-		class SyntaxError : public std::exception
+		class SyntaxErrorException : public std::exception
 		{
-			const char *what( void ) const throw();	
+			private:
+				std::string _detail;
+			
+			public:
+				explicit SyntaxErrorException( const std::string& detail ) : _detail("Syntax Error: " + _detail) {}
+				virtual ~SyntaxErrorException() throw() {}
+				virtual const char *what( void ) const throw()
+				{ return (_detail.c_str()); }	
 		};
 		
 };
