@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 22:14:57 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 22:40:11 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,9 @@ class Parser
 		bool				isValidPort(const std::string& to_check) const;
 		bool				isValidMethod(const std::string& to_check) const;
 		bool 				isValidBodySize(const std::string& value) const;
+
+		TokenType			peekType(std::vector<Token>::const_iterator it, size_t offset) const;
+		TokenType			peekValue(std::vector<Token>::const_iterator it, size_t offset) const;
 
 		void				enterContext(Context ctx);
 		void				exitContext( void );
