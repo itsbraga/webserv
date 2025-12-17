@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 13:33:05 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/17 15:58:15 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,11 +100,69 @@ void	Parser::parse( void )
 	std::vector<Token>::const_iterator current = _tokens.begin();
 	std::vector<Token>::const_iterator end = _tokens.end();
 
-	for (; current != end; ++current)
+	this->enterContext(HTTP);
+	
+	while (current != end)
 	{
 		switch (current->getType())
 		{
-			case S_LBRACE : 
+			case K_SERVER :
+				if (getCurrentContext() != HTTP)
+				 	throw SyntaxErrorException("A SERVER_BLOCK is only expected in a HTTP context");
+				else if ((current + 1)->getType() != S_LBRACE)
+					throw SyntaxErrorException("The keyword SERVER need to be followed by a LBRACE token");
+				current += 2;
+				break;
+			
+			case K_LOCATION :
+				if (isInContext(SERVER_BLOCK) == false)
+					throw SyntaxErrorException("A LOCATION_BLOCK can't be outside a SERVER_BLOCK");
+				else if ((current + 1)->getType() != V_PATH)
+					throw SyntaxErrorException("The keyword LOCATION need to be followed by a PATH token");
+				else if ((current + 2)->getType() != S_LBRACE)
+					throw SyntaxErrorException("A LOCATION_BLOCK can't be opened without a LBRACE token after PATH");
+				current += 3;
+				break;
+			
+			case K_LISTEN :
+				if (getCurrentContext() != SERVER_BLOCK)
+					throw SyntaxErrorException("The keyword LISTEN is only expected in a SERVER_BLOCK context");
+				else if ((current + 1)->getType() != V_NUMBER)
+					throw SyntaxErrorException("The keyword LOCATION need to be followed by a NUMBER token");
+				else if ((current + 2)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after LISTEN keyword");
+				current += 3;
+				break;
+			
+			case K_ROOT :
+				if ((current + 1)->getType() != V_PATH)
+					throw SyntaxErrorException("The keyword ROOT need to be followed by a PATH token");
+				else if ((current + 2)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after ROOT keyword");
+				current += 3;
+				break;
+
+			case K_INDEX :
+				if ((current + 1)->getType() != V_STR)
+					throw SyntaxErrorException("The keyword INDEX need to be followed by a STR token representing a file name");
+				else if ((current + 2)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after INDEX keyword");
+				current += 3;
+				break;
+			
+			case K_SERVERNAME :
+				if (getCurrentContext() != SERVER_BLOCK)
+					throw SyntaxErrorException("The keyword SERVER_NAME is only expected in a SERVER_BLOCK context");
+				else if ((current + 1)->getType() != V_STR)
+					throw SyntaxErrorException("The keyword SERVER_NAME need to be followed by a STR token");
+				else if ((current + 2)->getType() != S_SEMICOLON)
+					throw SyntaxErrorException("A SEMICOLON token is missing after SERVER_NAME keyword");
+				current += 3;
+				break;
+
+			case K_ERRORPAGE :
+				
+				
 		}
 	}
 }
@@ -314,7 +372,18 @@ void	Parser::exitContext( void )
 		this->_context_stack.pop_back();
 }
 
-Context	Parser::getCurrentContext( void )
+bool	Parser::isInContext(Context ctx) const
+{
+	std::vector<Context>::const_iterator it = _context_stack.begin();
+	for (; it != _context_stack.end(); ++it)
+	{
+		if (*it == ctx)
+			return (true);
+	}
+	return (false);
+}
+
+Context	Parser::getCurrentContext( void ) const
 {
 	if (this->_context_stack.empty() == false)
 		return (this->_context_stack.back());
