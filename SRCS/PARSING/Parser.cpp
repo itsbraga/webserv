@@ -6,11 +6,11 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 22:50:18 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/18 23:49:41 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../INCLUDES/Parser.hpp"
+#include "webserv.hpp"
 
 // void	Parser::handleFileConfig(char *arg, webserv_s *data)
 // {
@@ -118,6 +118,8 @@ void	Parser::parse( void )
 			case K_LOCATION :
 				if (isInContext(SERVER_BLOCK) == false)
 					throw SyntaxErrorException("A LOCATION_BLOCK can't be outside a SERVER_BLOCK context");
+				else if (getCurrentContext() == LOCATION_BLOCK)
+					throw SyntaxErrorException("A LOCATION_BLOCK can't be inside another LOCATION_BLOCK (i wish that were the case)");
 				else if (peekType(current, 1) != V_PATH)
 					throw SyntaxErrorException("The keyword LOCATION need to be followed by a PATH token");
 				else if (peekType(current, 2) != S_LBRACE)
@@ -196,9 +198,11 @@ void	Parser::parse( void )
 			case K_UPLOADALLOWED :
 				if (getCurrentContext() != LOCATION_BLOCK)
 					throw SyntaxErrorException("The keyword UPLOAD_ALLOWED is only expected in a LOCATION_BLOCK context");
-				else if (peekType(current, 1) != S_SEMICOLON)
+				else if (peekType(current, 1) != V_PATH)
+					throw SyntaxErrorException("The keyword UPLOAD_ALLOWED need to be followed by a PATH token");
+				else if (peekType(current, 2) != S_SEMICOLON)
 					throw SyntaxErrorException("A SEMICOLON token is missing after UPLOAD_ALLOWED keyword");
-				current += 2;
+				current += 3;
 				break;
 
 			case K_CLIENTMAXSIZEBODY :
@@ -300,6 +304,96 @@ void	Parser::parse( void )
 	}
 	if (getCurrentContext() != HTTP)
 		throw SyntaxErrorException("A BLOCK has not been closed properly");
+}
+
+void		Parser::createAllObjects( void )
+{
+	Server* current_server = NULL;
+	Location*	current_location = NULL;
+	std::vector<Token>::const_iterator current = _tokens.begin();
+	std::vector<Token>::const_iterator end = _tokens.end();
+
+	enterContext(HTTP);
+
+	while (current != end)
+	{
+		switch (current->getType())
+		{
+			case K_SERVER :
+				current_server = new Server;
+				if (current_server == NULL)
+					throw std::bad_alloc();
+				enterContext(SERVER_BLOCK);
+				current += 2;
+				break;
+
+			case K_LOCATION :
+				current_location = new Location;
+				if (current_location == NULL)
+					throw std::bad_alloc();
+				enterContext(LOCATION_BLOCK);
+				current_location->setUri((current + 1)->getValue());
+				current += 3;
+				break;
+			
+			case K_LISTEN : {
+				unsigned short int value;
+				std::stringstream ss((current + 1)->getValue());
+				ss >> value;
+				current_server->setPort(value);
+				current += 3;
+				break;
+			}
+
+			case K_ROOT :
+				if (getCurrentContext() == SERVER_BLOCK)
+					current_server->setRoot((current + 1)->getValue());
+				else
+					current_location->setRoot((current + 1)->getValue());
+				current += 3;
+				break;
+			
+			case K_INDEX :
+				if (getCurrentContext() == SERVER_BLOCK)
+					current_server->setIndex((current + 1)->getValue());
+				else
+					current_location->setIndex((current + 1)->getValue());
+				current += 3;
+				break;
+			
+			case K_SERVERNAME :
+				current_server->setServerName((current + 1)->getValue());
+				current += 3;
+				break;
+
+			case K_ERRORPAGE : {
+				
+			}
+
+			case K_UPLOADALLOWED :
+				current_location->setUploadAllowed(true);
+				current_location->setUploadPath((current + 1)->getValue());
+				current += 3;
+				break;
+				
+
+			case S_RBRACE :
+				if (getCurrentContext() == SERVER_BLOCK)
+				{
+				
+
+
+					exitContext();
+				}
+				else if (getCurrentContext() == LOCATION_BLOCK)
+				{
+				
+				
+					exitContext();
+				}
+				
+		}
+	}
 }
 
 Token		Parser::createToken(std::string value) const
