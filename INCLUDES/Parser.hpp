@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/17 22:40:11 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/18 16:28:26 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,10 @@ class Parser
 		void				initStatusCodesVector( void );
 		void				bufferTokenize( void );
 		void				parse( void );
+		void				createAllObjects( void );
 		void				fillBuffer(const std::ifstream &infile);
 		Token				createToken(std::string value) const;
 		void				createTokenDelimiter(std::string::const_iterator it);
-		// std::stringstream	createStringStream( void ); ???
 		static	void		lowerStr(std::string& str);
 
 		TokenType			identifyKeyword(const std::string& to_identify) const;
