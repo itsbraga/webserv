@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>503 - Service Unavailable</title>
+	<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #0f172a;
+			--bg-card: #1e293b;
+			--accent-amber: #f59e0b;
+			--accent-amber-light: #fbbf24;
+			--accent-blue: #3b82f6;
+			--text-light: #f1f5f9;
+			--text-muted: #64748b;
+			--stripe-dark: #1a1a1a;
+			--stripe-yellow: #fbbf24;
+		}
+
+		body {
+			min-height: 100vh;
+			background: var(--bg-dark);
+			font-family: 'Rubik', sans-serif;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.construction-stripes {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 20px;
+			background: repeating-linear-gradient(
+				-45deg,
+				var(--stripe-yellow),
+				var(--stripe-yellow) 20px,
+				var(--stripe-dark) 20px,
+				var(--stripe-dark) 40px
+			);
+			z-index: 100;
+		}
+
+		.construction-stripes.bottom {
+			top: auto;
+			bottom: 0;
+		}
+
+		.grid-pattern {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: 
+				linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+			background-size: 40px 40px;
+			z-index: 1;
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: 2rem;
+			max-width: 700px;
+		}
+
+		.maintenance-icon {
+			width: 160px;
+			height: 160px;
+			margin: 0 auto 2rem;
+			position: relative;
+		}
+
+		.gear {
+			position: absolute;
+			border-radius: 50%;
+			border: 8px solid var(--accent-amber);
+			animation: rotate-gear 8s linear infinite;
+		}
+
+		.gear::before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background: var(--bg-dark);
+			border-radius: 50%;
+		}
+
+		.gear-large {
+			width: 100px;
+			height: 100px;
+			top: 10px;
+			left: 10px;
+		}
+
+		.gear-large::before {
+			width: 40px;
+			height: 40px;
+		}
+
+		.gear-small {
+			width: 60px;
+			height: 60px;
+			top: 70px;
+			left: 90px;
+			animation-direction: reverse;
+			animation-duration: 5s;
+		}
+
+		.gear-small::before {
+			width: 24px;
+			height: 24px;
+		}
+
+		.gear-teeth {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+		}
+
+		.gear-large .gear-teeth::before,
+		.gear-large .gear-teeth::after {
+			content: '';
+			position: absolute;
+			background: var(--accent-amber);
+		}
+
+		.gear-large .gear-teeth::before {
+			width: 16px;
+			height: 116px;
+			top: -8px;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.gear-large .gear-teeth::after {
+			width: 116px;
+			height: 16px;
+			left: -8px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		.gear-small .gear-teeth::before,
+		.gear-small .gear-teeth::after {
+			content: '';
+			position: absolute;
+			background: var(--accent-amber);
+		}
+
+		.gear-small .gear-teeth::before {
+			width: 12px;
+			height: 76px;
+			top: -8px;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.gear-small .gear-teeth::after {
+			width: 76px;
+			height: 12px;
+			left: -8px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		@keyframes rotate-gear {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+
+		.error-code {
+			font-size: clamp(5rem, 14vw, 10rem);
+			font-weight: 700;
+			color: var(--accent-amber);
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			text-shadow: 0 4px 30px rgba(245, 158, 11, 0.3);
+		}
+
+		.error-title {
+			font-size: 1.5rem;
+			font-weight: 700;
+			color: var(--text-light);
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+			margin-bottom: 2rem;
+		}
+
+		.status-card {
+			background: var(--bg-card);
+			border-radius: 16px;
+			padding: 2rem;
+			border: 1px solid rgba(59, 130, 246, 0.1);
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+		}
+
+		.status-header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.8rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.status-dot {
+			width: 12px;
+			height: 12px;
+			background: var(--accent-amber);
+			border-radius: 50%;
+			animation: pulse-dot 2s ease-in-out infinite;
+		}
+
+		@keyframes pulse-dot {
+			0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+			50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+		}
+
+		.status-text {
+			font-family: 'Fira Code', monospace;
+			font-size: 0.9rem;
+			color: var(--accent-amber);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		.error-message {
+			color: var(--text-muted);
+			font-size: 1rem;
+			line-height: 1.8;
+			margin-bottom: 2rem;
+		}
+
+		.progress-section {
+			margin-bottom: 2rem;
+		}
+
+		.progress-label {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 0.8rem;
+			font-size: 0.85rem;
+		}
+
+		.progress-title {
+			color: var(--text-light);
+			font-weight: 600;
+		}
+
+		.progress-value {
+			color: var(--accent-amber);
+			font-family: 'Fira Code', monospace;
+		}
+
+		.progress-bar {
+			height: 8px;
+			background: rgba(59, 130, 246, 0.1);
+			border-radius: 4px;
+			overflow: hidden;
+		}
+
+		.progress-fill {
+			height: 100%;
+			background: linear-gradient(90deg, var(--accent-amber), var(--accent-amber-light));
+			border-radius: 4px;
+			animation: progress-animate 3s ease-in-out infinite;
+			width: 75%;
+		}
+
+		@keyframes progress-animate {
+			0%, 100% { width: 65%; }
+			50% { width: 85%; }
+		}
+
+		.checklist {
+			text-align: left;
+			margin-bottom: 2rem;
+		}
+
+		.checklist-item {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			padding: 0.8rem 1rem;
+			background: rgba(0, 0, 0, 0.2);
+			border-radius: 8px;
+			margin-bottom: 0.5rem;
+			font-size: 0.9rem;
+		}
+
+		.checklist-icon {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.75rem;
+			flex-shrink: 0;
+		}
+
+		.checklist-icon.done {
+			background: rgba(34, 197, 94, 0.2);
+			color: #22c55e;
+		}
+
+		.checklist-icon.progress {
+			background: rgba(245, 158, 11, 0.2);
+			color: var(--accent-amber);
+			animation: spin 2s linear infinite;
+		}
+
+		.checklist-icon.pending {
+			background: rgba(100, 116, 139, 0.2);
+			color: var(--text-muted);
+		}
+
+		@keyframes spin {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+
+		.checklist-text {
+			color: var(--text-muted);
+		}
+
+		.checklist-text.active {
+			color: var(--text-light);
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.9rem 1.8rem;
+			font-family: 'Rubik', sans-serif;
+			font-size: 0.9rem;
+			font-weight: 600;
+			text-decoration: none;
+			border-radius: 8px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-light));
+			color: var(--bg-dark);
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+		}
+
+		.btn-secondary {
+			background: transparent;
+			border: 1px solid rgba(100, 116, 139, 0.3);
+			color: var(--text-muted);
+		}
+
+		.btn-secondary:hover {
+			border-color: var(--accent-blue);
+			color: var(--accent-blue);
+		}
+
+		.eta {
+			margin-top: 2rem;
+			padding-top: 1.5rem;
+			border-top: 1px solid rgba(100, 116, 139, 0.1);
+			font-size: 0.85rem;
+			color: var(--text-muted);
+		}
+
+		.eta-time {
+			color: var(--accent-amber);
+			font-family: 'Fira Code', monospace;
+			font-weight: 600;
+		}
+
+		.floating-tools {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 5;
+			overflow: hidden;
+		}
+
+		.tool {
+			position: absolute;
+			font-size: 2rem;
+			opacity: 0.1;
+			animation: float-tool 15s linear infinite;
+		}
+
+		@keyframes float-tool {
+			0% { transform: translateY(100vh) rotate(0deg); }
+			100% { transform: translateY(-100px) rotate(360deg); }
+		}
+	</style>
+</head>
+<body>
+	<div class="construction-stripes"></div>
+	<div class="construction-stripes bottom"></div>
+	<div class="grid-pattern"></div>
+	
+	<div class="floating-tools">
+		<div class="tool" style="left: 5%; animation-delay: 0s;">🔧</div>
+		<div class="tool" style="left: 20%; animation-delay: 3s;">⚙️</div>
+		<div class="tool" style="left: 35%; animation-delay: 6s;">🔨</div>
+		<div class="tool" style="left: 55%; animation-delay: 9s;">🛠️</div>
+		<div class="tool" style="left: 75%; animation-delay: 12s;">⚡</div>
+		<div class="tool" style="left: 90%; animation-delay: 2s;">🔩</div>
+	</div>
+
+	<div class="container">
+		<div class="maintenance-icon">
+			<div class="gear gear-large">
+				<div class="gear-teeth"></div>
+			</div>
+			<div class="gear gear-small">
+				<div class="gear-teeth"></div>
+			</div>
+		</div>
+
+		<div class="error-code">503</div>
+		<div class="error-title">Service Unavailable</div>
+
+		<div class="status-card">
+			<div class="status-header">
+				<div class="status-dot"></div>
+				<span class="status-text">Maintenance in Progress</span>
+			</div>
+
+			<p class="error-message">
+				We're currently performing scheduled maintenance to improve our services.
+				Our team is working hard to get everything back online as quickly as possible.
+			</p>
+
+			<div class="progress-section">
+				<div class="progress-label">
+					<span class="progress-title">Maintenance Progress</span>
+					<span class="progress-value">~75%</span>
+				</div>
+				<div class="progress-bar">
+					<div class="progress-fill"></div>
+				</div>
+			</div>
+
+			<div class="checklist">
+				<div class="checklist-item">
+					<div class="checklist-icon done">✓</div>
+					<span class="checklist-text">Database backup completed</span>
+				</div>
+				<div class="checklist-item">
+					<div class="checklist-icon done">✓</div>
+					<span class="checklist-text">System updates installed</span>
+				</div>
+				<div class="checklist-item">
+					<div class="checklist-icon progress">↻</div>
+					<span class="checklist-text active">Running system checks...</span>
+				</div>
+				<div class="checklist-item">
+					<div class="checklist-icon pending">○</div>
+					<span class="checklist-text">Service restart pending</span>
+				</div>
+			</div>
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-primary">← Try Again</a>
+				<button onclick="location.reload()" class="btn btn-secondary">↻ Refresh</button>
+			</div>
+
+			<div class="eta">
+				Estimated time remaining: <span class="eta-time">~15 minutes</span>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

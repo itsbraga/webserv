@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>404 - Not Found</title>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-space: #0c0c1e;
+			--star-white: #ffffff;
+			--nebula-blue: #4f46e5;
+			--nebula-purple: #7c3aed;
+			--comet-cyan: #22d3ee;
+			--moon-gray: #94a3b8;
+		}
+
+		body {
+			min-height: 100vh;
+			background: var(--bg-space);
+			font-family: 'Space Mono', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.stars {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		.star {
+			position: absolute;
+			background: var(--star-white);
+			border-radius: 50%;
+			animation: twinkle 3s ease-in-out infinite;
+		}
+
+		@keyframes twinkle {
+			0%, 100% { opacity: 0.3; transform: scale(1); }
+			50% { opacity: 1; transform: scale(1.2); }
+		}
+
+		.nebula {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: 
+				radial-gradient(ellipse at 30% 20%, rgba(79, 70, 229, 0.2) 0%, transparent 50%),
+				radial-gradient(ellipse at 70% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+				radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.05) 0%, transparent 70%);
+			z-index: 2;
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: 2rem;
+		}
+
+		.astronaut {
+			position: relative;
+			width: 150px;
+			height: 180px;
+			margin: 0 auto 2rem;
+			animation: float 6s ease-in-out infinite;
+		}
+
+		@keyframes float {
+			0%, 100% { transform: translateY(0) rotate(-5deg); }
+			50% { transform: translateY(-20px) rotate(5deg); }
+		}
+
+		.astronaut-body {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 70px;
+			height: 90px;
+			background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+			border-radius: 20px 20px 25px 25px;
+		}
+
+		.astronaut-head {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 60px;
+			height: 60px;
+			background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
+			border-radius: 50%;
+			overflow: hidden;
+		}
+
+		.astronaut-visor {
+			position: absolute;
+			top: 10px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 45px;
+			height: 35px;
+			background: linear-gradient(135deg, var(--nebula-blue), var(--nebula-purple), var(--comet-cyan));
+			border-radius: 10px 10px 15px 15px;
+			animation: visor-glow 4s ease-in-out infinite;
+		}
+
+		@keyframes visor-glow {
+			0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.5); }
+			50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.8); }
+		}
+
+		.astronaut-arm {
+			position: absolute;
+			width: 20px;
+			height: 50px;
+			background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+			border-radius: 10px;
+			top: 75px;
+		}
+
+		.arm-left {
+			left: 10px;
+			transform: rotate(30deg);
+			transform-origin: top center;
+			animation: wave 2s ease-in-out infinite;
+		}
+
+		.arm-right {
+			right: 10px;
+			transform: rotate(-20deg);
+		}
+
+		@keyframes wave {
+			0%, 100% { transform: rotate(30deg); }
+			50% { transform: rotate(50deg); }
+		}
+
+		.astronaut-leg {
+			position: absolute;
+			width: 22px;
+			height: 45px;
+			background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+			border-radius: 10px;
+			bottom: -35px;
+		}
+
+		.leg-left { left: 35px; transform: rotate(10deg); }
+		.leg-right { right: 35px; transform: rotate(-10deg); }
+
+		.tether {
+			position: absolute;
+			top: 90px;
+			right: -50px;
+			width: 100px;
+			height: 2px;
+			background: linear-gradient(90deg, var(--moon-gray), transparent);
+			transform: rotate(-30deg);
+			animation: tether-float 6s ease-in-out infinite;
+		}
+
+		@keyframes tether-float {
+			0%, 100% { transform: rotate(-30deg); }
+			50% { transform: rotate(-20deg); }
+		}
+
+		.error-code {
+			font-family: 'Syne', sans-serif;
+			font-size: clamp(6rem, 18vw, 14rem);
+			font-weight: 800;
+			color: transparent;
+			background: linear-gradient(135deg, var(--comet-cyan), var(--nebula-blue), var(--nebula-purple));
+			-webkit-background-clip: text;
+			background-clip: text;
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			position: relative;
+		}
+
+		.error-code::after {
+			content: '404';
+			position: absolute;
+			left: 4px;
+			top: 4px;
+			z-index: -1;
+			background: linear-gradient(135deg, rgba(34, 211, 238, 0.3), rgba(79, 70, 229, 0.3));
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			filter: blur(8px);
+		}
+
+		.error-title {
+			font-family: 'Syne', sans-serif;
+			font-size: 1.5rem;
+			font-weight: 700;
+			color: var(--comet-cyan);
+			text-transform: uppercase;
+			letter-spacing: 0.5em;
+			margin-bottom: 2rem;
+		}
+
+		.message-card {
+			background: rgba(255, 255, 255, 0.03);
+			border: 1px solid rgba(79, 70, 229, 0.2);
+			border-radius: 20px;
+			padding: 2.5rem;
+			max-width: 500px;
+			margin: 0 auto;
+			backdrop-filter: blur(10px);
+		}
+
+		.signal-indicator {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.signal-bar {
+			width: 4px;
+			background: var(--nebula-purple);
+			border-radius: 2px;
+			animation: signal 1.5s ease-in-out infinite;
+		}
+
+		.signal-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+		.signal-bar:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+		.signal-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+		.signal-bar:nth-child(4) { height: 14px; animation-delay: 0.3s; }
+		.signal-bar:nth-child(5) { height: 8px; animation-delay: 0.4s; }
+
+		@keyframes signal {
+			0%, 100% { opacity: 0.3; }
+			50% { opacity: 1; }
+		}
+
+		.signal-text {
+			color: var(--moon-gray);
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+			margin-left: 1rem;
+		}
+
+		.error-message {
+			color: #64748b;
+			font-size: 1rem;
+			line-height: 1.8;
+			margin-bottom: 2rem;
+		}
+
+		.coordinates {
+			display: flex;
+			justify-content: center;
+			gap: 2rem;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+		}
+
+		.coord {
+			text-align: center;
+		}
+
+		.coord-label {
+			color: var(--moon-gray);
+			font-size: 0.7rem;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			margin-bottom: 0.3rem;
+		}
+
+		.coord-value {
+			color: var(--comet-cyan);
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+
+		.btn-home {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.8rem;
+			background: linear-gradient(135deg, var(--nebula-blue), var(--nebula-purple));
+			color: white;
+			padding: 1rem 2rem;
+			font-family: 'Space Mono', monospace;
+			font-size: 0.9rem;
+			text-decoration: none;
+			border-radius: 50px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.btn-home::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+			transition: left 0.5s ease;
+		}
+
+		.btn-home:hover::before {
+			left: 100%;
+		}
+
+		.btn-home:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 10px 40px rgba(79, 70, 229, 0.5);
+		}
+
+		.rocket-icon {
+			transition: transform 0.3s ease;
+		}
+
+		.btn-home:hover .rocket-icon {
+			transform: translateX(5px) rotate(-45deg);
+		}
+
+		.shooting-star {
+			position: fixed;
+			width: 100px;
+			height: 2px;
+			background: linear-gradient(90deg, var(--comet-cyan), transparent);
+			animation: shoot 3s linear infinite;
+			opacity: 0;
+		}
+
+		.shooting-star:nth-child(1) { top: 20%; left: 0; animation-delay: 0s; }
+		.shooting-star:nth-child(2) { top: 40%; left: 0; animation-delay: 2s; }
+		.shooting-star:nth-child(3) { top: 60%; left: 0; animation-delay: 4s; }
+
+		@keyframes shoot {
+			0% { left: 0; opacity: 0; transform: translateX(0) rotate(-45deg); }
+			10% { opacity: 1; }
+			100% { left: 100%; opacity: 0; transform: translateX(100vw) rotate(-45deg); }
+		}
+	</style>
+</head>
+<body>
+	<div class="stars">
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const stars = document.querySelector('.stars');
+				for (let i = 0; i < 100; i++) {
+					const star = document.createElement('div');
+					star.className = 'star';
+					star.style.cssText = `
+						left: ${Math.random() * 100}%;
+						top: ${Math.random() * 100}%;
+						width: ${Math.random() * 3 + 1}px;
+						height: ${Math.random() * 3 + 1}px;
+						animation-delay: ${Math.random() * 3}s;
+						animation-duration: ${Math.random() * 2 + 2}s;
+					`;
+					stars.appendChild(star);
+				}
+			});
+		</script>
+	</div>
+	<div class="nebula"></div>
+	
+	<div class="shooting-star"></div>
+	<div class="shooting-star"></div>
+	<div class="shooting-star"></div>
+
+	<div class="container">
+		<div class="astronaut">
+			<div class="astronaut-head">
+				<div class="astronaut-visor"></div>
+			</div>
+			<div class="astronaut-body"></div>
+			<div class="astronaut-arm arm-left"></div>
+			<div class="astronaut-arm arm-right"></div>
+			<div class="astronaut-leg leg-left"></div>
+			<div class="astronaut-leg leg-right"></div>
+			<div class="tether"></div>
+		</div>
+
+		<div class="error-code">404</div>
+		<div class="error-title">Lost in Space</div>
+
+		<div class="message-card">
+			<div class="signal-indicator">
+				<div class="signal-bar"></div>
+				<div class="signal-bar"></div>
+				<div class="signal-bar"></div>
+				<div class="signal-bar"></div>
+				<div class="signal-bar"></div>
+				<span class="signal-text">Signal Lost</span>
+			</div>
+
+			<p class="error-message">
+				Houston, we have a problem. The page you're looking for 
+				has drifted into the void. It might have been moved, deleted, 
+				or never existed in this galaxy.
+			</p>
+
+			<div class="coordinates">
+				<div class="coord">
+					<div class="coord-label">Status</div>
+					<div class="coord-value">NOT FOUND</div>
+				</div>
+				<div class="coord">
+					<div class="coord-label">Error</div>
+					<div class="coord-value">404</div>
+				</div>
+				<div class="coord">
+					<div class="coord-label">Location</div>
+					<div class="coord-value">UNKNOWN</div>
+				</div>
+			</div>
+
+			<a href="/" class="btn-home">
+				<span>←<span> Return to Earth</span>
+			</a>
+		</div>
+	</div>
+</body>
+</html>

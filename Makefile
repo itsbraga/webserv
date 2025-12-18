@@ -23,7 +23,7 @@ PINK		:=	\e[38;2;255;182;193m
 #————————————————————————————————————————————————————————
 
 NAME		:=	webserv
-INC			:=	-I INCLUDES/
+INC			:=	-I includes/
 
 CPPFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 DEPFLAGS	:=	-MMD -MP
@@ -37,10 +37,10 @@ endef
 #	SOURCES
 #————————————————————————————————————————————————————————
 
-SRCS_DIR	:=	SRCS/
-SRCS		:=	$(sort $(shell find SRCS -type f -name '*.cpp'))
+SRCS_DIR	:=	srcs/
+SRCS		:=	$(sort $(shell find srcs -type f -name '*.cpp'))
 
-OBJS_DIR	:=	OBJS/
+OBJS_DIR	:=	objs/
 OBJS		:=	$(patsubst $(SRCS_DIR)%.cpp,$(OBJS_DIR)%.o,$(SRCS))
 DEPS		:=	$(OBJS:.o=.d)
 
