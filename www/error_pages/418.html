@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>418 - I'm a Teapot</title>
+	<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-cream: #fef7ed;
+			--tea-brown: #8b5a2b;
+			--tea-light: #d4a574;
+			--ceramic-white: #faf8f5;
+			--ceramic-shadow: #e8ddd0;
+			--steam-gray: rgba(255, 255, 255, 0.8);
+			--accent-mint: #98d4bb;
+			--accent-coral: #f4a492;
+		}
+
+		body {
+			min-height: 100vh;
+			background: linear-gradient(180deg, var(--bg-cream) 0%, #fde8d0 100%);
+			font-family: 'Fredoka', sans-serif;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.pattern-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a574' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+			z-index: 0;
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: 2rem;
+		}
+
+		.teapot-scene {
+			position: relative;
+			width: 280px;
+			height: 280px;
+			margin: 0 auto 2rem;
+		}
+
+		.teapot {
+			position: absolute;
+			bottom: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			animation: teapot-wobble 3s ease-in-out infinite;
+		}
+
+		@keyframes teapot-wobble {
+			0%, 100% { transform: translateX(-50%) rotate(-3deg); }
+			50% { transform: translateX(-50%) rotate(3deg); }
+		}
+
+		.teapot-body {
+			width: 140px;
+			height: 110px;
+			background: linear-gradient(180deg, var(--ceramic-white) 0%, var(--ceramic-shadow) 100%);
+			border-radius: 50% 50% 45% 45%;
+			position: relative;
+			box-shadow: 
+				inset -10px -10px 30px rgba(0,0,0,0.05),
+				0 10px 30px rgba(139, 90, 43, 0.2);
+		}
+
+		.teapot-body::before {
+			content: '';
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			width: 60px;
+			height: 40px;
+			background: linear-gradient(135deg, rgba(255,255,255,0.8), transparent);
+			border-radius: 50%;
+		}
+
+		.teapot-lid {
+			position: absolute;
+			top: -25px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 80px;
+			height: 25px;
+			background: linear-gradient(180deg, var(--ceramic-white) 0%, var(--ceramic-shadow) 100%);
+			border-radius: 50% 50% 20% 20%;
+			box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+		}
+
+		.teapot-knob {
+			position: absolute;
+			top: -40px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 20px;
+			height: 20px;
+			background: linear-gradient(135deg, var(--accent-mint), #7bc4a8);
+			border-radius: 50%;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		}
+
+		.teapot-spout {
+			position: absolute;
+			right: -50px;
+			top: 20px;
+			width: 60px;
+			height: 30px;
+			background: linear-gradient(90deg, var(--ceramic-shadow), var(--ceramic-white));
+			border-radius: 0 50px 50px 0;
+			transform: rotate(-20deg);
+		}
+
+		.teapot-spout::after {
+			content: '';
+			position: absolute;
+			right: -5px;
+			top: 5px;
+			width: 15px;
+			height: 20px;
+			background: var(--ceramic-white);
+			border-radius: 50%;
+		}
+
+		.teapot-handle {
+			position: absolute;
+			left: -35px;
+			top: 15px;
+			width: 40px;
+			height: 70px;
+			border: 12px solid var(--ceramic-shadow);
+			border-right: none;
+			border-radius: 50px 0 0 50px;
+		}
+
+		.teapot-face {
+			position: absolute;
+			top: 35px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 80px;
+			height: 50px;
+		}
+
+		.teapot-eye {
+			position: absolute;
+			width: 12px;
+			height: 16px;
+			background: var(--tea-brown);
+			border-radius: 50%;
+			top: 0;
+			animation: blink 4s infinite;
+		}
+
+		.teapot-eye.left { left: 15px; }
+		.teapot-eye.right { right: 15px; }
+
+		.teapot-eye::after {
+			content: '';
+			position: absolute;
+			width: 4px;
+			height: 4px;
+			background: white;
+			border-radius: 50%;
+			top: 3px;
+			left: 2px;
+		}
+
+		@keyframes blink {
+			0%, 45%, 55%, 100% { transform: scaleY(1); }
+			50% { transform: scaleY(0.1); }
+		}
+
+		.teapot-blush {
+			position: absolute;
+			width: 18px;
+			height: 10px;
+			background: var(--accent-coral);
+			border-radius: 50%;
+			top: 25px;
+			opacity: 0.6;
+		}
+
+		.teapot-blush.left { left: 5px; }
+		.teapot-blush.right { right: 5px; }
+
+		.teapot-mouth {
+			position: absolute;
+			bottom: 5px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 20px;
+			height: 10px;
+			border: 3px solid var(--tea-brown);
+			border-top: none;
+			border-radius: 0 0 20px 20px;
+		}
+
+		.steam {
+			position: absolute;
+			top: -80px;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.steam-particle {
+			position: absolute;
+			width: 20px;
+			height: 30px;
+			background: var(--steam-gray);
+			border-radius: 50%;
+			filter: blur(8px);
+			animation: steam-rise 2s ease-out infinite;
+			opacity: 0;
+		}
+
+		.steam-particle:nth-child(1) { left: -15px; animation-delay: 0s; }
+		.steam-particle:nth-child(2) { left: 0; animation-delay: 0.5s; }
+		.steam-particle:nth-child(3) { left: 15px; animation-delay: 1s; }
+
+		@keyframes steam-rise {
+			0% { transform: translateY(0) scale(0.5); opacity: 0; }
+			20% { opacity: 0.8; }
+			100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
+		}
+
+		.saucer {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 180px;
+			height: 20px;
+			background: linear-gradient(180deg, var(--ceramic-white), var(--ceramic-shadow));
+			border-radius: 50%;
+			box-shadow: 0 5px 20px rgba(139, 90, 43, 0.15);
+		}
+
+		.error-code {
+			font-size: clamp(4rem, 12vw, 8rem);
+			font-weight: 700;
+			color: var(--tea-brown);
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			text-shadow: 3px 3px 0 var(--tea-light);
+		}
+
+		.error-title {
+			font-family: 'Patrick Hand', cursive;
+			font-size: 2.5rem;
+			color: var(--tea-brown);
+			margin-bottom: 2rem;
+			position: relative;
+		}
+
+		.error-title::after {
+			content: '☕';
+			margin-left: 0.5rem;
+		}
+
+		.message-card {
+			background: white;
+			border-radius: 30px;
+			padding: 2.5rem;
+			max-width: 480px;
+			margin: 0 auto;
+			box-shadow: 
+				0 20px 60px rgba(139, 90, 43, 0.1),
+				0 1px 3px rgba(139, 90, 43, 0.05);
+			border: 3px dashed var(--tea-light);
+		}
+
+		.message-header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			margin-bottom: 1.5rem;
+			font-size: 0.9rem;
+			color: var(--accent-mint);
+			font-weight: 600;
+		}
+
+		.error-message {
+			color: #6b5b4f;
+			font-size: 1.1rem;
+			line-height: 1.8;
+			margin-bottom: 1.5rem;
+		}
+
+		.fun-fact {
+			background: linear-gradient(135deg, #fef3e2, #fde8d0);
+			border-radius: 15px;
+			padding: 1.2rem;
+			margin-bottom: 2rem;
+			font-size: 0.9rem;
+			color: var(--tea-brown);
+			border-left: 4px solid var(--accent-coral);
+			text-align: left;
+		}
+
+		.fun-fact-title {
+			font-weight: 700;
+			margin-bottom: 0.3rem;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.btn-home {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.8rem;
+			background: linear-gradient(135deg, var(--tea-brown), #a0673a);
+			color: white;
+			padding: 1rem 2.5rem;
+			font-family: 'Fredoka', sans-serif;
+			font-size: 1rem;
+			font-weight: 600;
+			text-decoration: none;
+			border-radius: 50px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			box-shadow: 0 8px 25px rgba(139, 90, 43, 0.3);
+		}
+
+		.btn-home:hover {
+			transform: translateY(-3px) scale(1.02);
+			box-shadow: 0 12px 35px rgba(139, 90, 43, 0.4);
+		}
+
+		.btn-home:active {
+			transform: translateY(0);
+		}
+
+		.floating-leaves {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 5;
+			overflow: hidden;
+		}
+
+		.leaf {
+			position: absolute;
+			font-size: 1.5rem;
+			animation: fall 10s linear infinite;
+			opacity: 0.6;
+		}
+
+		@keyframes fall {
+			0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+			10% { opacity: 0.6; }
+			90% { opacity: 0.6; }
+			100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+		}
+	</style>
+</head>
+<body>
+	<div class="pattern-bg"></div>
+	
+	<div class="floating-leaves">
+		<div class="leaf" style="left: 10%; animation-delay: 0s;">🍃</div>
+		<div class="leaf" style="left: 30%; animation-delay: 2s;">🌿</div>
+		<div class="leaf" style="left: 50%; animation-delay: 4s;">🍃</div>
+		<div class="leaf" style="left: 70%; animation-delay: 6s;">🌿</div>
+		<div class="leaf" style="left: 90%; animation-delay: 8s;">🍃</div>
+	</div>
+
+	<div class="container">
+		<div class="teapot-scene">
+			<div class="teapot">
+				<div class="steam">
+					<div class="steam-particle"></div>
+					<div class="steam-particle"></div>
+					<div class="steam-particle"></div>
+				</div>
+				<div class="teapot-knob"></div>
+				<div class="teapot-lid"></div>
+				<div class="teapot-body">
+					<div class="teapot-face">
+						<div class="teapot-eye left"></div>
+						<div class="teapot-eye right"></div>
+						<div class="teapot-blush left"></div>
+						<div class="teapot-blush right"></div>
+						<div class="teapot-mouth"></div>
+					</div>
+				</div>
+				<div class="teapot-spout"></div>
+				<div class="teapot-handle"></div>
+			</div>
+			<div class="saucer"></div>
+		</div>
+
+		<div class="error-code">418</div>
+		<div class="error-title">I'm a Teapot</div>
+
+		<div class="message-card">
+			<div class="message-header">
+				<span>🫖</span>
+				<span>Brewing Status</span>
+			</div>
+
+			<p class="error-message">
+				This server is a teapot, and it refuses to brew coffee.
+				The resulting entity body may be short and stout.
+			</p>
+
+			<div class="fun-fact">
+				<div class="fun-fact-title">
+					<span>💡</span>
+					<span>Fun Fact</span>
+				</div>
+				<p>
+					HTTP 418 was defined in 1998 as an April Fools' joke in RFC 2324,
+					the Hyper Text Coffee Pot Control Protocol. It has since become
+					a beloved Easter egg!
+				</p>
+			</div>
+
+			<a href="/" class="btn-home">
+				<span>←<span> Back to Home</span>
+			</a>
+		</div>
+	</div>
+</body>
+</html>

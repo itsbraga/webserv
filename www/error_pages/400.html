@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>400 - Bad Request</title>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #0a0a0f;
+			--terminal-green: #00ff88;
+			--error-red: #ff3366;
+			--warning-yellow: #ffcc00;
+			--text-dim: #4a4a5a;
+			--glass-bg: rgba(255, 255, 255, 0.03);
+		}
+
+		body {
+			min-height: 100vh;
+			background: var(--bg-dark);
+			font-family: 'JetBrains Mono', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.noise {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+			opacity: 0.03;
+			pointer-events: none;
+			z-index: 1;
+		}
+
+		.grid-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: 
+				linear-gradient(rgba(255,51,102,0.03) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,51,102,0.03) 1px, transparent 1px);
+			background-size: 50px 50px;
+			animation: gridMove 20s linear infinite;
+			z-index: 0;
+		}
+
+		@keyframes gridMove {
+			0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+			100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: 2rem;
+		}
+
+		.error-code {
+			font-family: 'Space Grotesk', sans-serif;
+			font-size: clamp(8rem, 20vw, 16rem);
+			font-weight: 700;
+			color: transparent;
+			background: linear-gradient(135deg, var(--error-red), var(--warning-yellow));
+			-webkit-background-clip: text;
+			background-clip: text;
+			line-height: 1;
+			position: relative;
+			animation: glitch 3s infinite;
+		}
+
+		.error-code::before,
+		.error-code::after {
+			content: '400';
+			position: absolute;
+			left: 0;
+			right: 0;
+			background: linear-gradient(135deg, var(--error-red), var(--warning-yellow));
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
+
+		.error-code::before {
+			animation: glitch-1 0.3s infinite;
+			clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+		}
+
+		.error-code::after {
+			animation: glitch-2 0.3s infinite;
+			clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+		}
+
+		@keyframes glitch-1 {
+			0%, 100% { transform: translate(0); }
+			20% { transform: translate(-3px, 3px); }
+			40% { transform: translate(3px, -3px); }
+			60% { transform: translate(-3px, -3px); }
+			80% { transform: translate(3px, 3px); }
+		}
+
+		@keyframes glitch-2 {
+			0%, 100% { transform: translate(0); }
+			20% { transform: translate(3px, -3px); }
+			40% { transform: translate(-3px, 3px); }
+			60% { transform: translate(3px, 3px); }
+			80% { transform: translate(-3px, -3px); }
+		}
+
+		.terminal-box {
+			background: var(--glass-bg);
+			border: 1px solid rgba(255, 51, 102, 0.2);
+			border-radius: 12px;
+			padding: 2rem;
+			margin-top: 2rem;
+			max-width: 600px;
+			margin-left: auto;
+			margin-right: auto;
+			backdrop-filter: blur(10px);
+		}
+
+		.terminal-header {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 1.5rem;
+			padding-bottom: 1rem;
+			border-bottom: 1px solid rgba(255, 51, 102, 0.1);
+		}
+
+		.terminal-dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+		}
+
+		.dot-red { background: var(--error-red); }
+		.dot-yellow { background: var(--warning-yellow); }
+		.dot-green { background: var(--terminal-green); }
+
+		.error-title {
+			color: var(--error-red);
+			font-size: 1.5rem;
+			font-weight: 700;
+			margin-bottom: 1rem;
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+		}
+
+		.error-message {
+			color: #888;
+			font-size: 0.95rem;
+			line-height: 1.8;
+			margin-bottom: 1.5rem;
+		}
+
+		.code-block {
+			background: rgba(0, 0, 0, 0.4);
+			border-radius: 8px;
+			padding: 1rem;
+			text-align: left;
+			font-size: 0.85rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.code-line {
+			display: flex;
+			gap: 1rem;
+			margin: 0.3rem 0;
+		}
+
+		.line-number {
+			color: var(--text-dim);
+			user-select: none;
+		}
+
+		.code-content {
+			color: var(--error-red);
+		}
+
+		.code-content .keyword { color: var(--warning-yellow); }
+		.code-content .string { color: var(--terminal-green); }
+
+		.btn-home {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			background: transparent;
+			border: 1px solid var(--error-red);
+			color: var(--error-red);
+			padding: 0.8rem 2rem;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.9rem;
+			text-decoration: none;
+			border-radius: 6px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+		}
+
+		.btn-home:hover {
+			background: var(--error-red);
+			color: var(--bg-dark);
+			box-shadow: 0 0 30px rgba(255, 51, 102, 0.4);
+		}
+
+		.particles {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 5;
+		}
+
+		.particle {
+			position: absolute;
+			width: 4px;
+			height: 4px;
+			background: var(--error-red);
+			border-radius: 50%;
+			opacity: 0;
+			animation: float 8s infinite;
+		}
+
+		@keyframes float {
+			0% { opacity: 0; transform: translateY(100vh) scale(0); }
+			10% { opacity: 0.6; }
+			90% { opacity: 0.6; }
+			100% { opacity: 0; transform: translateY(-100vh) scale(1); }
+		}
+
+		.scanline {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			background: linear-gradient(90deg, transparent, var(--error-red), transparent);
+			opacity: 0.1;
+			animation: scan 4s linear infinite;
+			z-index: 100;
+			pointer-events: none;
+		}
+
+		@keyframes scan {
+			0% { top: -4px; }
+			100% { top: 100%; }
+		}
+	</style>
+</head>
+<body>
+	<div class="noise"></div>
+	<div class="grid-bg"></div>
+	<div class="scanline"></div>
+	
+	<div class="particles">
+		<div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+		<div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+		<div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+		<div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+		<div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+		<div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+		<div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+		<div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+		<div class="particle" style="left: 90%; animation-delay: 0.5s;"></div>
+	</div>
+
+	<div class="container">
+		<div class="error-code">400</div>
+		
+		<div class="terminal-box">
+			<div class="terminal-header">
+				<div class="terminal-dot dot-red"></div>
+				<div class="terminal-dot dot-yellow"></div>
+				<div class="terminal-dot dot-green"></div>
+			</div>
+			
+			<div class="error-title">Bad Request</div>
+			
+			<p class="error-message">
+				The server could not understand your request due to malformed syntax.
+				Please check your request and try again.
+			</p>
+
+			<div class="code-block">
+				<div class="code-line">
+					<span class="line-number">1</span>
+					<span class="code-content"><span class="keyword">ERROR</span>: Invalid request format</span>
+				</div>
+				<div class="code-line">
+					<span class="line-number">2</span>
+					<span class="code-content"><span class="keyword">STATUS</span>: <span class="string">400 Bad Request</span></span>
+				</div>
+				<div class="code-line">
+					<span class="line-number">3</span>
+					<span class="code-content"><span class="keyword">ACTION</span>: Verify request syntax</span>
+				</div>
+			</div>
+			
+			<a href="/" class="btn-home">
+				<span>←</span> Back to Home
+			</a>
+		</div>
+	</div>
+</body>
+</html>

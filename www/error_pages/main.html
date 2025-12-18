@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pages d'erreur HTTP</title>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Inter', sans-serif;
+			min-height: 100vh;
+			background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+			color: #e2e8f0;
+			padding: 2rem;
+		}
+
+		.container {
+			max-width: 900px;
+			margin: 0 auto;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 3rem;
+			padding: 2rem;
+		}
+
+		h1 {
+			font-size: 2.5rem;
+			font-weight: 700;
+			margin-bottom: 0.5rem;
+			background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
+
+		.subtitle {
+			color: #64748b;
+			font-size: 1.1rem;
+		}
+
+		.error-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 1.5rem;
+		}
+
+		.error-card {
+			background: rgba(255, 255, 255, 0.03);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 16px;
+			padding: 1.5rem;
+			text-decoration: none;
+			color: inherit;
+			transition: all 0.3s ease;
+			display: block;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.error-card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 3px;
+			background: var(--card-accent);
+			transform: scaleX(0);
+			transition: transform 0.3s ease;
+		}
+
+		.error-card:hover {
+			transform: translateY(-4px);
+			background: rgba(255, 255, 255, 0.06);
+			border-color: var(--card-accent);
+			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+		}
+
+		.error-card:hover::before {
+			transform: scaleX(1);
+		}
+
+		.error-card.error-400 { --card-accent: #ff3366; }
+		.error-card.error-403 { --card-accent: #8b5cf6; }
+		.error-card.error-404 { --card-accent: #22d3ee; }
+		.error-card.error-418 { --card-accent: #d4a574; }
+		.error-card.error-500 { --card-accent: #ef4444; }
+		.error-card.error-503 { --card-accent: #f59e0b; }
+
+		.card-header {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			margin-bottom: 1rem;
+		}
+
+		.error-code {
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 2rem;
+			font-weight: 600;
+			color: var(--card-accent);
+		}
+
+		.error-name {
+			font-size: 1.1rem;
+			font-weight: 600;
+			color: #f1f5f9;
+		}
+
+		.error-description {
+			color: #64748b;
+			font-size: 0.9rem;
+			line-height: 1.6;
+		}
+
+		.card-footer {
+			margin-top: 1.5rem;
+			padding-top: 1rem;
+			border-top: 1px solid rgba(255, 255, 255, 0.05);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.file-name {
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.8rem;
+			color: #475569;
+			background: rgba(0, 0, 0, 0.3);
+			padding: 0.3rem 0.6rem;
+			border-radius: 4px;
+		}
+
+		.view-btn {
+			font-size: 0.85rem;
+			color: var(--card-accent);
+			display: flex;
+			align-items: center;
+			gap: 0.3rem;
+		}
+
+		.view-btn span {
+			transition: transform 0.2s ease;
+		}
+
+		.error-card:hover .view-btn span {
+			transform: translateX(4px);
+		}
+
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: #64748b;
+			text-decoration: none;
+			font-size: 0.9rem;
+			margin-bottom: 2rem;
+			padding: 0.5rem 1rem;
+			border-radius: 8px;
+			transition: all 0.2s ease;
+		}
+
+		.back-link:hover {
+			color: #e2e8f0;
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		footer {
+			text-align: center;
+			margin-top: 3rem;
+			padding-top: 2rem;
+			border-top: 1px solid rgba(255, 255, 255, 0.05);
+			color: #475569;
+			font-size: 0.85rem;
+		}
+
+		.tag {
+			display: inline-block;
+			font-size: 0.7rem;
+			padding: 0.2rem 0.5rem;
+			border-radius: 4px;
+			background: rgba(255, 255, 255, 0.05);
+			color: #94a3b8;
+			margin-left: 0.5rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		.tag.client { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+		.tag.server { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+		.tag.fun { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<a href="/" class="back-link">← Retour à l'accueil</a>
+
+		<header>
+			<h1>Pages d'erreur HTTP</h1>
+			<p class="subtitle">Miaou</p>
+		</header>
+
+		<div class="error-grid">
+			<a href="400.html" class="error-card error-400">
+				<div class="card-header">
+					<span class="error-code">400</span>
+					<div>
+						<div class="error-name">Bad Request <span class="tag client">Client</span></div>
+					</div>
+				</div>
+				<p class="error-description">
+					Le serveur n'a pas pu comprendre la requête en raison d'une syntaxe invalide.
+				</p>
+				<div class="card-footer">
+					<span class="file-name">400.html</span>
+					<span class="view-btn">Voir <span>→</span></span>
+				</div>
+			</a>
+
+			<a href="403.html" class="error-card error-403">
+				<div class="card-header">
+					<span class="error-code">403</span>
+					<div>
+						<div class="error-name">Forbidden <span class="tag client">Client</span></div>
+					</div>
+				</div>
+				<p class="error-description">
+					L'accès à cette ressource est interdit. Vous n'avez pas les permissions nécessaires.
+				</p>
+				<div class="card-footer">
+					<span class="file-name">403.html</span>
+					<span class="view-btn">Voir <span>→</span></span>
+				</div>
+			</a>
+
+			<a href="404.html" class="error-card error-404">
+				<div class="card-header">
+					<span class="error-code">404</span>
+					<div>
+						<div class="error-name">Not Found <span class="tag client">Client</span></div>
+					</div>
+				</div>
+				<p class="error-description">
+					La page demandée n'existe pas ou a été déplacée vers une autre adresse.
+				</p>
+				<div class="card-footer">
+					<span class="file-name">404.html</span>
+					<span class="view-btn">Voir <span>→</span></span>
+				</div>
+			</a>
+
+			<a href="418.html" class="error-card error-418">
+				<div class="card-header">
+					<span class="error-code">418</span>
+					<div>
+						<div class="error-name">I'm a Teapot <span class="tag fun">Easter Egg</span></div>
+					</div>
+				</div>
+				<p class="error-description">
+					Le serveur refuse de préparer du café car c'est une théière. (RFC 2324)
+				</p>
+				<div class="card-footer">
+					<span class="file-name">418.html</span>
+					<span class="view-btn">Voir <span>→</span></span>
+				</div>
+			</a>
+
+			<a href="500.html" class="error-card error-500">
+				<div class="card-header">
+					<span class="error-code">500</span>
+					<div>
+						<div class="error-name">Internal Server Error <span class="tag server">Serveur</span></div>
+					</div>
+				</div>
+				<p class="error-description">
+					Une erreur interne s'est produite sur le serveur. Veuillez réessayer plus tard.
+				</p>
+				<div class="card-footer">
+					<span class="file-name">500.html</span>
+					<span class="view-btn">Voir <span>→</span></span>
+				</div>
+			</a>
+
+			<a href="503.html" class="error-card error-503">
+				<div class="card-header">
+					<span class="error-code">503</span>
+					<div>
+						<div class="error-name">Service Unavailable <span class="tag server">Serveur</span></div>
+					</div>
+				</div>
+				<p class="error-description">
+					Le service est temporairement indisponible pour cause de maintenance.
+				</p>
+				<div class="card-footer">
+					<span class="file-name">503.html</span>
+					<span class="view-btn">Voir <span>→</span></span>
+				</div>
+			</a>
+		</div>
+
+		<footer>
+			<p>By @k0xdama & @itsbraga</p>
+		</footer>
+	</div>
+</body>
+</html>
