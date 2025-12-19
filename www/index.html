@@ -3,38 +3,306 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Page de test</title>
+	<title>WEBSERV • 42</title>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--black: #0a0a0a;
+			--dark: #111;
+			--gray: #1a1a1a;
+			--muted: #555;
+			--light: #999;
+			--white: #e5e5e5;
+			--red: #8b0000;
+			--red-light: #a31515;
+		}
+
 		body {
-			font-family: Arial, sans-serif;
+			font-family: 'IBM Plex Mono', monospace;
+			background: var(--black);
+			color: var(--white);
+			min-height: 100vh;
+			line-height: 1.6;
+		}
+
+		.container {
 			max-width: 800px;
-			margin: 50px auto;
-			padding: 20px;
-			background-color: #f5f5f5;
+			margin: 0 auto;
+			padding: 4rem 2rem;
 		}
+
+		header {
+			text-align: center;
+			margin-bottom: 4rem;
+			padding-bottom: 3rem;
+			border-bottom: 1px solid var(--gray);
+		}
+
+		.logo {
+			font-family: 'Playfair Display', serif;
+			font-size: 6rem;
+			font-weight: 700;
+			color: var(--red);
+			line-height: 1;
+			margin-bottom: 1rem;
+		}
+
 		h1 {
-			color: #333;
+			font-size: 1.5rem;
+			font-weight: 600;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			margin-bottom: 1.5rem;
 		}
-		.info {
-			background-color: white;
-			padding: 20px;
-			border-radius: 8px;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+		.tagline {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		.status {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-top: 2rem;
+			font-size: 0.8rem;
+			color: var(--light);
+		}
+
+		.status-dot {
+			width: 8px;
+			height: 8px;
+			background: #22c55e;
+			border-radius: 50%;
+			animation: pulse 2s infinite;
+		}
+
+		@keyframes pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.5; }
+		}
+
+		.message {
+			background: var(--dark);
+			border-left: 2px solid var(--red);
+			padding: 1.5rem 2rem;
+			margin-bottom: 3rem;
+		}
+
+		.message p {
+			color: var(--light);
+			font-size: 0.95rem;
+		}
+
+		.message strong {
+			color: var(--white);
+		}
+
+		nav {
+			margin-bottom: 3rem;
+		}
+
+		.nav-list {
+			list-style: none;
+		}
+
+		.nav-item {
+			border-bottom: 1px solid var(--gray);
+		}
+
+		.nav-item:first-child {
+			border-top: 1px solid var(--gray);
+		}
+
+		.nav-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 1.2rem 0;
+			color: var(--white);
+			text-decoration: none;
+			transition: color 0.2s, padding-left 0.2s;
+		}
+
+		.nav-link:hover {
+			color: var(--red-light);
+			padding-left: 1rem;
+		}
+
+		.nav-link-left {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+
+		.nav-number {
+			color: var(--muted);
+			font-size: 0.8rem;
+			width: 2rem;
+		}
+
+		.nav-title {
+			font-weight: 600;
+		}
+
+		.nav-arrow {
+			color: var(--muted);
+			transition: transform 0.2s;
+		}
+
+		.nav-link:hover .nav-arrow {
+			transform: translateX(5px);
+			color: var(--red);
+		}
+
+		.section {
+			margin-bottom: 3rem;
+		}
+
+		.section-title {
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+			color: var(--muted);
+			margin-bottom: 1rem;
+		}
+
+		.methods {
+			display: flex;
+			gap: 1rem;
+			flex-wrap: wrap;
+		}
+
+		.method {
+			padding: 0.5rem 1rem;
+			background: var(--dark);
+			border: 1px solid var(--gray);
+			font-size: 0.8rem;
+		}
+
+		.method-get { border-color: #22c55e; color: #22c55e; }
+		.method-post { border-color: #3b82f6; color: #3b82f6; }
+		.method-delete { border-color: var(--red); color: var(--red-light); }
+
+				.method-head { border-color: #a855f7; color: #a855f7; }
+
+		.quote {
+			text-align: center;
+			padding: 2rem 0;
+			border-top: 1px solid var(--gray);
+			margin-top: 3rem;
+		}
+
+		.quote p {
+			font-style: italic;
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		footer {
+			text-align: center;
+			padding-top: 2rem;
+			border-top: 1px solid var(--gray);
+			margin-top: 2rem;
+		}
+
+		.footer-text {
+			font-size: 0.75rem;
+			color: var(--muted);
+		}
+
+		.skull {
+			font-size: 1.5rem;
+			margin-bottom: 0.5rem;
+			opacity: 0.3;
 		}
 	</style>
 </head>
 <body>
-	<h1>Serveur Web - Page temporaire</h1>
-	<div class="info">
-		<h2>Bienvenue</h2>
-		<p>Si tu vois cette page, ton serveur web fonctionne correctement !</p>
-		<p>Tu peux maintenant tester :</p>
-		<ul>
-			<li><a href="/index.html">Cette page (index.html)</a></li>
-			<li><a href="/test.html">Page de test</a></li>
-			<li><a href="/error_pages/">Pages d'erreur HTTP</a></li>
-			<li><a href="/form.html">Formulaire</a></li>
-		</ul>
+	<div class="container">
+		<header>
+			<div class="logo">42</div>
+			<h1>Webserv</h1>
+			<p class="tagline">Tu ne peux pas échapper au BlackHole.</p>
+			<div class="status">
+				<span class="status-dot"></span>
+				<span>Serveur en ligne</span>
+			</div>
+		</header>
+
+		<div class="message">
+			<p>
+				Si tu vois cette page, ton serveur HTTP fonctionne.<br>
+				Profite bien... <strong>le BlackHole arrive</strong>.
+			</p>
+		</div>
+
+		<nav>
+			<ul class="nav-list">
+				<li class="nav-item">
+					<a href="/index.html" class="nav-link">
+						<span class="nav-link-left">
+							<span class="nav-number">01</span>
+							<span class="nav-title">Accueil</span>
+						</span>
+						<span class="nav-arrow">→</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="/error_pages/" class="nav-link">
+						<span class="nav-link-left">
+							<span class="nav-number">02</span>
+							<span class="nav-title">Pages d'erreur</span>
+						</span>
+						<span class="nav-arrow">→</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="/upload.html" class="nav-link">
+						<span class="nav-link-left">
+							<span class="nav-number">03</span>
+							<span class="nav-title">Upload</span>
+						</span>
+						<span class="nav-arrow">→</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="/test.html" class="nav-link">
+						<span class="nav-link-left">
+							<span class="nav-number">04</span>
+							<span class="nav-title">Tests</span>
+						</span>
+						<span class="nav-arrow">→</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<div class="section">
+			<h2 class="section-title">Méthodes HTTP implémentées</h2>
+			<div class="methods">
+				<span class="method method-get">GET</span>
+				<span class="method method-post">POST</span>
+				<span class="method method-delete">DELETE</span>
+				<span class="method method-head">HEAD</span>
+			</div>
+		</div>
+
+		<div class="quote">
+			<p>“On dit qu'on ne peut pas prévoir l'heure de notre mort mais on sait qu'elle peut survenir à tout moment.”</p>
+			<p>-Destination finale</p>
+		</div>
+
+		<footer>
+			<div class="skull">💀</div>
+			<p class="footer-text">WEBSERV © k0xdama & itsbraga</p>
+		</footer>
 	</div>
 </body>
 </html>

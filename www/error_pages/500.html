@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>500 - Internal Server Error</title>
+	<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-black: #000000;
+			--danger-red: #ef4444;
+			--warning-orange: #f97316;
+			--electric-blue: #3b82f6;
+			--text-white: #ffffff;
+			--text-dim: #374151;
+		}
+
+		body {
+			min-height: 100vh;
+			background: var(--bg-black);
+			font-family: 'Share Tech Mono', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.crt-effect {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 100;
+		}
+
+		.crt-effect::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: repeating-linear-gradient(
+				0deg,
+				rgba(0, 0, 0, 0.15),
+				rgba(0, 0, 0, 0.15) 1px,
+				transparent 1px,
+				transparent 2px
+			);
+		}
+
+		.crt-effect::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+		}
+
+		.glitch-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(
+				90deg,
+				transparent 0%,
+				rgba(239, 68, 68, 0.03) 50%,
+				transparent 100%
+			);
+			animation: glitch-bg 0.5s infinite;
+			pointer-events: none;
+			z-index: 50;
+		}
+
+		@keyframes glitch-bg {
+			0%, 100% { transform: translateX(0); }
+			10% { transform: translateX(-2px); }
+			20% { transform: translateX(2px); }
+			30% { transform: translateX(-1px); }
+			40% { transform: translateX(1px); }
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: 2rem;
+		}
+
+		.warning-icon {
+			width: 120px;
+			height: 120px;
+			margin: 0 auto 2rem;
+			position: relative;
+		}
+
+		.warning-triangle {
+			width: 0;
+			height: 0;
+			border-left: 60px solid transparent;
+			border-right: 60px solid transparent;
+			border-bottom: 104px solid var(--danger-red);
+			position: relative;
+			animation: pulse-warning 1.5s ease-in-out infinite;
+		}
+
+		.warning-triangle::before {
+			content: '';
+			position: absolute;
+			top: 30px;
+			left: -10px;
+			width: 0;
+			height: 0;
+			border-left: 50px solid transparent;
+			border-right: 50px solid transparent;
+			border-bottom: 86px solid var(--bg-black);
+		}
+
+		.warning-triangle::after {
+			content: '!';
+			position: absolute;
+			top: 45px;
+			left: 50%;
+			transform: translateX(-50%);
+			font-family: 'Rajdhani', sans-serif;
+			font-size: 3rem;
+			font-weight: 700;
+			color: var(--danger-red);
+		}
+
+		@keyframes pulse-warning {
+			0%, 100% { filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.5)); }
+			50% { filter: drop-shadow(0 0 40px rgba(239, 68, 68, 0.8)); }
+		}
+
+		.error-code {
+			font-family: 'Rajdhani', sans-serif;
+			font-size: clamp(6rem, 18vw, 12rem);
+			font-weight: 700;
+			color: var(--danger-red);
+			line-height: 1;
+			position: relative;
+			animation: text-glitch 3s infinite;
+		}
+
+		.error-code::before,
+		.error-code::after {
+			content: '500';
+			position: absolute;
+			left: 0;
+			right: 0;
+		}
+
+		.error-code::before {
+			color: var(--electric-blue);
+			animation: glitch-1 0.3s infinite;
+			clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+			opacity: 0.8;
+		}
+
+		.error-code::after {
+			color: var(--warning-orange);
+			animation: glitch-2 0.3s infinite;
+			clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+			opacity: 0.8;
+		}
+
+		@keyframes glitch-1 {
+			0%, 100% { transform: translate(0); }
+			20% { transform: translate(-3px, 2px); }
+			40% { transform: translate(3px, -2px); }
+			60% { transform: translate(-2px, -1px); }
+			80% { transform: translate(2px, 1px); }
+		}
+
+		@keyframes glitch-2 {
+			0%, 100% { transform: translate(0); }
+			20% { transform: translate(3px, -2px); }
+			40% { transform: translate(-3px, 2px); }
+			60% { transform: translate(2px, 1px); }
+			80% { transform: translate(-2px, -1px); }
+		}
+
+		.error-title {
+			font-family: 'Rajdhani', sans-serif;
+			font-size: 1.8rem;
+			font-weight: 700;
+			color: var(--danger-red);
+			text-transform: uppercase;
+			letter-spacing: 0.3em;
+			margin-bottom: 2rem;
+			animation: flicker 2s infinite;
+		}
+
+		@keyframes flicker {
+			0%, 100% { opacity: 1; }
+			92% { opacity: 1; }
+			93% { opacity: 0.3; }
+			94% { opacity: 1; }
+			96% { opacity: 0.5; }
+			97% { opacity: 1; }
+		}
+
+		.terminal-window {
+			background: rgba(20, 20, 20, 0.9);
+			border: 1px solid var(--danger-red);
+			border-radius: 8px;
+			padding: 0;
+			max-width: 600px;
+			margin: 0 auto;
+			overflow: hidden;
+			box-shadow: 
+				0 0 30px rgba(239, 68, 68, 0.2),
+				inset 0 0 30px rgba(0, 0, 0, 0.5);
+		}
+
+		.terminal-header {
+			background: linear-gradient(90deg, var(--danger-red), var(--warning-orange));
+			padding: 0.8rem 1rem;
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+
+		.terminal-buttons {
+			display: flex;
+			gap: 6px;
+		}
+
+		.terminal-btn {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			background: rgba(0, 0, 0, 0.3);
+		}
+
+		.terminal-title {
+			color: var(--bg-black);
+			font-size: 0.85rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		.terminal-body {
+			padding: 1.5rem;
+			text-align: center;
+		}
+
+		.error-text {
+			color: var(--text-white);
+			font-size: 1.1rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.error-subtext {
+			color: #6b7280;
+			font-size: 0.85rem;
+			margin-bottom: 1.5rem;
+			line-height: 1.5;
+		}
+
+		.glitch-box {
+			background: rgba(0, 0, 0, 0.5);
+			padding: 1rem 2rem;
+			display: inline-block;
+			border-left: 3px solid var(--danger-red);
+		}
+
+		.glitch-text {
+			font-size: 1.2rem;
+			font-weight: 700;
+			color: var(--danger-red);
+			position: relative;
+			display: inline-block;
+			animation: glitch-text 2.5s infinite;
+		}
+
+		.glitch-text::before,
+		.glitch-text::after {
+			content: attr(data-text);
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.glitch-text::before {
+			color: var(--electric-blue);
+			animation: glitch-1 0.3s infinite;
+			clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+		}
+
+		.glitch-text::after {
+			color: var(--warning-orange);
+			animation: glitch-2 0.3s infinite;
+			clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+		}
+
+		@keyframes glitch-text {
+			0%, 100% { transform: translate(0); }
+			2% { transform: translate(2px, 0); }
+			4% { transform: translate(-2px, 0); }
+			6% { transform: translate(0); }
+		}
+
+		.log-line {
+			margin-bottom: 0.8rem;
+			font-size: 0.85rem;
+			display: flex;
+			gap: 0.5rem;
+		}
+
+		.log-time {
+			color: var(--text-dim);
+		}
+
+		.log-level {
+			padding: 0.1rem 0.4rem;
+			border-radius: 3px;
+			font-size: 0.75rem;
+			font-weight: 700;
+		}
+
+		.log-error { background: var(--danger-red); color: white; }
+		.log-warn { background: var(--warning-orange); color: white; }
+		.log-fatal { background: #7f1d1d; color: white; }
+
+		.log-message {
+			color: #9ca3af;
+		}
+
+		.log-message .highlight {
+			color: var(--danger-red);
+		}
+
+		.stack-trace {
+			background: rgba(0, 0, 0, 0.4);
+			border-radius: 4px;
+			padding: 1rem;
+			margin-top: 1rem;
+			font-size: 0.75rem;
+			color: #6b7280;
+			border-left: 3px solid var(--danger-red);
+		}
+
+		.stack-line {
+			margin: 0.3rem 0;
+		}
+
+		.stack-line .file {
+			color: var(--electric-blue);
+		}
+
+		.stack-line .line-num {
+			color: var(--warning-orange);
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			margin-top: 1.5rem;
+			padding: 0 1.5rem 1.5rem;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.8rem 1.5rem;
+			font-family: 'Share Tech Mono', monospace;
+			font-size: 0.85rem;
+			text-decoration: none;
+			border-radius: 4px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		.btn-home {
+			background: var(--danger-red);
+			color: white;
+		}
+
+		.btn-home:hover {
+			background: #dc2626;
+			box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+		}
+
+		.btn-back {
+			background: rgba(239, 68, 68, 0.05);
+			border: 1px solid rgba(239, 68, 68, 0.4);
+			color: #fca5a5;
+
+			position: relative;
+			overflow: hidden;
+		}
+
+		.btn-back::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(
+				90deg,
+				transparent,
+				rgba(239, 68, 68, 0.25),
+				transparent
+			);
+			transition: left 0.4s ease;
+		}
+
+		.btn-back:hover::before {
+			left: 100%;
+		}
+
+		.btn-back:hover {
+			color: var(--danger-red);
+			border-color: var(--danger-red);
+			box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
+			transform: translateY(-2px);
+		}
+
+		.binary-rain {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 5;
+			overflow: hidden;
+		}
+
+		.binary-column {
+			position: absolute;
+			top: -100%;
+			font-size: 14px;
+			color: var(--danger-red);
+			opacity: 0.1;
+			animation: rain 8s linear infinite;
+			font-family: 'Share Tech Mono', monospace;
+			writing-mode: vertical-rl;
+			text-orientation: upright;
+		}
+
+		@keyframes rain {
+			0% { top: -100%; opacity: 0; }
+			10% { opacity: 0.1; }
+			90% { opacity: 0.1; }
+			100% { top: 100%; opacity: 0; }
+		}
+	</style>
+</head>
+<body>
+	<div class="crt-effect"></div>
+	<div class="glitch-overlay"></div>
+	
+	<div class="binary-rain">
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const rain = document.querySelector('.binary-rain');
+				for (let i = 0; i < 20; i++) {
+					const col = document.createElement('div');
+					col.className = 'binary-column';
+					col.style.left = `${i * 5}%`;
+					col.style.animationDelay = `${Math.random() * 8}s`;
+					col.style.animationDuration = `${6 + Math.random() * 4}s`;
+					col.textContent = Array(30).fill(0).map(() => Math.round(Math.random())).join('');
+					rain.appendChild(col);
+				}
+			});
+		</script>
+	</div>
+
+	<div class="container">
+		<div class="warning-icon">
+			<div class="warning-triangle"></div>
+		</div>
+
+		<div class="error-code">500</div>
+		<div class="error-title">Internal Server Error</div>
+
+		<div class="terminal-window">
+			<div class="terminal-header">
+				<div class="terminal-buttons">
+					<div class="terminal-btn"></div>
+					<div class="terminal-btn"></div>
+					<div class="terminal-btn"></div>
+				</div>
+				<div class="terminal-title">Error</div>
+			</div>
+			
+			<div class="terminal-body">
+				<p class="error-text">Something went wrong on our end.</p>
+				<p class="error-subtext">The server encountered an unexpected condition that prevented it from fulfilling the request.</p>
+				
+				<div class="glitch-box">
+					<span class="glitch-text" data-text="SORRY BRO">SORRY BRO</span>
+				</div>
+			</div>
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home"><span>←</span> Go Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

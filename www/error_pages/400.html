@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -121,6 +121,24 @@
 			80% { transform: translate(-3px, -3px); }
 		}
 
+		/********************* MEME IMAGE STYLE IS HERE *********************/
+
+		.error-meme {
+			display: block;
+			max-width: min(320px, 80vw);
+			margin: 1.5rem auto 0;
+			border-radius: 12px;
+			box-shadow: 0 0 40px rgba(255, 51, 102, 0.25);
+			animation: floatMeme 4s ease-in-out infinite;
+		}
+
+		@keyframes floatMeme {
+			0%, 100% { transform: translateY(0); }
+			50% { transform: translateY(-6px); }
+		}
+
+		/********************************************************************/
+
 		.terminal-box {
 			background: var(--glass-bg);
 			border: 1px solid rgba(255, 51, 102, 0.2);
@@ -195,6 +213,14 @@
 		.code-content .keyword { color: var(--warning-yellow); }
 		.code-content .string { color: var(--terminal-green); }
 
+		.btn-container {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			margin-top: 1.5rem;
+			flex-wrap: wrap;
+		}
+
 		.btn-home {
 			display: inline-flex;
 			align-items: center;
@@ -215,6 +241,28 @@
 			background: var(--error-red);
 			color: var(--bg-dark);
 			box-shadow: 0 0 30px rgba(255, 51, 102, 0.4);
+		}
+
+		.btn-back {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			background: transparent;
+			border: 1px solid var(--text-dim);
+			color: var(--text-dim);
+			padding: 0.8rem 2rem;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.9rem;
+			text-decoration: none;
+			border-radius: 6px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+		}
+
+		.btn-back:hover {
+			border-color: var(--warning-yellow);
+			color: var(--warning-yellow);
+			box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
 		}
 
 		.particles {
@@ -282,7 +330,13 @@
 
 	<div class="container">
 		<div class="error-code">400</div>
-		
+
+		<img
+			src="memes/400_fuckcat.jpg"
+			alt="Fuck cat meme"
+			class="error-meme"
+		/>
+
 		<div class="terminal-box">
 			<div class="terminal-header">
 				<div class="terminal-dot dot-red"></div>
@@ -312,9 +366,16 @@
 				</div>
 			</div>
 			
-			<a href="/" class="btn-home">
-				<span>←</span> Back to Home
-			</a>
+			<div class="btn-container">
+				<a href="/" class="btn btn-home">
+					<span>←</span> Go Home
+				</a>
+
+				<a href="javascript:history.back()" class="btn-back">
+					Go Back
+				</a>
+			</div>
+
 		</div>
 	</div>
 </body>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Upload • WEBSERV</title>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--black: #0a0a0a;
+			--dark: #111;
+			--gray: #1a1a1a;
+			--muted: #555;
+			--light: #999;
+			--white: #e5e5e5;
+			--red: #8b0000;
+			--red-light: #a31515;
+		}
+
+		body {
+			font-family: 'IBM Plex Mono', monospace;
+			background: var(--black);
+			color: var(--white);
+			min-height: 100vh;
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 600px;
+			margin: 0 auto;
+			padding: 3rem 2rem;
+		}
+
+		.back {
+			display: inline-block;
+			color: var(--muted);
+			text-decoration: none;
+			font-size: 0.85rem;
+			margin-bottom: 3rem;
+			transition: color 0.2s;
+		}
+
+		.back:hover {
+			color: var(--red);
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 3rem;
+			padding-bottom: 2rem;
+			border-bottom: 1px solid var(--gray);
+		}
+
+		h1 {
+			font-family: 'Playfair Display', serif;
+			font-size: 2.5rem;
+			color: var(--red);
+			margin-bottom: 0.5rem;
+		}
+
+		.subtitle {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		.warning {
+			background: var(--dark);
+			border-left: 2px solid var(--red);
+			padding: 1rem 1.5rem;
+			margin-bottom: 2rem;
+			font-size: 0.85rem;
+			color: var(--light);
+		}
+
+		.upload-zone {
+			border: 1px dashed var(--gray);
+			padding: 3rem 2rem;
+			text-align: center;
+			margin-bottom: 2rem;
+			transition: border-color 0.2s, background 0.2s;
+			cursor: pointer;
+			position: relative;
+		}
+
+		.upload-zone:hover {
+			border-color: var(--red);
+			background: var(--dark);
+		}
+
+		.upload-zone.dragover {
+			border-color: var(--red-light);
+			background: rgba(139, 0, 0, 0.1);
+		}
+
+		.upload-icon {
+			font-size: 2rem;
+			margin-bottom: 1rem;
+			opacity: 0.5;
+		}
+
+		.upload-text {
+			color: var(--light);
+			font-size: 0.9rem;
+		}
+
+		.upload-hint {
+			color: var(--muted);
+			font-size: 0.8rem;
+			margin-top: 0.5rem;
+		}
+
+		.upload-input {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			cursor: pointer;
+		}
+
+		.file-list {
+			margin-bottom: 2rem;
+		}
+
+		.file-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0.8rem 1rem;
+			background: var(--dark);
+			border: 1px solid var(--gray);
+			margin-bottom: 0.5rem;
+		}
+
+		.file-info {
+			display: flex;
+			align-items: center;
+			gap: 0.8rem;
+			font-size: 0.85rem;
+		}
+
+		.file-size {
+			color: var(--muted);
+			font-size: 0.75rem;
+		}
+
+		.file-remove {
+			background: none;
+			border: none;
+			color: var(--muted);
+			cursor: pointer;
+			font-size: 1rem;
+			transition: color 0.2s;
+		}
+
+		.file-remove:hover {
+			color: var(--red);
+		}
+
+		.form-group {
+			margin-bottom: 1.5rem;
+		}
+
+		label {
+			display: block;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--muted);
+			margin-bottom: 0.5rem;
+		}
+
+		input[type="text"],
+		textarea {
+			width: 100%;
+			padding: 0.8rem 1rem;
+			background: var(--dark);
+			border: 1px solid var(--gray);
+			color: var(--white);
+			font-family: inherit;
+			font-size: 0.9rem;
+			transition: border-color 0.2s;
+		}
+
+		input[type="text"]:focus,
+		textarea:focus {
+			outline: none;
+			border-color: var(--red);
+		}
+
+		textarea {
+			min-height: 100px;
+			resize: vertical;
+		}
+
+		::placeholder {
+			color: var(--muted);
+		}
+
+		.submit-btn {
+			width: 100%;
+			padding: 1rem;
+			background: var(--red);
+			border: none;
+			color: var(--white);
+			font-family: inherit;
+			font-size: 0.9rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.submit-btn:hover {
+			background: var(--red-light);
+		}
+
+		footer {
+			text-align: center;
+			padding-top: 2rem;
+			border-top: 1px solid var(--gray);
+			/* margin-top: 3rem; */
+			margin-top: 2rem;
+		}
+
+		.footer-text {
+			font-size: 0.75rem;
+			color: var(--muted);
+		}
+
+		.skull {
+			font-size: 1.5rem;
+			margin-bottom: 0.5rem;
+			opacity: 0.3;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<a href="/" class="back"><span>←</span> Retour</a>
+
+		<header>
+			<h1>Upload</h1>
+			<p class="subtitle">Envoie tes fichiers vers le néant</p>
+		</header>
+
+		<div class="warning">
+			⚠ Une fois uploadé, ton fichier sera aspiré par le BlackHole. Pas de retour en arrière.
+		</div>
+
+		<form action="/upload" method="POST" enctype="multipart/form-data">
+			<div class="upload-zone" id="uploadZone">
+				<input type="file" name="file" class="upload-input" id="fileInput" multiple>
+				<div class="upload-icon">📁</div>
+				<p class="upload-text">Dépose tes fichiers ici</p>
+				<p class="upload-hint">ou clique pour sélectionner</p>
+			</div>
+
+			<div class="file-list" id="fileList"></div>
+
+			<div class="form-group">
+				<label for="name">Nom (optionnel)</label>
+				<input type="text" id="name" name="sender_name" placeholder="Ton nom...">
+			</div>
+
+			<div class="form-group">
+				<label for="message">Message (optionnel)</label>
+				<textarea id="message" name="message" placeholder="Dernières paroles..."></textarea>
+			</div>
+
+			<!-- <button type="submit" class="submit-btn">Envoyer vers la vogsphere</button> -->
+			<button type="submit" class="submit-btn">Envoyer</button>
+		</form>
+
+		<footer>
+			<div class="skull">💀</div>
+			<p class="footer-text">WEBSERV © k0xdama & itsbraga</p>
+		</footer>
+	</div>
+
+	<script>
+		const uploadZone = document.getElementById('uploadZone');
+		const fileInput = document.getElementById('fileInput');
+		const fileList = document.getElementById('fileList');
+
+		uploadZone.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			uploadZone.classList.add('dragover');
+		});
+
+		uploadZone.addEventListener('dragleave', () => {
+			uploadZone.classList.remove('dragover');
+		});
+
+		uploadZone.addEventListener('drop', (e) => {
+			e.preventDefault();
+			uploadZone.classList.remove('dragover');
+			handleFiles(e.dataTransfer.files);
+		});
+
+		fileInput.addEventListener('change', (e) => {
+			handleFiles(e.target.files);
+		});
+
+		function handleFiles(files) {
+			fileList.innerHTML = '';
+			Array.from(files).forEach(file => {
+				const item = document.createElement('div');
+				item.className = 'file-item';
+				item.innerHTML = `
+					<div class="file-info">
+						<span>📄</span>
+						<span>${file.name}</span>
+						<span class="file-size">${formatSize(file.size)}</span>
+					</div>
+					<button type="button" class="file-remove" onclick="this.parentElement.remove()">✕</button>
+				`;
+				fileList.appendChild(item);
+			});
+		}
+
+		function formatSize(bytes) {
+			if (bytes === 0) return '0 B';
+			const k = 1024;
+			const sizes = ['B', 'KB', 'MB', 'GB'];
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+		}
+	</script>
+</body>
+</html>

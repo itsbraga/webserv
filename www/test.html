@@ -2,19 +2,517 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
-	<title>Page de test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tests • WEBSERV</title>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--black: #0a0a0a;
+			--dark: #111;
+			--gray: #1a1a1a;
+			--muted: #555;
+			--light: #999;
+			--white: #e5e5e5;
+			--red: #8b0000;
+			--red-light: #a31515;
+			--green: #22c55e;
+			--blue: #3b82f6;
+			--purple: #a855f7;
+		}
+
 		body {
-			font-family: Arial, sans-serif;
+			font-family: 'IBM Plex Mono', monospace;
+			background: var(--black);
+			color: var(--white);
+			min-height: 100vh;
+			line-height: 1.6;
+		}
+
+		.container {
 			max-width: 800px;
-			margin: 50px auto;
-			padding: 20px;
+			margin: 0 auto;
+			padding: 3rem 2rem;
+		}
+
+		.back {
+			display: inline-block;
+			color: var(--muted);
+			text-decoration: none;
+			font-size: 0.85rem;
+			margin-bottom: 3rem;
+			transition: color 0.2s;
+		}
+
+		.back:hover {
+			color: var(--red);
+		}
+
+		header {
+			margin-bottom: 3rem;
+			padding-bottom: 2rem;
+			border-bottom: 1px solid var(--gray);
+		}
+
+		h1 {
+			font-family: 'Playfair Display', serif;
+			font-size: 2.5rem;
+			color: var(--red);
+			margin-bottom: 0.5rem;
+		}
+
+		.subtitle {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		h2 {
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+			color: var(--muted);
+			margin-bottom: 1rem;
+		}
+
+		.tests-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 1rem;
+			margin-bottom: 3rem;
+		}
+
+		.test-card {
+			background: var(--dark);
+			border: 1px solid var(--gray);
+			padding: 1.2rem;
+			transition: border-color 0.2s;
+		}
+
+		.test-card:hover {
+			border-color: var(--muted);
+		}
+
+		.test-card.wide {
+			grid-column: span 2;
+		}
+
+		@media (max-width: 500px) {
+			.test-card.wide {
+				grid-column: span 1;
+			}
+		}
+
+		.test-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 1rem;
+		}
+
+		.test-name {
+			font-weight: 600;
+			font-size: 0.9rem;
+		}
+
+		.test-method {
+			font-size: 0.7rem;
+			padding: 0.2rem 0.5rem;
+			border: 1px solid;
+		}
+
+		.method-get { border-color: var(--green); color: var(--green); }
+		.method-post { border-color: var(--blue); color: var(--blue); }
+		.method-delete { border-color: var(--red); color: var(--red-light); }
+		.method-head { border-color: var(--purple); color: var(--purple); }
+		.method-multi { border-color: var(--muted); color: var(--light); }
+
+		.test-btn {
+			width: 100%;
+			padding: 0.6rem;
+			background: transparent;
+			border: 1px solid var(--gray);
+			color: var(--light);
+			font-family: inherit;
+			font-size: 0.8rem;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.test-btn:hover {
+			border-color: var(--red);
+			color: var(--white);
+		}
+
+		.test-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		.console {
+			background: var(--dark);
+			border: 1px solid var(--gray);
+			margin-bottom: 3rem;
+		}
+
+		.console-header {
+			padding: 0.8rem 1rem;
+			border-bottom: 1px solid var(--gray);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.console-dots {
+			display: flex;
+			gap: 0.5rem;
+		}
+
+		.console-dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: var(--muted);
+		}
+
+		.console-clear {
+			background: none;
+			border: none;
+			color: var(--muted);
+			font-family: inherit;
+			font-size: 0.75rem;
+			cursor: pointer;
+			transition: color 0.2s;
+		}
+
+		.console-clear:hover {
+			color: var(--white);
+		}
+
+		.console-body {
+			padding: 1rem;
+			min-height: 150px;
+			max-height: 300px;
+			overflow-y: auto;
+			font-size: 0.8rem;
+		}
+
+		.log {
+			margin: 0.4rem 0;
+			display: flex;
+			gap: 0.8rem;
+			align-items: flex-start;
+		}
+
+		.log-time {
+			color: var(--muted);
+			flex-shrink: 0;
+		}
+
+		.log-method {
+			font-size: 0.7rem;
+			padding: 0.1rem 0.4rem;
+			flex-shrink: 0;
+			min-width: 50px;
+			text-align: center;
+		}
+
+		.log-status {
+			font-size: 0.7rem;
+			padding: 0.1rem 0.4rem;
+			flex-shrink: 0;
+		}
+
+		.status-ok { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+		.status-err { background: rgba(139, 0, 0, 0.2); color: var(--red-light); }
+		.status-redirect { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+		.log-url {
+			color: var(--light);
+			word-break: break-all;
+		}
+
+		.log-details {
+			color: var(--muted);
+		}
+
+		.log-separator {
+			border: none;
+			border-top: 1px dashed var(--gray);
+			margin: 0.8rem 0;
+		}
+
+		.empty-state {
+			color: var(--muted);
+			text-align: center;
+			padding: 2rem;
+		}
+
+		.links {
+			border-top: 1px solid var(--gray);
+			padding-top: 2rem;
+		}
+
+		.links-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.link {
+			padding: 0.5rem 1rem;
+			background: var(--dark);
+			border: 1px solid var(--gray);
+			color: var(--light);
+			text-decoration: none;
+			font-size: 0.8rem;
+			transition: all 0.2s;
+		}
+
+		.link:hover {
+			border-color: var(--red);
+			color: var(--white);
+		}
+
+		footer {
+			text-align: center;
+			padding-top: 2rem;
+			border-top: 1px solid var(--gray);
+			/* margin-top: 3rem; */
+			margin-top: 2rem;
+		}
+
+		.footer-text {
+			font-size: 0.75rem;
+			color: var(--muted);
+		}
+
+		.skull {
+			font-size: 1.5rem;
+			margin-bottom: 0.5rem;
+			opacity: 0.3;
 		}
 	</style>
 </head>
 <body>
-	<h1>Page de test</h1>
-	<p>Ceci est une page de test pour vérifier le routing.</p>
-	<p><a href="/">Retour à l'accueil</a></p>
+	<div class="container">
+		<a href="/" class="back"><span>←</span> Retour</a>
+
+		<header>
+			<h1>Tests</h1>
+			<p class="subtitle">Vérifie si le serveur répond correctement</p>
+		</header>
+
+		<section>
+			<h2>Méthodes HTTP</h2>
+			<div class="tests-grid">
+				<div class="test-card">
+					<div class="test-header">
+						<span class="test-name">GET</span>
+						<span class="test-method method-get">GET</span>
+					</div>
+					<button class="test-btn" onclick="runTest('GET', '/')">Tester</button>
+				</div>
+
+				<div class="test-card">
+					<div class="test-header">
+						<span class="test-name">POST</span>
+						<span class="test-method method-post">POST</span>
+					</div>
+					<button class="test-btn" onclick="runTest('POST', '/upload', 'test=data')">Tester</button>
+				</div>
+
+				<div class="test-card">
+					<div class="test-header">
+						<span class="test-name">DELETE</span>
+						<span class="test-method method-delete">DELETE</span>
+					</div>
+					<button class="test-btn" onclick="runTest('DELETE', '/test-file')">Tester</button>
+				</div>
+
+				<div class="test-card">
+					<div class="test-header">
+						<span class="test-name">HEAD</span>
+						<span class="test-method method-head">HEAD</span>
+					</div>
+					<button class="test-btn" onclick="runTest('HEAD', '/')">Tester</button>
+				</div>
+
+				<div class="test-card wide">
+					<div class="test-header">
+						<span class="test-name">Stress Test</span>
+						<span class="test-method method-multi">×10</span>
+					</div>
+					<button class="test-btn" onclick="stressTest()" id="stressBtn">Lancer 10 requêtes simultanées</button>
+				</div>
+			</div>
+		</section>
+
+		<section>
+			<h2>Console</h2>
+			<div class="console">
+				<div class="console-header">
+					<div class="console-dots">
+						<span class="console-dot"></span>
+						<span class="console-dot"></span>
+						<span class="console-dot"></span>
+					</div>
+					<button class="console-clear" onclick="clearConsole()">Effacer</button>
+				</div>
+				<div class="console-body" id="console">
+					<div class="empty-state" id="emptyState">Aucun test exécuté</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="links">
+			<h2>Liens rapides</h2>
+			<div class="links-list">
+				<a href="/" class="link">/</a>
+				<a href="/upload.html" class="link">/upload.html</a>
+				<a href="/error_pages/" class="link">/error_pages/</a>
+				<a href="/error_pages/418.html" class="link">418</a>
+			</div>
+		</section>
+
+		<footer>
+			<div class="skull">💀</div>
+			<p class="footer-text">WEBSERV © k0xdama & itsbraga</p>
+		</footer>
+	</div>
+
+	<script>
+		const consoleEl = document.getElementById('console');
+		const emptyState = document.getElementById('emptyState');
+
+		function hideEmptyState() {
+			if (emptyState) emptyState.style.display = 'none';
+		}
+
+		function clearConsole() {
+			consoleEl.innerHTML = '<div class="empty-state" id="emptyState">Aucun test exécuté</div>';
+		}
+
+		function getTime() {
+			return new Date().toTimeString().slice(0, 5);
+		}
+
+		function getStatusClass(status) {
+			if (status >= 200 && status < 300) return 'status-ok';
+			if (status >= 300 && status < 400) return 'status-redirect';
+			return 'status-err';
+		}
+
+		function getMethodClass(method) {
+			const classes = {
+				'GET': 'method-get',
+				'POST': 'method-post',
+				'DELETE': 'method-delete',
+				'HEAD': 'method-head'
+			};
+			return classes[method] || 'method-multi';
+		}
+
+		function logRequest(method, url, status, duration) {
+			hideEmptyState();
+			const line = document.createElement('div');
+			line.className = 'log';
+			line.innerHTML = `
+				<span class="log-time">[${getTime()}]</span>
+				<span class="log-method ${getMethodClass(method)}">${method}</span>
+				<span class="log-status ${getStatusClass(status)}">${status}</span>
+				<span class="log-url">${url}</span>
+				<span class="log-details">${duration}ms</span>
+			`;
+			consoleEl.appendChild(line);
+			consoleEl.scrollTop = consoleEl.scrollHeight;
+		}
+
+		function logError(method, url, error) {
+			hideEmptyState();
+			const line = document.createElement('div');
+			line.className = 'log';
+			line.innerHTML = `
+				<span class="log-time">[${getTime()}]</span>
+				<span class="log-method ${getMethodClass(method)}">${method}</span>
+				<span class="log-status status-err">ERR</span>
+				<span class="log-url">${url}</span>
+				<span class="log-details">${error}</span>
+			`;
+			consoleEl.appendChild(line);
+			consoleEl.scrollTop = consoleEl.scrollHeight;
+		}
+
+		function logSummary(text, isSuccess) {
+			const line = document.createElement('div');
+			line.className = 'log';
+			line.innerHTML = `
+				<span class="log-time">[${getTime()}]</span>
+				<span class="log-status ${isSuccess ? 'status-ok' : 'status-err'}">${isSuccess ? 'OK' : 'FAIL'}</span>
+				<span class="log-url">${text}</span>
+			`;
+			consoleEl.appendChild(line);
+			consoleEl.scrollTop = consoleEl.scrollHeight;
+		}
+
+		function addSeparator() {
+			hideEmptyState();
+			const sep = document.createElement('hr');
+			sep.className = 'log-separator';
+			consoleEl.appendChild(sep);
+		}
+
+		async function runTest(method, url, body = null) {
+			const start = performance.now();
+			
+			try {
+				const opts = { method };
+				if (body && method === 'POST') {
+					opts.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+					opts.body = body;
+				}
+				const res = await fetch(url, opts);
+				const duration = Math.round(performance.now() - start);
+				logRequest(method, url, res.status, duration);
+			} catch (e) {
+				logError(method, url, e.message);
+			}
+		}
+
+		async function stressTest() {
+			const btn = document.getElementById('stressBtn');
+			btn.disabled = true;
+			btn.textContent = 'Test en cours...';
+			
+			addSeparator();
+			
+			const start = performance.now();
+			const results = await Promise.all(
+				Array(10).fill().map(async () => {
+					const reqStart = performance.now();
+					try {
+						const res = await fetch('/');
+						const duration = Math.round(performance.now() - reqStart);
+						return { ok: res.ok, status: res.status, duration };
+					} catch (e) {
+						return { ok: false, status: 'ERR', duration: 0, error: e.message };
+					}
+				})
+			);
+			
+			const totalDuration = Math.round(performance.now() - start);
+			const success = results.filter(r => r.ok).length;
+			const avgDuration = Math.round(results.reduce((a, r) => a + r.duration, 0) / results.length);
+			
+			logSummary(`Stress: ${success}/10 OK — ${totalDuration}ms total — ${avgDuration}ms/req`, success === 10);
+			
+			btn.disabled = false;
+			btn.textContent = 'Lancer 10 requêtes simultanées';
+		}
+	</script>
 </body>
 </html>
