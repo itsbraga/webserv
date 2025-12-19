@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/18 22:52:07 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/19 04:05:13 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ class Server
 		std::string				_client_max_size_body;
 		unsigned int			_return_code;
 		std::string				_return_uri;
-		std::map<std::string, Location*>	_locations;
+		std::map<std::string, Location>	_locations;
 		
 	public : 
 		Server();
 		~Server();
 
 
-		void					setPort( const unsigned short int port );
+		void					setPort( unsigned short int port );
 		void					setServerName( const std::string server_name );
 		void					setRoot( const std::string root );
 		void					setIndex( const std::string index );
@@ -49,6 +49,18 @@ class Server
 		bool										getAutoIndex() const;
 		unsigned int								getReturnCode() const;
 		std::string									getReturnUri() const;
+		std::map<std::string, Location> 			getLocations() const;
+
+		unsigned short int							getPort();
+		std::string									getServerName();
+		std::string									getRoot();
+		std::string 								getIndex();
+		std::vector<ErrorPage>&						getErrorPage();
+		std::string									getClientMaxSizeBody(std::string max_size);
+		bool										getAutoIndex();
+		unsigned int								getReturnCode();
+		std::string									getReturnUri();
+		std::map<std::string, Location>& 			getLocations();
 		
 
 };

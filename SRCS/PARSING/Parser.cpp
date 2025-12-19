@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/18 23:49:41 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/19 04:08:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,7 +293,7 @@ void	Parser::parse( void )
 				else
 				{
 					exitContext();
-					current++;
+					++current;
 				}
 				break;
 			
@@ -306,10 +306,10 @@ void	Parser::parse( void )
 		throw SyntaxErrorException("A BLOCK has not been closed properly");
 }
 
-void		Parser::createAllObjects( void )
+void		Parser::createAllObjects(webserv_t *webserv)
 {
-	Server* current_server = NULL;
-	Location*	current_location = NULL;
+	Server 		current_server;
+	Location	current_location;
 	std::vector<Token>::const_iterator current = _tokens.begin();
 	std::vector<Token>::const_iterator end = _tokens.end();
 
@@ -320,19 +320,15 @@ void		Parser::createAllObjects( void )
 		switch (current->getType())
 		{
 			case K_SERVER :
-				current_server = new Server;
-				if (current_server == NULL)
-					throw std::bad_alloc();
+				current_server = Server();
 				enterContext(SERVER_BLOCK);
 				current += 2;
 				break;
 
 			case K_LOCATION :
-				current_location = new Location;
-				if (current_location == NULL)
-					throw std::bad_alloc();
+				current_location = Location();
 				enterContext(LOCATION_BLOCK);
-				current_location->setUri((current + 1)->getValue());
+				current_location.setUri((current + 1)->getValue());
 				current += 3;
 				break;
 			
@@ -340,58 +336,145 @@ void		Parser::createAllObjects( void )
 				unsigned short int value;
 				std::stringstream ss((current + 1)->getValue());
 				ss >> value;
-				current_server->setPort(value);
+				current_server.setPort(value);
 				current += 3;
 				break;
 			}
 
 			case K_ROOT :
 				if (getCurrentContext() == SERVER_BLOCK)
-					current_server->setRoot((current + 1)->getValue());
+					current_server.setRoot((current + 1)->getValue());
 				else
-					current_location->setRoot((current + 1)->getValue());
+					current_location.setRoot((current + 1)->getValue());
 				current += 3;
 				break;
 			
 			case K_INDEX :
 				if (getCurrentContext() == SERVER_BLOCK)
-					current_server->setIndex((current + 1)->getValue());
+					current_server.setIndex((current + 1)->getValue());
 				else
-					current_location->setIndex((current + 1)->getValue());
+					current_location.setIndex((current + 1)->getValue());
 				current += 3;
 				break;
 			
 			case K_SERVERNAME :
-				current_server->setServerName((current + 1)->getValue());
+				current_server.setServerName((current + 1)->getValue());
 				current += 3;
 				break;
 
 			case K_ERRORPAGE : {
+				++current;
+				std::vector<int> status;
+				std::string	file;
+				int value = 0;
+				std::stringstream ss;
+				while (current->getType() != V_PATH)
+				{
+					ss.str(current->getValue());
+					ss >> value;
+					status.push_back(value);
+					++current;
+				}
+				file = current->getValue();
+				ErrorPage epage(status, file);
+				if (getCurrentContext() == SERVER_BLOCK)
+					current_server.getErrorPage().push_back(epage);
+				else
+					current_location.getErrorPage().push_back(epage);
+				current += 2;
+				break;
 				
 			}
 
 			case K_UPLOADALLOWED :
-				current_location->setUploadAllowed(true);
-				current_location->setUploadPath((current + 1)->getValue());
+				current_location.setUploadAllowed(true);
+				current_location.setUploadPath((current + 1)->getValue());
 				current += 3;
 				break;
-				
+			
+			case K_CLIENTMAXSIZEBODY :
+				if (getCurrentContext() == SERVER_BLOCK)
+					current_server.setClientMaxSizeBody((current + 1)->getValue());
+				else
+					current_location.setClientMaxSizeBody((current + 1)->getValue());
+				current += 3;
+				break;
+
+			case K_AUTOINDEX :
+				if (getCurrentContext() == SERVER_BLOCK)
+					current_server.setAutoIndex(true);
+				else
+					current_location.setAutoIndex(true);
+				current += 3;
+				break;
+			
+			case K_ALLOWEDMETHODS : {
+				++current;
+				std::vector<std::string> methods;
+				while (current->getType() != S_SEMICOLON)
+				{
+					methods.push_back(current->getValue());
+					++current;
+				}
+				current_location.setAllowedMethods(methods);
+				++current;
+				break;
+			}
+
+			case K_CGI : {
+				std::pair<std::string, std::string>	cgi_bin;
+				cgi_bin = std::make_pair((current + 1)->getValue(), (current + 2)->getValue());
+				current_location.getCgiBin().push_back(cgi_bin);
+				current += 4;
+				break;
+			}
+
+			case K_RETURN : {
+				unsigned int return_code;
+				std::stringstream ss((current + 1)->getValue());
+				ss >> return_code;	
+				if (getCurrentContext() == SERVER_BLOCK)
+				{
+					current_server.setReturnCode(return_code);
+					if ((current + 1)->getValue() == "301")
+					{
+						current_server.setReturnUri((current + 2)->getValue());
+						current += 4;
+					}
+					else
+						current += 3;
+				}
+				else
+				{
+					current_location.setReturnCode(return_code);
+					if ((current + 1)->getValue() == "301")
+					{
+						current_location.setReturnUri((current + 2)->getValue());
+						current += 4;
+					}
+					else
+						current += 3;
+				}
+				break;
+			}
 
 			case S_RBRACE :
 				if (getCurrentContext() == SERVER_BLOCK)
 				{
-				
-
-
+					webserv->servers.push_back(current_server);
+					webserv->servers_nb += 1;
 					exitContext();
 				}
-				else if (getCurrentContext() == LOCATION_BLOCK)
+				else
 				{
-				
-				
+					current_server.getLocations()[current_location.getUri()] = current_location;
 					exitContext();
 				}
-				
+				++current;
+				break;
+			
+			default :
+				throw ConfigurationErrorException("An unknow and unexpected error has occured");
 		}
 	}
 }
