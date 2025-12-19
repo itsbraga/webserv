@@ -6,13 +6,14 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/19 03:51:36 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/19 21:14:02 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "colors.hpp"
+#include "Server.hpp"
 
 # include <cstdlib>
 # include <iostream>
@@ -27,6 +28,12 @@
 # include <cstdio>
 # include <ctime>
 # include <sys/stat.h>
+
+typedef struct webserv_s
+{
+	unsigned int		servers_nb;
+	std::vector<Server> servers;
+}		webserv_t;
 
 enum Context
 {
@@ -139,7 +146,7 @@ class Parser
 		bool 				isValidBodySize(const std::string& value) const;
 
 		TokenType			peekType(std::vector<Token>::const_iterator it, size_t offset) const;
-		TokenType			peekValue(std::vector<Token>::const_iterator it, size_t offset) const;
+		std::string			peekValue(std::vector<Token>::const_iterator it, size_t offset) const;
 
 		void				enterContext(Context ctx);
 		void				exitContext( void );
@@ -158,7 +165,7 @@ class Parser
 				std::string _detail;
 			
 			public:
-				explicit SyntaxErrorException( const std::string& detail ) : _detail("Syntax Error: " + _detail) {}
+				explicit SyntaxErrorException( const std::string& detail ) : _detail("Syntax Error: " + detail) {}
 				virtual ~SyntaxErrorException() throw() {}
 				virtual const char *what( void ) const throw()
 				{ return (_detail.c_str()); }	
@@ -170,7 +177,7 @@ class Parser
 				std::string _detail;
 
 			public:
-				explicit ConfigurationErrorException( const std::string& detail) : _detail("Configuration Error: " + _detail) {}
+				explicit ConfigurationErrorException( const std::string& detail) : _detail("Configuration Error: " + detail) {}
 				virtual ~ConfigurationErrorException() throw() {}
 				virtual const char *what( void ) const throw()
 				{ return (_detail.c_str()); }
@@ -188,5 +195,3 @@ inline std::ostream&	operator<<(std::ostream &os, const Parser& to_insert)
 	os << std::endl;
 	return (os);
 }
-
-// - [server[KEYWORD]]

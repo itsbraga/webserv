@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/18 20:22:26 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/19 21:06:32 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 
 // Our libs
 # include "Parser.hpp"
-# include "Server.hpp"
+// # include "Server.hpp"
 # include "Location.hpp"
 # include "Message.hpp"
 # include "Request.hpp"
@@ -51,12 +51,6 @@
 // Other
 # include "defines.hpp"
 # include "colors.hpp"
-
-typedef struct webserv_s
-{
-	unsigned int		servers_nb;
-	std::vector<Server> servers;
-}		webserv_t;
 
 /**************************\
  *	PARSING
