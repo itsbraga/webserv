@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/19 04:08:35 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/19 23:33:12 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,7 @@ void	Parser::parse( void )
 				break;
 			
 			default :
+				std::cout << "fautif = " << current->getValue() << std::endl;
 				throw SyntaxErrorException("An unknow syntax error has occured");	
 					
 		}
@@ -474,7 +475,7 @@ void		Parser::createAllObjects(webserv_t *webserv)
 				break;
 			
 			default :
-				throw ConfigurationErrorException("An unknow and unexpected error has occured");
+				throw ConfigurationErrorException("An unknow and unexpected configuration error has occured");
 		}
 	}
 }
@@ -510,7 +511,7 @@ TokenType	Parser::identifySymbol(const std::string& to_identify) const
 {
 	if (isLeftBrace(to_identify[0]) == true)
 		return (S_LBRACE);
-	else if (isRightBrace(to_identify[0] == true))
+	else if (isRightBrace(to_identify[0]) == true)
 		return (S_RBRACE);
 	else
 		return (S_SEMICOLON);
@@ -650,6 +651,8 @@ bool	Parser::isString(const std::string& to_compare) const
 {
 	std::string::const_iterator it;
 
+	if (to_compare[0] == '.')
+		return (false);
 	for (it = to_compare.begin(); it != to_compare.end(); it++)
 	{
 		if (isalpha(static_cast<int>(*it)) == 0 && *it != '.')
@@ -724,7 +727,7 @@ bool	Parser::isValidPort(const std::string& to_check) const
 
 bool	Parser::isValidMethod(const std::string& to_check) const
 {
-	if (to_check == "GET" || to_check == "HEAD" || to_check == "POST" || to_check == "DELETE")
+	if (to_check == "get" || to_check == "head" || to_check == "post" || to_check == "delete")
 		return (true);
 	else
 		return (false);
@@ -770,7 +773,7 @@ TokenType	Parser::peekType(std::vector<Token>::const_iterator it, size_t offset)
     return (it + offset)->getType();
 }
 
-TokenType	Parser::peekValue(std::vector<Token>::const_iterator it, size_t offset) const
+std::string		Parser::peekValue(std::vector<Token>::const_iterator it, size_t offset) const
 {
 	if (it + offset >= _tokens.end())
         throw SyntaxErrorException("Unexpected end of file");

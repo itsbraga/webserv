@@ -10,6 +10,7 @@ int main(int argc, char **argv)
 		parser = new Parser(argv[1]);
 		parser->bufferTokenize();
 		std::cout << *parser << std::endl;
+		
 	}
 	catch(const std::exception& e)
 	{
