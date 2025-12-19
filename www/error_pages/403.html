@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>403 - Forbidden</title>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #050508;
+			--accent-purple: #8b5cf6;
+			--accent-pink: #ec4899;
+			--accent-cyan: #06b6d4;
+			--text-dim: #3a3a4a;
+			--border-color: rgba(139, 92, 246, 0.2);
+		}
+
+		body {
+			min-height: 100vh;
+			background: var(--bg-dark);
+			font-family: 'JetBrains Mono', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.bg-gradient {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: 
+				radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+				radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+			z-index: 0;
+		}
+
+		.hex-grid {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%238b5cf6' fill-opacity='0.04'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+			opacity: 0.5;
+			z-index: 1;
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: 2rem;
+		}
+
+		.lock-container {
+			position: relative;
+			width: 200px;
+			height: 200px;
+			margin: 0 auto 2rem;
+		}
+
+		.lock-ring {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border: 2px solid var(--accent-purple);
+			border-radius: 50%;
+			opacity: 0.3;
+			animation: pulse-ring 3s ease-out infinite;
+		}
+
+		.lock-ring:nth-child(1) { width: 160px; height: 160px; animation-delay: 0s; }
+		.lock-ring:nth-child(2) { width: 200px; height: 200px; animation-delay: 0.5s; }
+		.lock-ring:nth-child(3) { width: 240px; height: 240px; animation-delay: 1s; }
+
+		@keyframes pulse-ring {
+			0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+			100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+		}
+
+		.lock-icon {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 80px;
+			height: 100px;
+		}
+
+		.lock-body {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 60px;
+			height: 50px;
+			background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.lock-keyhole {
+			width: 12px;
+			height: 20px;
+			background: var(--bg-dark);
+			border-radius: 50% 50% 2px 2px;
+			position: relative;
+		}
+
+		.lock-keyhole::after {
+			content: '';
+			position: absolute;
+			bottom: -8px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 6px;
+			height: 12px;
+			background: var(--bg-dark);
+		}
+
+		.lock-shackle {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 40px;
+			height: 45px;
+			border: 6px solid var(--accent-purple);
+			border-bottom: none;
+			border-radius: 20px 20px 0 0;
+			animation: shake 0.5s ease-in-out infinite;
+		}
+
+		@keyframes shake {
+			0%, 100% { transform: translateX(-50%) rotate(0deg); }
+			25% { transform: translateX(-50%) rotate(-2deg); }
+			75% { transform: translateX(-50%) rotate(2deg); }
+		}
+
+		.error-code {
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(5rem, 15vw, 10rem);
+			font-weight: 900;
+			background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			line-height: 1;
+			margin-bottom: 1rem;
+			text-shadow: 0 0 80px rgba(139, 92, 246, 0.5);
+		}
+
+		.error-title {
+			font-family: 'Orbitron', sans-serif;
+			font-size: 1.8rem;
+			font-weight: 700;
+			color: var(--accent-purple);
+			text-transform: uppercase;
+			letter-spacing: 0.5em;
+			margin-bottom: 2rem;
+		}
+
+		.access-card {
+			background: rgba(139, 92, 246, 0.05);
+			border: 1px solid var(--border-color);
+			border-radius: 16px;
+			padding: 2rem;
+			max-width: 500px;
+			margin: 0 auto;
+			backdrop-filter: blur(10px);
+		}
+
+		.access-header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			margin-bottom: 1.5rem;
+			color: var(--accent-pink);
+			font-size: 0.85rem;
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+		}
+
+		.access-icon {
+			width: 8px;
+			height: 8px;
+			background: var(--accent-pink);
+			border-radius: 50%;
+			animation: blink 1s infinite;
+		}
+
+		@keyframes blink {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0.3; }
+		}
+
+		.error-message {
+			color: #666;
+			font-size: 0.95rem;
+			line-height: 1.8;
+			margin-bottom: 2rem;
+		}
+
+		.permission-list {
+			text-align: left;
+			margin-bottom: 2rem;
+		}
+
+		.permission-item {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			padding: 0.8rem 1rem;
+			background: rgba(0, 0, 0, 0.3);
+			border-radius: 8px;
+			margin-bottom: 0.5rem;
+			font-size: 0.85rem;
+		}
+
+		.permission-icon {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.8rem;
+		}
+
+		.denied { background: rgba(236, 72, 153, 0.2); color: var(--accent-pink); }
+		.denied::before { content: '✕'; }
+
+		.permission-text {
+			color: #888;
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.8rem 1.5rem;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.85rem;
+			text-decoration: none;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+			border: none;
+		}
+
+		.btn-home {
+			background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+			color: white;
+		}
+
+		.btn-home:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+		}
+
+		.btn-back {
+			background: transparent;
+			border: 1px solid var(--border-color);
+			color: var(--accent-purple);
+		}
+
+		.btn-back:hover {
+			background: rgba(139, 92, 246, 0.1);
+		}
+
+		.floating-elements {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 5;
+		}
+
+		.float-shape {
+			position: absolute;
+			border: 1px solid rgba(139, 92, 246, 0.1);
+			animation: float-around 20s linear infinite;
+		}
+
+		.float-shape:nth-child(1) {
+			width: 100px;
+			height: 100px;
+			top: 10%;
+			left: 10%;
+			border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+			animation-duration: 25s;
+		}
+
+		.float-shape:nth-child(2) {
+			width: 60px;
+			height: 60px;
+			top: 70%;
+			right: 15%;
+			border-radius: 50%;
+			animation-duration: 18s;
+			animation-direction: reverse;
+		}
+
+		.float-shape:nth-child(3) {
+			width: 80px;
+			height: 80px;
+			top: 40%;
+			right: 10%;
+			animation-duration: 22s;
+		}
+
+		@keyframes float-around {
+			0% { transform: rotate(0deg) translate(10px) rotate(0deg); }
+			100% { transform: rotate(360deg) translate(10px) rotate(-360deg); }
+		}
+	</style>
+</head>
+<body>
+	<div class="bg-gradient"></div>
+	<div class="hex-grid"></div>
+	
+	<div class="floating-elements">
+		<div class="float-shape"></div>
+		<div class="float-shape"></div>
+		<div class="float-shape"></div>
+	</div>
+
+	<div class="container">
+		<div class="lock-container">
+			<div class="lock-ring"></div>
+			<div class="lock-ring"></div>
+			<div class="lock-ring"></div>
+			<div class="lock-icon">
+				<div class="lock-shackle"></div>
+				<div class="lock-body">
+					<div class="lock-keyhole"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="error-code">403</div>
+		<div class="error-title">Forbidden</div>
+
+		<div class="access-card">
+			<div class="access-header">
+				<div class="access-icon"></div>
+				<span>Access Denied</span>
+			</div>
+
+			<p class="error-message">
+				You don't have permission to access this resource.
+			</p>
+
+			<div class="permission-list">
+				<div class="permission-item">
+					<div class="permission-icon denied"></div>
+					<span class="permission-text">Read access not granted</span>
+				</div>
+				<!-- <div class="permission-item">
+					<div class="permission-icon denied"></div>
+					<span class="permission-text">IP address blocked</span>
+				</div> -->
+			</div>
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home">← Go Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

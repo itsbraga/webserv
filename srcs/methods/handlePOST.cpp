@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/18 22:15:18 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/19 17:36:35 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ static Response*	__uploadPOST( Server& server, std::string& body, std::string& c
 {
 	(void)server; // retirer quand Location sera OK
 
-	std::string dir = "./www/upload";	// a changer: recuperer depuis fichier de config
-	std::string route = "/upload";		// a changer aussi
+	std::string dir = "./www/uploads";	// a changer: recuperer depuis fichier de config
+	std::string route = "/uploads";		// a changer aussi
 	std::string URI = handleUpload( body, content_type, dir, route );
 
 	Response* response = new Response( URI.empty() ? 200 : 201, URI.empty() ? "OK" : "Created" );

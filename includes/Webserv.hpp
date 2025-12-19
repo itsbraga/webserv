@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/18 21:28:35 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/19 21:39:28 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,3 +94,6 @@ Response*	handleGET( Server& server, Request& request );
 
 // handlePOST.cpp
 Response*	handlePOST( Server& server, Request& request );
+
+// handleHEAD.cpp
+Response*	handleHEAD( Server& server, Request& request );

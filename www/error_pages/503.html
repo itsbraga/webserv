@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -280,8 +280,7 @@
 			height: 100%;
 			background: linear-gradient(90deg, var(--accent-amber), var(--accent-amber-light));
 			border-radius: 4px;
-			animation: progress-animate 3s ease-in-out infinite;
-			width: 75%;
+			width: 54%;
 		}
 
 		@keyframes progress-animate {
@@ -367,23 +366,23 @@
 			transition: all 0.3s ease;
 		}
 
-		.btn-primary {
+		.btn-home {
 			background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-light));
 			color: var(--bg-dark);
 		}
 
-		.btn-primary:hover {
+		.btn-home:hover {
 			transform: translateY(-2px);
 			box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
 		}
 
-		.btn-secondary {
+		.btn-back {
 			background: transparent;
 			border: 1px solid rgba(100, 116, 139, 0.3);
 			color: var(--text-muted);
 		}
 
-		.btn-secondary:hover {
+		.btn-back:hover {
 			border-color: var(--accent-blue);
 			color: var(--accent-blue);
 		}
@@ -467,7 +466,7 @@
 			<div class="progress-section">
 				<div class="progress-label">
 					<span class="progress-title">Maintenance Progress</span>
-					<span class="progress-value">~75%</span>
+					<span class="progress-value">~54%</span>
 				</div>
 				<div class="progress-bar">
 					<div class="progress-fill"></div>
@@ -475,10 +474,6 @@
 			</div>
 
 			<div class="checklist">
-				<div class="checklist-item">
-					<div class="checklist-icon done">✓</div>
-					<span class="checklist-text">Database backup completed</span>
-				</div>
 				<div class="checklist-item">
 					<div class="checklist-icon done">✓</div>
 					<span class="checklist-text">System updates installed</span>
@@ -494,12 +489,12 @@
 			</div>
 
 			<div class="btn-container">
-				<a href="/" class="btn btn-primary">← Try Again</a>
-				<button onclick="location.reload()" class="btn btn-secondary">↻ Refresh</button>
+				<a href="/" class="btn btn-home"><span>←</span> Go Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
 			</div>
 
 			<div class="eta">
-				Estimated time remaining: <span class="eta-time">~15 minutes</span>
+				Estimated time remaining: <span class="eta-time">~42 hours</span>
 			</div>
 		</div>
 	</div>

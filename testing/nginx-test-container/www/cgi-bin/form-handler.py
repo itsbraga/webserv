@@ -88,7 +88,7 @@ print("        </div>")
 
 # Fin du HTML
 print("""        <br>
-        <a href="/">← Retour à l'accueil</a>
+        <a href="/"><span>←</span> Retour à l'accueil</a>
     </div>
 </body>
 </html>""")
