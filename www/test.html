@@ -300,22 +300,22 @@
 </head>
 <body>
 	<div class="container">
-		<a href="/" class="back"><span>←</span> Retour</a>
+		<a href="/" class="back"><span>←</span> Back to home page</a>
 
 		<header>
 			<h1>Tests</h1>
-			<p class="subtitle">Vérifie si le serveur répond correctement</p>
+			<p class="subtitle">Ensure that the server is responding correctly.</p>
 		</header>
 
 		<section>
-			<h2>Méthodes HTTP</h2>
+			<h2>Methods</h2>
 			<div class="tests-grid">
 				<div class="test-card">
 					<div class="test-header">
 						<span class="test-name">GET</span>
 						<span class="test-method method-get">GET</span>
 					</div>
-					<button class="test-btn" onclick="runTest('GET', '/')">Tester</button>
+					<button class="test-btn" onclick="runTest('GET', '/')">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -323,7 +323,7 @@
 						<span class="test-name">POST</span>
 						<span class="test-method method-post">POST</span>
 					</div>
-					<button class="test-btn" onclick="runTest('POST', '/upload', 'test=data')">Tester</button>
+					<button class="test-btn" onclick="runTest('POST', '/upload', 'test=data')">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -331,7 +331,7 @@
 						<span class="test-name">DELETE</span>
 						<span class="test-method method-delete">DELETE</span>
 					</div>
-					<button class="test-btn" onclick="runTest('DELETE', '/test-file')">Tester</button>
+					<button class="test-btn" onclick="runTest('DELETE', '/test-file')">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -339,7 +339,7 @@
 						<span class="test-name">HEAD</span>
 						<span class="test-method method-head">HEAD</span>
 					</div>
-					<button class="test-btn" onclick="runTest('HEAD', '/')">Tester</button>
+					<button class="test-btn" onclick="runTest('HEAD', '/')">Test</button>
 				</div>
 
 				<div class="test-card wide">
@@ -347,7 +347,7 @@
 						<span class="test-name">Stress Test</span>
 						<span class="test-method method-multi">×10</span>
 					</div>
-					<button class="test-btn" onclick="stressTest()" id="stressBtn">Lancer 10 requêtes simultanées</button>
+					<button class="test-btn" onclick="stressTest()" id="stressBtn">Run 10 simultaneous requests</button>
 				</div>
 			</div>
 		</section>
@@ -361,16 +361,16 @@
 						<span class="console-dot"></span>
 						<span class="console-dot"></span>
 					</div>
-					<button class="console-clear" onclick="clearConsole()">Effacer</button>
+					<button class="console-clear" onclick="clearConsole()">Delete</button>
 				</div>
 				<div class="console-body" id="console">
-					<div class="empty-state" id="emptyState">Aucun test exécuté</div>
+					<div class="empty-state" id="emptyState">No tests performed</div>
 				</div>
 			</div>
 		</section>
 
 		<section class="links">
-			<h2>Liens rapides</h2>
+			<h2>Shortcuts</h2>
 			<div class="links-list">
 				<a href="/" class="link">/</a>
 				<a href="/upload.html" class="link">/upload.html</a>
@@ -381,7 +381,7 @@
 
 		<footer>
 			<div class="skull">💀</div>
-			<p class="footer-text">WEBSERV © k0xdama & itsbraga</p>
+			<p class="footer-text">© 2025 WEBSERV - k0xdama & itsbraga - All Rights Reserved.</p>
 		</footer>
 	</div>
 

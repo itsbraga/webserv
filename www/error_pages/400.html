@@ -21,15 +21,20 @@
 			--glass-bg: rgba(255, 255, 255, 0.03);
 		}
 
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
 		body {
-			min-height: 100vh;
+			min-height: 100%;
 			background: var(--bg-dark);
 			font-family: 'JetBrains Mono', monospace;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			overflow: hidden;
 			position: relative;
+			padding: 1rem;
 		}
 
 		.noise {
@@ -67,12 +72,14 @@
 			position: relative;
 			z-index: 10;
 			text-align: center;
-			padding: 2rem;
+			padding: 1rem;
+			width: 100%;
+			max-width: 600px;
 		}
 
 		.error-code {
 			font-family: 'Space Grotesk', sans-serif;
-			font-size: clamp(8rem, 20vw, 16rem);
+			font-size: clamp(4rem, 15vw, 12rem);
 			font-weight: 700;
 			color: transparent;
 			background: linear-gradient(135deg, var(--error-red), var(--warning-yellow));
@@ -121,12 +128,11 @@
 			80% { transform: translate(-3px, -3px); }
 		}
 
-		/********************* MEME IMAGE STYLE IS HERE *********************/
-
 		.error-meme {
 			display: block;
-			max-width: min(320px, 80vw);
-			margin: 1.5rem auto 0;
+			width: 100%;
+			max-width: min(280px, 70vw);
+			margin: 1rem auto;
 			border-radius: 12px;
 			box-shadow: 0 0 40px rgba(255, 51, 102, 0.25);
 			animation: floatMeme 4s ease-in-out infinite;
@@ -137,17 +143,13 @@
 			50% { transform: translateY(-6px); }
 		}
 
-		/********************************************************************/
-
 		.terminal-box {
 			background: var(--glass-bg);
 			border: 1px solid rgba(255, 51, 102, 0.2);
 			border-radius: 12px;
-			padding: 2rem;
-			margin-top: 2rem;
-			max-width: 600px;
-			margin-left: auto;
-			margin-right: auto;
+			padding: clamp(1rem, 4vw, 2rem);
+			margin-top: 1.5rem;
+			width: 100%;
 			backdrop-filter: blur(10px);
 		}
 
@@ -155,14 +157,14 @@
 			display: flex;
 			align-items: center;
 			gap: 8px;
-			margin-bottom: 1.5rem;
-			padding-bottom: 1rem;
+			margin-bottom: 1rem;
+			padding-bottom: 0.75rem;
 			border-bottom: 1px solid rgba(255, 51, 102, 0.1);
 		}
 
 		.terminal-dot {
-			width: 12px;
-			height: 12px;
+			width: 10px;
+			height: 10px;
 			border-radius: 50%;
 		}
 
@@ -172,33 +174,35 @@
 
 		.error-title {
 			color: var(--error-red);
-			font-size: 1.5rem;
+			font-size: clamp(1rem, 4vw, 1.5rem);
 			font-weight: 700;
-			margin-bottom: 1rem;
+			margin-bottom: 0.75rem;
 			text-transform: uppercase;
-			letter-spacing: 0.2em;
+			letter-spacing: 0.15em;
 		}
 
 		.error-message {
 			color: #888;
-			font-size: 0.95rem;
-			line-height: 1.8;
-			margin-bottom: 1.5rem;
+			font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+			line-height: 1.6;
+			margin-bottom: 1rem;
 		}
 
 		.code-block {
 			background: rgba(0, 0, 0, 0.4);
 			border-radius: 8px;
-			padding: 1rem;
+			padding: clamp(0.5rem, 2vw, 1rem);
 			text-align: left;
-			font-size: 0.85rem;
-			margin-bottom: 1.5rem;
+			font-size: clamp(0.7rem, 2vw, 0.85rem);
+			margin-bottom: 1rem;
+			overflow-x: auto;
 		}
 
 		.code-line {
 			display: flex;
-			gap: 1rem;
-			margin: 0.3rem 0;
+			gap: 0.75rem;
+			margin: 0.25rem 0;
+			white-space: nowrap;
 		}
 
 		.line-number {
@@ -215,9 +219,9 @@
 
 		.btn-container {
 			display: flex;
-			gap: 1rem;
+			gap: 0.75rem;
 			justify-content: center;
-			margin-top: 1.5rem;
+			margin-top: 1rem;
 			flex-wrap: wrap;
 		}
 
@@ -228,9 +232,9 @@
 			background: transparent;
 			border: 1px solid var(--error-red);
 			color: var(--error-red);
-			padding: 0.8rem 2rem;
+			padding: 0.6rem 1.5rem;
 			font-family: 'JetBrains Mono', monospace;
-			font-size: 0.9rem;
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
 			text-decoration: none;
 			border-radius: 6px;
 			transition: all 0.3s ease;
@@ -250,9 +254,9 @@
 			background: transparent;
 			border: 1px solid var(--text-dim);
 			color: var(--text-dim);
-			padding: 0.8rem 2rem;
+			padding: 0.6rem 1.5rem;
 			font-family: 'JetBrains Mono', monospace;
-			font-size: 0.9rem;
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
 			text-decoration: none;
 			border-radius: 6px;
 			transition: all 0.3s ease;
@@ -273,6 +277,7 @@
 			height: 100%;
 			pointer-events: none;
 			z-index: 5;
+			overflow: hidden;
 		}
 
 		.particle {
@@ -332,8 +337,8 @@
 		<div class="error-code">400</div>
 
 		<img
-			src="memes/400_fuckcat.jpg"
-			alt="Fuck cat meme"
+			src="memes/400_cat_fuck.jpg"
+			alt="Cat fuck you"
 			class="error-meme"
 		/>
 
@@ -348,7 +353,6 @@
 			
 			<p class="error-message">
 				The server could not understand your request due to malformed syntax.
-				Please check your request and try again.
 			</p>
 
 			<div class="code-block">
@@ -358,24 +362,14 @@
 				</div>
 				<div class="code-line">
 					<span class="line-number">2</span>
-					<span class="code-content"><span class="keyword">STATUS</span>: <span class="string">400 Bad Request</span></span>
-				</div>
-				<div class="code-line">
-					<span class="line-number">3</span>
-					<span class="code-content"><span class="keyword">ACTION</span>: Verify request syntax</span>
+					<span class="code-content"><span class="keyword">ACTION</span>: Verify your request and try again</span>
 				</div>
 			</div>
 			
 			<div class="btn-container">
-				<a href="/" class="btn btn-home">
-					<span>←</span> Go Home
-				</a>
-
-				<a href="javascript:history.back()" class="btn-back">
-					Go Back
-				</a>
+				<a href="/" class="btn btn-home"><span>←</span> Go Home</a>
+				<a href="javascript:history.back()" class="btn-back">Go Back</a>
 			</div>
-
 		</div>
 	</div>
 </body>

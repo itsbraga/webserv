@@ -3,16 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   handleHEAD.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/19 21:39:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/19 23:39:45 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-Response*	handleHEAD( Server& server, Request& request )
-{
-	
-}
+Response*	handleHEAD( Server& server, Request& request );
