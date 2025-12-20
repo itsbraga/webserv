@@ -34,7 +34,8 @@
 			align-items: center;
 			justify-content: center;
 			position: relative;
-			padding: 1rem;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
 		}
 
 		.bg-gradient {
@@ -64,7 +65,7 @@
 			position: relative;
 			z-index: 10;
 			text-align: center;
-			padding: 1rem;
+			padding: clamp(0.5rem, 3vw, 1rem);
 			width: 100%;
 			max-width: 500px;
 		}
@@ -390,7 +391,7 @@
 			</div>
 
 			<div class="btn-container">
-				<a href="/" class="btn btn-home"><span>←</span> Go Home</a>
+				<a href="/" class="btn btn-home"><span>←</span> Home</a>
 				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
 			</div>
 		</div>

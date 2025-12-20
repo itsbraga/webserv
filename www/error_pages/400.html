@@ -34,7 +34,8 @@
 			align-items: center;
 			justify-content: center;
 			position: relative;
-			padding: 1rem;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
 		}
 
 		.noise {
@@ -72,7 +73,7 @@
 			position: relative;
 			z-index: 10;
 			text-align: center;
-			padding: 1rem;
+			padding: clamp(0.5rem, 3vw, 1rem);
 			width: 100%;
 			max-width: 600px;
 		}
@@ -86,6 +87,7 @@
 			-webkit-background-clip: text;
 			background-clip: text;
 			line-height: 1;
+			margin-top: clamp(2rem, 6vw, 4rem);
 			position: relative;
 			animation: glitch 3s infinite;
 		}
@@ -336,11 +338,7 @@
 	<div class="container">
 		<div class="error-code">400</div>
 
-		<img
-			src="memes/400_cat_fuck.jpg"
-			alt="Cat fuck you"
-			class="error-meme"
-		/>
+		<img src="memes/400_cat_fuck.jpg" alt="Cat fuck you" class="error-meme" />
 
 		<div class="terminal-box">
 			<div class="terminal-header">
@@ -362,12 +360,12 @@
 				</div>
 				<div class="code-line">
 					<span class="line-number">2</span>
-					<span class="code-content"><span class="keyword">ACTION</span>: Verify your request and try again</span>
+					<span class="code-content"><span class="keyword">ACTION</span>: Try again properly</span>
 				</div>
 			</div>
 			
 			<div class="btn-container">
-				<a href="/" class="btn btn-home"><span>←</span> Go Home</a>
+				<a href="/" class="btn btn-home"><span>←</span> Home</a>
 				<a href="javascript:history.back()" class="btn-back">Go Back</a>
 			</div>
 		</div>
