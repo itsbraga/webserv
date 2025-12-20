@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_map.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/19 21:38:38 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/19 23:39:58 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	init_method_map()
 {
 	g_method_map["GET"] = &handleGET;
 	g_method_map["POST"] = &handlePOST;
-	g_method_map["HEAD"] = &handleHEAD;
+	// g_method_map["HEAD"] = &handleHEAD;
 	// g_method_map["DELETE"] = &handleDELETE;
 }
 

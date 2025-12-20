@@ -243,44 +243,43 @@
 </head>
 <body>
 	<div class="container">
-		<a href="/" class="back"><span>←</span> Retour</a>
+		<a href="/" class="back"><span>←</span> Back to home page</a>
 
 		<header>
 			<h1>Upload</h1>
-			<p class="subtitle">Envoie tes fichiers vers le néant</p>
+			<p class="subtitle">Send your files into the void</p>
 		</header>
 
 		<div class="warning">
-			⚠ Une fois uploadé, ton fichier sera aspiré par le BlackHole. Pas de retour en arrière.
+			⚠️ The countdown has already begun... Don't waste any time.
 		</div>
 
 		<form action="/upload" method="POST" enctype="multipart/form-data">
 			<div class="upload-zone" id="uploadZone">
 				<input type="file" name="file" class="upload-input" id="fileInput" multiple>
 				<div class="upload-icon">📁</div>
-				<p class="upload-text">Dépose tes fichiers ici</p>
-				<p class="upload-hint">ou clique pour sélectionner</p>
+				<p class="upload-text">Drop your files here</p>
+				<p class="upload-hint">or click to select</p>
 			</div>
 
 			<div class="file-list" id="fileList"></div>
 
 			<div class="form-group">
-				<label for="name">Nom (optionnel)</label>
-				<input type="text" id="name" name="sender_name" placeholder="Ton nom...">
+				<label for="name">Name (optional)</label>
+				<input type="text" id="name" name="sender_name" placeholder="Your name...">
 			</div>
 
 			<div class="form-group">
-				<label for="message">Message (optionnel)</label>
-				<textarea id="message" name="message" placeholder="Dernières paroles..."></textarea>
+				<label for="message">Message (optional)</label>
+				<textarea id="message" name="message" placeholder="Last words..."></textarea>
 			</div>
 
-			<!-- <button type="submit" class="submit-btn">Envoyer vers la vogsphere</button> -->
-			<button type="submit" class="submit-btn">Envoyer</button>
+			<button type="submit" class="submit-btn">Send</button>
 		</form>
 
 		<footer>
 			<div class="skull">💀</div>
-			<p class="footer-text">WEBSERV © k0xdama & itsbraga</p>
+			<p class="footer-text">© 2025 WEBSERV - k0xdama & itsbraga - All Rights Reserved.</p>
 		</footer>
 	</div>
 
