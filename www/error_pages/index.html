@@ -12,12 +12,17 @@
 			box-sizing: border-box;
 		}
 
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
 		body {
 			font-family: 'Inter', sans-serif;
 			min-height: 100vh;
 			background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
 			color: #e2e8f0;
-			padding: 2rem;
+			padding: clamp(1rem, 4vw, 2rem);
 		}
 
 		.container {
@@ -27,14 +32,14 @@
 
 		header {
 			text-align: center;
-			margin-bottom: 3rem;
-			padding: 2rem;
+			margin-bottom: clamp(1.5rem, 5vw, 3rem);
+			padding: clamp(1rem, 4vw, 2rem);
 		}
 
 		h1 {
-			font-size: 2.5rem;
+			font-size: clamp(1.5rem, 5vw, 2.5rem);
 			font-weight: 700;
-			margin-bottom: 0.5rem;
+			margin-bottom: 1rem;
 			background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
 			-webkit-background-clip: text;
 			background-clip: text;
@@ -48,7 +53,7 @@
 
 		.error-grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 			gap: 1.5rem;
 		}
 
@@ -60,9 +65,11 @@
 			text-decoration: none;
 			color: inherit;
 			transition: all 0.3s ease;
-			display: block;
+			display: flex;
+			flex-direction: column;
 			position: relative;
 			overflow: hidden;
+			min-height: 240px;
 		}
 
 		.error-card::before {
@@ -119,10 +126,11 @@
 			color: #64748b;
 			font-size: 0.9rem;
 			line-height: 1.6;
+			flex-grow: 1;
 		}
 
 		.card-footer {
-			margin-top: 1.5rem;
+			margin-top: auto;
 			padding-top: 1rem;
 			border-top: 1px solid rgba(255, 255, 255, 0.05);
 			display: flex;
@@ -201,7 +209,7 @@
 </head>
 <body>
 	<div class="container">
-		<a href="/" class="back-link"><span></span>←</span> Back to home page</a>
+		<a href="/" class="back-link"><span>←</span> Back to home page</a>
 
 		<header>
 			<h1>HTTP Error Pages</h1>
