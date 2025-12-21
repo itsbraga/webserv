@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/18 22:02:24 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:31:20 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,18 @@ Webserv::~Webserv()
 }
 
 /*
+	----------------------------- [ Print ] ------------------------------
+*/
+static void		__requestReceived( Request& request )
+{
+	std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
+	std::cout << BOLD PINK "Method: " NC << request.getMethod() << std::endl;
+	std::cout << BOLD PINK "URI: " NC << request.getURI() << std::endl;
+	std::cout << BOLD PINK "Headers:\n" NC << request.getHeaderMap() << std::endl;
+	std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+}
+
+/*
 	------------------------ [ Private methods ] -------------------------
 */
 bool	Webserv::_addServerToEpoll( Server* server )
@@ -49,6 +61,7 @@ bool	Webserv::_addServerToEpoll( Server* server )
 		std::cerr << ERR_PREFIX << P_ORANGE "epoll_ctl(ADD server): " NC << strerror( errno ) << std::endl;
 		return (false);
 	}
+
 	return (true);
 }
 
@@ -64,6 +77,7 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 		std::cerr << ERR_PREFIX << P_ORANGE "epoll_ctl(ADD client): " NC << strerror( errno ) << std::endl;
 		return (false);
 	}
+
 	return (true);
 }
 
@@ -146,17 +160,12 @@ void	Webserv::_processRequest( int client_fd, Client* client )
 
 	try {
 		Request request( client->getReadBuffer() );
-
-		std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
-		std::cout << BOLD PINK "Method: " NC << request.getMethod() << std::endl;
-		std::cout << BOLD PINK "URI: " NC << request.getURI() << std::endl;
-		std::cout << BOLD PINK "Headers:\n" NC << request.getHeaderMap() << std::endl;
-		std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+		__requestReceived( request );
 
 		response = handleMethod( *client->getServer(), request );
 	}
 	catch (const BadRequestException& e) {
-		std::cerr << BOLD P_YELLOW "[DEBUG] " << e.what() << std::endl;
+		std::cerr << P_YELLOW "[DEBUG] " NC << e.what() << std::endl;
 		response = handleHttpException( e );
 	}
 	catch (const std::exception& e) {
@@ -172,6 +181,7 @@ void	Webserv::_processRequest( int client_fd, Client* client )
 void	Webserv::_checkClientTimeout()
 {
 	std::map<int, Client*>::iterator it = _clients.begin();
+
 	while (it != _clients.end())
 	{
 		if (it->second->isTimedOut( TIMEOUT ))
@@ -200,6 +210,7 @@ bool	Webserv::addServer( const std::string& server_name, uint16_t port )
 	}
 
 	_servers.insert( std::make_pair( server->getSocket(), server ) );
+
 	return (true);
 }
 
@@ -213,11 +224,13 @@ bool	Webserv::init(/* config file */)
 	}
 
 	std::map<int, Server*>::iterator it;
+
 	for (it = _servers.begin(); it != _servers.end(); ++it)
 	{
 		if (!_addServerToEpoll( it->second ))
 			return (false);
 	}
+	
 	return (true);
 }
 
@@ -226,12 +239,12 @@ void	Webserv::run()
 {
 	epoll_event events[MAX_EVENTS];
 
-	std::cout << P_YELLOW "[Webserv] Starting event loop...\n" NC << std::endl;
+	std::cout << P_YELLOW "[Webserv] Waiting for new connections...\n" NC << std::endl;
 
 	while (true)
 	{
-		int nbReady = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
-		if (nbReady == -1)
+		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
+		if (nbFds == -1)
 		{
 			if (errno == EINTR)
 				continue ;
@@ -240,7 +253,7 @@ void	Webserv::run()
 		}
 
 		_checkClientTimeout();
-		for (int i = 0; i < nbReady; i++)
+		for (int i = 0; i < nbFds; i++)
 		{
 			int fd = events[i].data.fd;
 			if (_servers.count( fd ) > 0)

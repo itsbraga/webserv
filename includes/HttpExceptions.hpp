@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpExceptions.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 02:08:19 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/18 22:00:18 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/20 19:57:15 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ class BadRequestException : public HttpException
 {
 	public:
 		BadRequestException() : HttpException( 400, "Bad Request" ) {}
-		BadRequestException( const std::string& detail ) : HttpException( 400, "Bad Request: ", detail ) {}
+		BadRequestException( const std::string& detail ) : HttpException( 400, "Bad Request", detail ) {}
 };
 
 class ForbiddenException : public HttpException

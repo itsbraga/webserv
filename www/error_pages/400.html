@@ -80,8 +80,8 @@
 
 		.error-code {
 			font-family: 'Space Grotesk', sans-serif;
-			font-size: clamp(4rem, 15vw, 12rem);
-			font-weight: 700;
+			font-size: clamp(4rem, 15vw, 9rem);
+			font-weight: 800;
 			color: transparent;
 			background: linear-gradient(135deg, var(--error-red), var(--warning-yellow));
 			-webkit-background-clip: text;
@@ -130,19 +130,23 @@
 			80% { transform: translate(-3px, -3px); }
 		}
 
+		.error-title {
+			color: var(--error-red);
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
+			font-weight: 700;
+			margin: 0.5rem auto 1.5rem;
+			text-transform: uppercase;
+			letter-spacing: clamp(0.15em, 2vw, 0.2em);
+			text-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+		}
+
 		.error-meme {
 			display: block;
 			width: 100%;
-			max-width: min(280px, 70vw);
+			max-width: min(250px, 65vw);
 			margin: 1rem auto;
 			border-radius: 12px;
 			box-shadow: 0 0 40px rgba(255, 51, 102, 0.25);
-			animation: floatMeme 4s ease-in-out infinite;
-		}
-
-		@keyframes floatMeme {
-			0%, 100% { transform: translateY(0); }
-			50% { transform: translateY(-6px); }
 		}
 
 		.terminal-box {
@@ -173,15 +177,6 @@
 		.dot-red { background: var(--error-red); }
 		.dot-yellow { background: var(--warning-yellow); }
 		.dot-green { background: var(--terminal-green); }
-
-		.error-title {
-			color: var(--error-red);
-			font-size: clamp(1rem, 4vw, 1.5rem);
-			font-weight: 700;
-			margin-bottom: 0.75rem;
-			text-transform: uppercase;
-			letter-spacing: 0.15em;
-		}
 
 		.error-message {
 			color: #888;
@@ -337,8 +332,7 @@
 
 	<div class="container">
 		<div class="error-code">400</div>
-
-		<img src="memes/400_cat_fuck.jpg" alt="Cat fuck you" class="error-meme" />
+		<div class="error-title">Bad Request</div>
 
 		<div class="terminal-box">
 			<div class="terminal-header">
@@ -346,8 +340,6 @@
 				<div class="terminal-dot dot-yellow"></div>
 				<div class="terminal-dot dot-green"></div>
 			</div>
-			
-			<div class="error-title">Bad Request</div>
 			
 			<p class="error-message">
 				The server could not understand your request due to malformed syntax.
@@ -363,6 +355,8 @@
 					<span class="code-content"><span class="keyword">ACTION</span>: Try again properly</span>
 				</div>
 			</div>
+
+			<img src="memes/400_cat_fuck.jpg" alt="Cat fuck you" class="error-meme" />
 			
 			<div class="btn-container">
 				<a href="/" class="btn btn-home"><span>←</span> Home</a>

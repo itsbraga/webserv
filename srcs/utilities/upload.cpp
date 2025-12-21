@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   upload.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/18 22:06:13 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:44:26 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,17 +83,18 @@ std::string		handleUpload( const std::string& body, const std::string& content_t
 	if (!isValidFilename( filename ))
 		throw BadRequestException();
 
-	if (!fileExists( upload_dir ) || !isDirectory( upload_dir ))
+	if (!pathExists( upload_dir ) || !isDirectory( upload_dir ))
 		throw NotFoundException();
 	if (!isWritable( upload_dir ))
 		throw ForbiddenException();
 
 	std::string path = upload_dir + "/" + filename; // filesystem path
-	bool exists = fileExists( path );
+	bool exists = pathExists( path );
 
 	if (!saveFile( path, file_content ))
 		throw InternalServerErrorException();
 
 	std::string URI = upload_route + "/" + filename;
+
 	return (exists ? "" : URI);
 }

@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:46:39 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/16 01:46:47 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/21 01:17:29 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@ bool	ErrorPage::findStatus( int target ) const
 		if (*it == target)
 			return (true);
 	}
+
 	return (false);
 }

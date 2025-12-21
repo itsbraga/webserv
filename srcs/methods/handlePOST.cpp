@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/19 17:36:35 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:54:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,17 @@ static std::string	__resolvePath( Server& server, const std::string& URI )
 	return (server.getRoot() + URI);
 }
 
-static std::string	__getParentDir( const std::string& path )
+static Response*	__buildPOSTResponse( bool created, const std::string& URI )
 {
-	size_t pos = path.find_last_of( '/' );
-	if (pos == std::string::npos)
-		return (".");
+	Response* response = new Response( created ? 201 : 200, created ? "Created" : "OK" );
 
-	return (path.substr( 0, pos ));
+	response->setBody( created ? "File created\n" : "File updated\n" );
+	response->setContentLength( "13" );
+	response->setContentType( "text/plain" );
+	if (created)
+		response->setLocation( URI );
+
+	return (response);
 }
 
 static Response*	__uploadPOST( Server& server, std::string& body, std::string& content_type )
@@ -34,48 +38,43 @@ static Response*	__uploadPOST( Server& server, std::string& body, std::string& c
 	std::string route = "/uploads";		// a changer aussi
 	std::string URI = handleUpload( body, content_type, dir, route );
 
-	Response* response = new Response( URI.empty() ? 200 : 201, URI.empty() ? "OK" : "Created" );
-
-	response->setBody( URI.empty() ? "File updated\n" : "File created\n" );
-	response->setContentLength( "13" );
-	response->setContentType( "text/plain" );
-	if (!URI.empty())
-		response->setLocation( URI );
-	return (response);
+	return (__buildPOSTResponse( !URI.empty(), URI ));
 }
 
-static Response*	__classicPOST( Server& server, Request& request, std::string& body )
+static Response*	__classicPOST( Server& server, std::string& URI, std::string& body )
 {
-	std::string URI = request.getURI();
 	std::string path = __resolvePath( server, URI );
-	std::string parent_dir = __getParentDir( path );
+	std::string parent_dir = getParentDir( path );
 
-	if (!fileExists( parent_dir ) || !isDirectory( parent_dir ))
+	if (!pathExists( parent_dir ) || !isDirectory( parent_dir ))
 		throw NotFoundException();
 	if (!isWritable( parent_dir ))
 		throw ForbiddenException();
+	if (isDirectory( path ))
+		throw ForbiddenException();
 
-	bool exists = fileExists( path );
+	bool exists = isRegularFile( path );
 	saveFile( path, body );
 
-	Response* response = new Response( exists ? 200 : 201, exists ? "OK" : "Created" );
-
-	response->setBody( exists ? "File updated\n" : "File created\n" );
-	response->setContentLength( "13" );
-	response->setContentType( "text/plain" );
-	if (!exists)
-		response->setLocation( URI );
-	return (response);
+	return (__buildPOSTResponse( !exists, URI ));
 }
 
 Response*	handlePOST( Server& server, Request& request )
 {
+	std::string URI = request.getURI();
+
+	if (!isSafePath( server.getRoot(), URI )) // modifier getRoot quand Location OK
+		throw ForbiddenException();
+
+	// 1/ Récupérer la location qui match avec l'URI
+	// 2/ Check si POST est autorisé pour cette route, sinon throw MethodNotAllowedException()
+	// 3/ Check client_max_body_size
+
 	std::string ct_value = request.getHeaderValue( "Content-Type" );
 	std::string body = request.getBody();
-	if (body.empty())
-		throw BadRequestException();
 
 	if (ct_value.find( "multipart/form-data" ) != std::string::npos)
 		return (__uploadPOST( server, body, ct_value ));
-	return (__classicPOST( server, request, body ));
+
+	return (__classicPOST( server, URI, body ));
 }
