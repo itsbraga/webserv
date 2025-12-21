@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/18 16:35:07 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:31:25 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@
  *	Class
 \**************************/
 
-class LocationTree;
-
 class Server
 {
 	private:
@@ -43,9 +41,8 @@ class Server
 		std::string 	_server_name;
 		std::string		_ip_host;
 		uint16_t 		_port;
-		std::string		_root; // sera a la base de tree
+		std::string		_root;
 		std::string		_index;
-		LocationTree*	_tree;
 
 		Server( const Server& );
 		Server&			operator=( const Server& );
@@ -73,5 +70,4 @@ class Server
 		uint16_t				getPort() const				{ return (_port); }
 		const std::string&		getRoot() const				{ return (_root); }
 		const std::string&		getIndex() const			{ return (_index); }
-		LocationTree*			getLocationTree() const		{ return (_tree); }
 };

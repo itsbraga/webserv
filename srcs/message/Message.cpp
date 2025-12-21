@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/18 17:19:50 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:13:55 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static std::string	__toLower( const std::string& str )
 
 	for (size_t i = 0; i < result.size(); i++)
 		result[i] = std::tolower( static_cast<unsigned char>( result[i] ) );
+
 	return (result);
 }
 
@@ -42,6 +43,7 @@ static int	__hexToInt( const std::string& hex )
 		else
 			return (-1);
 	}
+
 	return (result);
 }
 
@@ -58,6 +60,7 @@ bool	Message::_hasHeader( const std::string& key ) const
 		if (__toLower( it->first ) == lowerKey)
 			return (true);
 	}
+
 	return (false);
 }
 
@@ -148,6 +151,7 @@ void	Message::addHeader( const std::string& key, const std::string& value )
 {
 	if (key.empty() || value.empty())
 		return ;
+
 	_headers.push_back( std::make_pair( key, value ) );
 }
 
@@ -175,9 +179,6 @@ void	Message::setHeaderValue( const std::string& key, const std::string& value )
 void	Message::setBody( const std::string& body )
 {
 	_body = body;
-
-	// std::string length_str = toString( _body.length() );
-	// setHeaderValue( "Content-Length", length_str );
 }
 
 /*
@@ -192,6 +193,7 @@ const std::string	Message::getHeaderMap() const
 
 	if (result.empty())
 		return (ERR_PREFIX "No header found\n");
+
 	return (result);
 }
 
@@ -208,5 +210,6 @@ const std::string	Message::getHeaderValue( const std::string& key ) const
         if (__toLower( it->first ) == lower_key)
             return (it->second);
     }
+
     return (ERR_PREFIX "Header not found: " + key);
 }

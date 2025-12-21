@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/19 21:39:28 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/20 20:10:19 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,9 @@
 # include "colors.hpp"
 # include "utilities.hpp"
 # include "HttpExceptions.hpp"
-# include "Parser.hpp"
+// # include "Parser.hpp"
 # include "ErrorPage.hpp"
 # include "Location.hpp"
-# include "LocationTree.hpp"
 # include "Server.hpp"
 # include "Client.hpp"
 # include "Message.hpp"
@@ -82,7 +81,7 @@ class Webserv
 };
 
 /**************************\
- *	METHODS
+ *	Methods
 \**************************/
 
 // method_map.cpp
@@ -97,3 +96,6 @@ Response*	handlePOST( Server& server, Request& request );
 
 // handleHEAD.cpp
 Response*	handleHEAD( Server& server, Request& request );
+
+// handleDELETE.cpp
+Response*	handleDELETE( Server& server, Request& request );

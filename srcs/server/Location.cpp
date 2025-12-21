@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/16 02:21:08 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/21 01:17:43 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	Location::setAllowedMethods( const std::vector<std::string>& allowed_method
 		if (m != "GET" && m != "POST" && m != "DELETE" && m != "HEAD")
 			return ;
 	}
+
 	_allowed_methods = allowed_methods;
 }
 

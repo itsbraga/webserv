@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/18 22:21:04 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:20:48 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 /*
 	---------------------- [ Object manipulation ] -----------------------
 */
-Server::Server( const std::string& server_name, uint16_t port )
-				: _socket( -1 ), _server_name( server_name ), _port( port ), _tree( NULL )
+Server::Server( const std::string& server_name, uint16_t port ) : _socket( -1 ), _server_name( server_name ), _port( port )
 {
-	if (server_name.empty())
-		return ;
+	// if (server_name.empty())
+	// 	return ;
 
 	std::memset( &_addr, 0, sizeof(_addr) );	
 }
@@ -41,17 +40,20 @@ bool	Server::_createSocket()
 		std::cerr << ERR_PREFIX << P_ORANGE "socket(): " NC << strerror( errno ) << std::endl;
 		return (false);
 	}
+
 	return (true);
 }
 
 bool	Server::_configureSocket()
 {
 	int opt = 1;
+
 	if (setsockopt( _socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof( opt ) ) == -1)
 	{
 		std::cerr << ERR_PREFIX << P_ORANGE "setsockopt(): " NC << strerror( errno ) << std::endl;
 		return (false);
 	}
+
 	return (true);
 }
 
@@ -73,6 +75,7 @@ bool	Server::_bindAndListen()
 		std::cerr << ERR_PREFIX << P_ORANGE "listen(): " NC << strerror( errno ) << std::endl;
 		return (false);
 	}
+
 	return (true);
 }
 
@@ -83,6 +86,7 @@ bool	Server::_setNonBlocking( int fd )
 		std::cerr << ERR_PREFIX << P_ORANGE "fcntl(F_SETFL | O_NONBLOCK): " NC << strerror( errno ) << std::endl;
 		return (false);
 	}
+
 	return (true);
 }
 
@@ -130,8 +134,9 @@ bool	Server::init()
 	setRoot( "./www" );
 	setIndex( "index.html" );
 
-	std::cout << BOLD P_PURPLE "[https://" << _server_name << ".xy] " NC P_BLUE "Listening on port " << _port
+	std::cout << BOLD P_PURPLE "[https://" << _server_name << ".xy] " NC P_PURPLE "Listening on port " << _port
 			  << NC "\n\n";
+
 	return (true);
 }
 
@@ -149,5 +154,6 @@ int		Server::acceptNewClient()
 		::close( clientSocket );
 		return (-1);
 	}
+
 	return (clientSocket);
 }

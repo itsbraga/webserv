@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/18 22:05:54 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:53:27 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # include "HttpExceptions.hpp"
 
 /**************************\
- *	Utilities
+ *	Basic utilities
 \**************************/
 
 // string.cpp
@@ -56,7 +56,7 @@ std::string		toString( const T& value )
  *	Request class utils
 \**************************/
 
-// Request_utils.cpp
+// request/Request_utils.cpp
 std::string		extractRequestLine( const std::string& serialized );
 void			parseRequestLine( const std::string& request_line, std::string& method, std::string& URI, std::string& protocol_version );
 void			validateMethod( const std::string& method );
@@ -67,18 +67,38 @@ bool			isValidHeaderName( const std::string& name );
 size_t			findHeaderBoundaries( const std::string& serialized, size_t& header_start, size_t& header_end );
 
 /**************************\
- *	File utils
+ *	File
 \**************************/
 
+class Server;
+
 // file.cpp
-bool			fileExists( const std::string& path );
-bool			isDirectory( const std::string& path );
+bool			pathExists( const std::string& path );
+std::string		resolvePath( Server& server, const std::string& URI );
+
+bool			isRegularFile( const std::string& path );
 bool			isReadable( const std::string& path );
 bool			isWritable( const std::string& path );
 std::string		readFileContent( const std::string& path );
 bool			saveFile( const std::string& path, const std::string& content );
+bool			deleteFile( const std::string& path );
 std::string		extractBasename( const std::string& filename );
 bool			isValidFilename( const std::string& filename );
+
+/**************************\
+ *	Directory
+\**************************/
+
+// directory.cpp
+bool			isDirectory( const std::string& path );
+std::string		getParentDir( const std::string& path );
+bool			isSafePath( const std::string& root, const std::string& requested_path );
+
+/**************************\
+ *	Autoindex
+\**************************/
+
+// autoindex.cpp
 std::string		generateAutoindex( const std::string& path, const std::string& URI );
 
 /**************************\
@@ -91,7 +111,7 @@ class Response;
 Response*		handleHttpException( const std::exception& e );
 
 /**************************\
- *	Upload utils
+ *	Upload handling
 \**************************/
 
 // upload.cpp

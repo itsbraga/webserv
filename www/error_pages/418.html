@@ -4,22 +4,20 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>418 – I'm a Teapot 🫖</title>
-
 	<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@900&display=swap" rel="stylesheet">
-
 	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
 		:root {
 			--primary: #FF6B6B;
 			--secondary: #4ECDC4;
 			--accent: #FFE66D;
-			--bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			--bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 			--glass: rgba(255, 255, 255, 0.15);
-		}
-
-		*, *::before, *::after {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
 		}
 
 		html, body {
@@ -28,39 +26,15 @@
 		}
 
 		body {
-			min-height: 100%;
+			min-height: 100vh;
 			background: var(--bg-gradient);
 			font-family: 'Comfortaa', cursive;
 			color: white;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			padding: 1rem;
+			padding: clamp(1rem, 4vw, 2rem);
 		}
-
-		/* .bubbles {
-			position: fixed;
-			width: 100%;
-			height: 100%;
-			z-index: 0;
-			overflow: hidden;
-			top: 0;
-			left: 0;
-		}
-
-		.bubble {
-			position: absolute;
-			bottom: -100px;
-			background: rgba(255, 255, 255, 0.1);
-			border-radius: 50%;
-			animation: rise 10s infinite ease-in;
-		}
-
-		@keyframes rise {
-			0% { transform: translateY(0) scale(1); opacity: 0; }
-			50% { opacity: 0.3; }
-			100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
-		} */
 
 		.container {
 			position: relative;
@@ -71,8 +45,7 @@
 			backdrop-filter: blur(15px);
 			border: 1px solid rgba(255, 255, 255, 0.2);
 			border-radius: 24px;
-			padding: clamp(1rem, 4vw, 2rem);
-			min-height: 100vh;
+			padding: clamp(1.5rem, 5vw, 2.5rem);
 			text-align: center;
 			box-shadow: 0 25px 50px rgba(0,0,0,0.2);
 			animation: float 6s ease-in-out infinite;
@@ -83,8 +56,20 @@
 			50% { transform: translateY(-15px); }
 		}
 
-		.title {
-			font-size: clamp(1.5rem, 6vw, 3rem);
+		.error-code {
+			font-family: 'Montserrat', sans-serif;
+			font-size: clamp(4rem, 15vw, 9rem);
+			line-height: 1;
+			margin: 0;
+			background: linear-gradient(to bottom, #fff, var(--accent));
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+		}
+
+		.error-title {
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
 			font-weight: 700;
 			margin-bottom: 1rem;
 			color: var(--accent);
@@ -93,7 +78,7 @@
 		.error-meme {
 			display: block;
 			width: 100%;
-			max-width: min(300px, 75vw);
+			max-width: min(250px, 65vw);
 			margin: 0 auto 1rem;
 			border-radius: 12px;
 			box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -110,8 +95,8 @@
 
 		.steam {
 			position: absolute;
-			top: -10px;
-			right: -10px;
+			top: -7px;
+			right: -5px;
 			font-size: 0.8rem;
 			animation: steam 2s infinite;
 			opacity: 0;
@@ -123,19 +108,8 @@
 			100% { transform: translateY(-30px) translateX(15px) scale(1.5); opacity: 0; }
 		}
 
-		.code {
-			font-family: 'Montserrat', sans-serif;
-			font-size: clamp(3.5rem, 12vw, 6rem);
-			line-height: 1;
-			margin: 0;
-			background: linear-gradient(to bottom, #fff, var(--accent));
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
-			filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
-		}
-
 		.text {
-			font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+			font-size: clamp(0.8rem, 2.5vw, 1.1rem);
 			line-height: 1.5;
 			margin-bottom: 1.5rem;
 		}
@@ -155,13 +129,13 @@
 		}
 
 		.btn {
-			padding: 0.75rem 1.5rem;
+			padding: 0.6rem 1.25rem;
 			border-radius: 50px;
 			text-decoration: none;
 			font-weight: bold;
 			transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 			text-transform: uppercase;
-			font-size: clamp(0.7rem, 2vw, 0.8rem);
+			font-size: clamp(0.65rem, 2vw, 0.8rem);
 			letter-spacing: 1px;
 		}
 
@@ -189,26 +163,47 @@
 
 		.easter-egg {
 			margin-top: 1.5rem;
-			font-size: clamp(0.7rem, 2vw, 0.8rem);
+			font-size: clamp(0.65rem, 2vw, 0.8rem);
 			opacity: 0.6;
 			font-style: italic;
+		}
+
+		/* Media queries for small screens */
+		@media (max-width: 480px) {
+			.container {
+				border-radius: 16px;
+				padding: 1.25rem;
+			}
+
+			.btn-container {
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.btn {
+				width: 100%;
+				max-width: 200px;
+			}
+		}
+
+		@media (max-height: 700px) {
+			.container {
+				animation: none;
+			}
+
+			.error-code {
+				font-size: clamp(3rem, 12vw, 6rem);
+			}
 		}
 	</style>
 </head>
 <body>
-
-	<!-- <div class="bubbles" id="bubble-container"></div> -->
-
 	<div class="container">
 
-		<h1 class="code">418</h1>
-		<div class="title">I'M A TEAPOT !</div>
+		<h1 class="error-code">418</h1>
+		<div class="error-title">I'M A TEAPOT !</div>
 
-		<img 
-			src="memes/418_cat_teapot.jpg" 
-			alt="Cat inside a teapot" 
-			class="error-meme"
-		/>
+		<img src="memes/418_cat_teapot.jpg" alt="Cat inside a teapot" class="error-meme" />
 
 		<p class="text">
 			Sorry... You asked for a coffee, but I'm a <strong>teapot</strong>.<br>
@@ -226,20 +221,5 @@
 			<span class="steam">☁️</span>🫖
 		</div>
 	</div>
-
-	<!-- <script>
-		const container = document.getElementById('bubble-container');
-		for (let i = 0; i < 15; i++) {
-			const bubble = document.createElement('div');
-			bubble.className = 'bubble';
-			const size = Math.random() * 60 + 20 + 'px';
-			bubble.style.width = size;
-			bubble.style.height = size;
-			bubble.style.left = Math.random() * 100 + '%';
-			bubble.style.animationDelay = Math.random() * 8 + 's';
-			bubble.style.animationDuration = Math.random() * 5 + 7 + 's';
-			container.appendChild(bubble);
-		}
-	</script> -->
 </body>
 </html>

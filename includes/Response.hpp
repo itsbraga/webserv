@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/18 21:13:24 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/20 19:33:55 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ class Response : public Message
 
 		void				defineContentType();
 		void				loadContent( const std::string& body, const std::string& path );
+		void				loadHeaders( const std::string& body, const std::string& path );
 
 		/********************************************\
 		 *	Builders Status Functions

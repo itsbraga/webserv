@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/18 17:16:34 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/21 01:13:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 		return (true); // Without body
 
 	size_t cl_end = _read_buffer.find( "\r\n", cl_pos );
+
 	std::string cl_value = _read_buffer.substr( cl_pos + 15, cl_end - cl_pos - 15 );
 	if (cl_value.empty())
 		return (false);
@@ -40,6 +41,7 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 		return (true);
 
 	size_t body_received = _read_buffer.size() - body_start;
+
 	return (body_received >= static_cast<size_t>( content_length ));
 }
 

@@ -83,21 +83,21 @@
 		}
 
 		.cat-astronaut {
-			width: clamp(180px, 45vw, 280px);
+			width: clamp(190px, 55vw, 290px);
 			height: auto;
-			margin: clamp(2rem, 5vw, 3rem) auto clamp(1rem, 3vw, 1.5rem);
-			animation: float 6s ease-in-out infinite;
+			margin: clamp(1rem, 2vw, 0.3rem) auto clamp(1rem, 2vw, 0.3rem);
 			filter: drop-shadow(0 0 30px rgba(34, 211, 238, 0.3));
+			animation: float 6s ease-in-out infinite;
 		}
 
 		@keyframes float {
 			0%, 100% { transform: translateY(0) rotate(-5deg); }
-			50% { transform: translateY(-20px) rotate(5deg); }
+			50% { transform: translateY(-18px) rotate(5deg); }
 		}
 
 		.error-code {
 			font-family: 'Syne', sans-serif;
-			font-size: clamp(3.5rem, 15vw, 10rem);
+			font-size: clamp(4rem, 15vw, 9rem);
 			font-weight: 800;
 			color: transparent;
 			background: linear-gradient(135deg, var(--comet-cyan), var(--nebula-blue), var(--nebula-purple));
@@ -126,7 +126,7 @@
 
 		.error-title {
 			font-family: 'Syne', sans-serif;
-			font-size: clamp(0.8rem, 3.5vw, 1.5rem);
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
 			font-weight: 700;
 			color: var(--comet-cyan);
 			text-transform: uppercase;

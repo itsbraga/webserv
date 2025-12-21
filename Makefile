@@ -2,21 +2,21 @@
 #	ANSI
 #————————————————————————————————————————————————————————
 
-NC			:=	\e[0m
-BOLD		:=	\e[1m
-BLINK		:=	\e[5m
+NC			:=	\033[0m
+BOLD		:=	\033[1m
+BLINK		:=	\033[5m
 
-WHITE		:=	\e[97m
-BLUE		:=	\e[34m
-P_BLUE		:=	\e[38;2;179;235;242m
-CYAN		:=	\e[36m
-P_YELLOW	:=	\e[38;2;255;234;150m
-GREEN		:=	\e[32m
-G_NEON		:=	\e[38;2;57;255;20m
-P_GREEN		:=	\e[38;2;173;235;179m
-PURPLE		:=	\e[35m
-P_PURPLE	:=	\e[38;2;211;211;255m
-PINK		:=	\e[38;2;255;182;193m
+WHITE		:=	\033[97m
+BLUE		:=	\033[34m
+P_BLUE		:=	\033[38;2;179;235;242m
+CYAN		:=	\033[36m
+P_YELLOW	:=	\033[38;2;255;234;150m
+GREEN		:=	\033[32m
+G_NEON		:=	\033[38;2;57;255;20m
+P_GREEN		:=	\033[38;2;173;235;179m
+PURPLE		:=	\033[35m
+P_PURPLE	:=	\033[38;2;211;211;255m
+PINK		:=	\033[38;2;255;182;193m
 
 #————————————————————————————————————————————————————————
 #	PROGRAM NAME & COMPILATION DETAILS
@@ -77,17 +77,15 @@ endef
 #	RULES
 #————————————————————————————————————————————————————————
 
-all: init_progress $(NAME)
-
-init_progress:
-		@rm -f $(PROGRESS_FILE)
-		@echo "0" > $(PROGRESS_FILE)
-		@printf "$(BOLD)╔══════════════════════════════════════════════════════╗$(NC)\n"
-		@printf "$(BOLD)║$(NC)\t\t  $(BOLD)$(PINK)Compiling $(NAME)...$(NC)                 $(BOLD)║$(NC)\n"
-		@printf "$(BOLD)╚══════════════════════════════════════════════════════╝$(NC)\n\n"
-
+all: $(NAME)
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp
+		@if [ ! -f $(PROGRESS_FILE) ]; then \
+			echo "0" > $(PROGRESS_FILE); \
+			printf "$(BOLD)╔══════════════════════════════════════════════════════╗$(NC)\n"; \
+			printf "$(BOLD)║$(NC)\t\t  $(BOLD)$(PINK)Compiling $(NAME)...$(NC)                 $(BOLD)║$(NC)\n"; \
+			printf "$(BOLD)╚══════════════════════════════════════════════════════╝$(NC)\n\n"; \
+		fi
 		@mkdir -p $(dir $@)
 		@c++ $(CPPFLAGS) $(DEPFLAGS) $(INC) -c $< -o $@
 		@$(call show_progress,$<)
@@ -120,4 +118,4 @@ debug: fclean
 		@make $(NAME) CPPFLAGS="$(CPPFLAGS) $(DEBUG)"
 
 
-.PHONY: all init_progress clean fclean re debug
+.PHONY: all clean fclean re debug
