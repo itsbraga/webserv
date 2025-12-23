@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   handleGET.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/21 02:06:23 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 20:57:29 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-static Response*	__handleDirectoryRequest( Server& server, std::string& path, const std::string& URI )
+static Response*	__handleDirectoryRequest( Server& server, std::string& path, const std::string& uri )
 {
-	(void)URI;
 	std::string idx = path + (path[path.size() - 1] == '/' ? "" : "/") + server.getIndex();
 	std::string	body;
 
@@ -23,8 +22,8 @@ static Response*	__handleDirectoryRequest( Server& server, std::string& path, co
 		body = readFileContent( idx );
 		path = idx;
 	}
-	// else if (server.getAutoindex())
-	// 	body = generateAutoindex( path, URI );
+	else if (server.getAutoIndex())
+		body = generateAutoIndex( path, uri );
 	else
 		throw ForbiddenException();
 
@@ -46,8 +45,8 @@ static Response*	__handleFileRequest( const std::string& path )
 
 Response*	handleGET( Server& server, Request& request )
 {
-	std::string	URI = request.getURI();
-	std::string	path = resolvePath( server, URI );
+	std::string	uri = request.getUri();
+	std::string	path = resolvePath( server, uri );
 
 	// Récupérer la location qui match avec l'URI + si la methode est autorisee pour cette route
 	// sinon throw MethodNotAllowedException()
@@ -57,7 +56,7 @@ Response*	handleGET( Server& server, Request& request )
 	if (!isReadable( path ))
 		throw ForbiddenException();
 	if (isDirectory( path ))
-		return (__handleDirectoryRequest( server, path, URI ));
+		return (__handleDirectoryRequest( server, path, uri ));
 
 	return (__handleFileRequest( path ));
 }

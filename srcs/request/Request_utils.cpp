@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/21 01:26:03 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:36:25 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Message.hpp"
-#include "utilities.hpp"
+#include "Webserv.hpp"
 
 /*
 	---------------------------- [ Utilities ] ---------------------------
@@ -36,11 +35,11 @@ std::string		extractRequestLine( const std::string& serialized )
 	return (request_line);
 }
 
-void	parseRequestLine( const std::string& request_line, std::string& method, std::string& URI, std::string& protocol_version )
+void	parseRequestLine( const std::string& request_line, std::string& method, std::string& uri, std::string& protocol_version )
 {
 	std::stringstream	ss( request_line );
 
-	if (!(ss >> method >> URI >> protocol_version))
+	if (!(ss >> method >> uri >> protocol_version))
 		throw BadRequestException( "Incomplete request line" );
 
 	std::string extra;
@@ -60,10 +59,10 @@ void	validateMethod( const std::string& method )
 		throw NotImplementedException(); // Peut-être ailleurs
 }
 
-void	validateURI( const std::string& URI )
+void	validateUri( const std::string& uri )
 {
-	if (URI.empty() || URI[0] != '/')
-		throw BadRequestException( "URI must start with '/'" );
+	if (uri.empty() || uri[0] != '/')
+		throw BadRequestException( "uri must start with '/'" );
 }
 
 void	validateProtocolVersion( const std::string& protocol_version )

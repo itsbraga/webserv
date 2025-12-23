@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/21 01:54:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:19:09 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-static std::string	__resolvePath( Server& server, const std::string& URI )
+static std::string	__resolvePath( Server& server, const std::string& uri )
 {
-	return (server.getRoot() + URI);
+	return (server.getRoot() + uri);
 }
 
-static Response*	__buildPOSTResponse( bool created, const std::string& URI )
+static Response*	__buildPOSTResponse( bool created, const std::string& uri )
 {
 	Response* response = new Response( created ? 201 : 200, created ? "Created" : "OK" );
 
@@ -25,25 +25,34 @@ static Response*	__buildPOSTResponse( bool created, const std::string& URI )
 	response->setContentLength( "13" );
 	response->setContentType( "text/plain" );
 	if (created)
-		response->setLocation( URI );
+		response->setLocation( uri );
 
 	return (response);
 }
 
+// static Response*	__uploadPOST( Server& server, Location& location, std::string& body, std::string& content_type )
+// {
+// 	std::string dir = server.getRoot() + location.getUri();
+// 	std::string route = location.getUri();
+// 	std::string uri = handleUpload( body, content_type, dir, route );
+
+// 	return (__buildPOSTResponse( !uri.empty(), uri ));
+// }
+
 static Response*	__uploadPOST( Server& server, std::string& body, std::string& content_type )
 {
-	(void)server; // retirer quand Location sera OK
+	(void)server;
 
-	std::string dir = "./www/uploads";	// a changer: recuperer depuis fichier de config
-	std::string route = "/uploads";		// a changer aussi
-	std::string URI = handleUpload( body, content_type, dir, route );
+	std::string dir = "./www/uploads";
+	std::string route = "/uploads";
+	std::string uri = handleUpload( body, content_type, dir, route );
 
-	return (__buildPOSTResponse( !URI.empty(), URI ));
+	return (__buildPOSTResponse( !uri.empty(), uri ));
 }
 
-static Response*	__classicPOST( Server& server, std::string& URI, std::string& body )
+static Response*	__classicPOST( Server& server, std::string& uri, std::string& body )
 {
-	std::string path = __resolvePath( server, URI );
+	std::string path = __resolvePath( server, uri );
 	std::string parent_dir = getParentDir( path );
 
 	if (!pathExists( parent_dir ) || !isDirectory( parent_dir ))
@@ -56,19 +65,19 @@ static Response*	__classicPOST( Server& server, std::string& URI, std::string& b
 	bool exists = isRegularFile( path );
 	saveFile( path, body );
 
-	return (__buildPOSTResponse( !exists, URI ));
+	return (__buildPOSTResponse( !exists, uri ));
 }
 
 Response*	handlePOST( Server& server, Request& request )
 {
-	std::string URI = request.getURI();
+	std::string uri = request.getUri();
 
-	if (!isSafePath( server.getRoot(), URI )) // modifier getRoot quand Location OK
+	if (!isSafePath( server.getRoot(), uri )) // modifier getRoot quand Location OK
 		throw ForbiddenException();
 
-	// 1/ Récupérer la location qui match avec l'URI
+	// 1/ Récupérer la location qui match avec l'uri, si pas trouvée voir dans bloc server en lui-même
 	// 2/ Check si POST est autorisé pour cette route, sinon throw MethodNotAllowedException()
-	// 3/ Check client_max_body_size
+	// 3/ Check client_max_body_size (comme pour l'uri)
 
 	std::string ct_value = request.getHeaderValue( "Content-Type" );
 	std::string body = request.getBody();
@@ -76,5 +85,5 @@ Response*	handlePOST( Server& server, Request& request )
 	if (ct_value.find( "multipart/form-data" ) != std::string::npos)
 		return (__uploadPOST( server, body, ct_value ));
 
-	return (__classicPOST( server, URI, body ));
+	return (__classicPOST( server, uri, body ));
 }

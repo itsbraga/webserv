@@ -3,31 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 23:12:32 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/21 01:21:25 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 20:56:39 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utilities.hpp"
+#include "Webserv.hpp"
 
-static std::string	__buildAutoindexHeader( const std::string& URI )
+static std::string	__buildAutoIndexHeader( const std::string& uri )
 {
-	std::string html = "<!DOCTYPE html><html><head><title>Index of " + URI + "</title></head><body>";
-	html += "<h1>Index of " + URI + "</h1><ul>";
+	std::string html = "<!DOCTYPE html><html><head><title>Index of " + uri + "</title></head><body>";
+	html += "<h1>Index of " + uri + "</h1><ul>";
 
-	if (URI != "/")
+	if (uri != "/")
 		html += "<li><a href=\"../\">../</a></li>";
 
 	return (html);
 }
 
-static std::string	__buildEntryLink( const std::string& URI, const std::string& name, bool isDir )
+static std::string	__buildEntryLink( const std::string& uri, const std::string& name, bool isDir )
 {
-	std::string link = URI;
+	std::string link = uri;
 
-	if (URI[URI.size() - 1] != '/')
+	if (uri[uri.size() - 1] != '/')
 		link += "/";
 	link += name;
 
@@ -37,7 +37,7 @@ static std::string	__buildEntryLink( const std::string& URI, const std::string& 
 	return ("<li><a href=\"" + link + "\">" + name + "</a></li>");
 }
 
-std::string		generateAutoindex( const std::string& path, const std::string& URI )
+std::string		generateAutoIndex( const std::string& path, const std::string& uri )
 {
 	DIR*			dir = opendir( path.c_str() );
 	struct dirent*	entry;
@@ -45,14 +45,14 @@ std::string		generateAutoindex( const std::string& path, const std::string& URI 
 	if (!dir)
 		throw std::runtime_error( "Cannot open directory" );
 
-	std::string html = __buildAutoindexHeader( URI );
+	std::string html = __buildAutoIndexHeader( uri );
 	while ((entry = readdir( dir )) != NULL)
 	{
 		std::string name = entry->d_name;
 		if (name == "." || name == "..")
 			continue ;
 
-		html += __buildEntryLink( URI, name, isDirectory( path + "/" + name ));
+		html += __buildEntryLink( uri, name, isDirectory( path + "/" + name ));
 	}
 	html += "</ul></body></html>";
 	closedir( dir );

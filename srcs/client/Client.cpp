@@ -3,14 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/21 01:13:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 19:28:05 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "Webserv.hpp"
+
+/*
+	---------------------- [ Object manipulation ] -----------------------
+*/
+Client::Client( int socket, int server_fd ) : _socket( socket ), _server_fd( server_fd ), _last_activity( time( NULL ) ) {}
+
+Client::~Client()
+{
+	if (_socket != -1)
+		::close( _socket );
+}
 
 /*
 	------------------------ [ Private methods ] -------------------------

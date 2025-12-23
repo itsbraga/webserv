@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/20 20:10:19 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 18:36:08 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,38 @@
  *	Used libraries
 \**************************/
 
-// External
+// External C++
 # include <iostream>
+# include <string>
+# include <sstream>
+# include <fstream>
+# include <ctime>
+# include <cctype>
+# include <cstring>
+# include <cstdlib>
+# include <utility>
+# include <exception>
+# include <vector>
 # include <map>
-# include <set>
-# include <sys/wait.h>		// waitpid()
+
+// External C
+# include <sys/epoll.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include <dirent.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <netinet/in.h>
+# include <errno.h>
 
 // Project
 # include "defines.hpp"
 # include "colors.hpp"
 # include "utilities.hpp"
 # include "HttpExceptions.hpp"
-// # include "Parser.hpp"
+# include "Token.hpp"
+# include "Parser.hpp"
 # include "ErrorPage.hpp"
 # include "Location.hpp"
 # include "Server.hpp"
@@ -58,25 +78,32 @@ class Webserv
 {
 	private:
 		int						_epoll_fd;
-		std::map<int, Server*>	_servers;
-		std::map<int, Client*>	_clients;
-		
-		bool	_addServerToEpoll( Server* server );
+		std::map<int, Server>	_servers;
+		std::map<int, Client>	_clients;
+
+		bool	_addServerToEpoll( int server_fd );
 		bool	_addClientToEpoll( int client_fd );
 		void	_removeClient( int client_fd );
 
 		void	_handleServerEvent( int server_fd );
-		void	_handleClientEvent( int client_fd, uint32_t events );
-		void	_handleClientData( int client_fd, Client* client );
-		void	_processRequest( int client_fd, Client* client );
+		void	_handleClientEvent( int client_fd, unsigned int events );
+		void	_handleClientData( int client_fd );
+		void	_processRequest( int client_fd );
 		void	_checkClientTimeout();
 
+		Webserv( const Webserv& toCopy );
+		Webserv&	operator=( const Webserv& toCopy );
+
 	public:
-		Webserv() : _epoll_fd( -1 ) {}
+		Webserv();
 		~Webserv();
 
-		bool	addServer( const std::string& server_name, uint16_t port );
-		bool	init(/* config file */);
+		bool	addServer( Server& server );
+
+		Server*			getServer( int fd );
+		const Server*	getServer( int fd ) const;
+
+		bool	init();
 		void	run();
 };
 

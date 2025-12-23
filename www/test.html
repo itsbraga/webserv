@@ -331,7 +331,7 @@
 						<span class="test-name">DELETE</span>
 						<span class="test-method method-delete">DELETE</span>
 					</div>
-					<button class="test-btn" onclick="runTest('DELETE', '/test-file')">Test</button>
+					<button class="test-btn" onclick="runDeleteTest()">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -389,36 +389,42 @@
 		const consoleEl = document.getElementById('console');
 		const emptyState = document.getElementById('emptyState');
 
-		function hideEmptyState() {
-			if (emptyState) emptyState.style.display = 'none';
+		function hideEmptyState()
+		{
+			if (emptyState)
+				emptyState.style.display = 'none';
 		}
 
-		function clearConsole() {
-			consoleEl.innerHTML = '<div class="empty-state" id="emptyState">Aucun test exécuté</div>';
+		function clearConsole()
+		{ consoleEl.innerHTML = '<div class="empty-state" id="emptyState">Aucun test exécuté</div>'; }
+
+		function getTime()
+		{ return (new Date().toTimeString().slice(0, 5)); }
+
+		function getStatusClass(status)
+		{
+			if (status >= 200 && status < 300)
+				return ('status-ok');
+			if (status >= 300 && status < 400)
+				return ('status-redirect');
+			return ('status-err');
 		}
 
-		function getTime() {
-			return new Date().toTimeString().slice(0, 5);
-		}
-
-		function getStatusClass(status) {
-			if (status >= 200 && status < 300) return 'status-ok';
-			if (status >= 300 && status < 400) return 'status-redirect';
-			return 'status-err';
-		}
-
-		function getMethodClass(method) {
+		function getMethodClass(method)
+		{
 			const classes = {
 				'GET': 'method-get',
 				'POST': 'method-post',
 				'DELETE': 'method-delete',
 				'HEAD': 'method-head'
 			};
-			return classes[method] || 'method-multi';
+			return (classes[method] || 'method-multi');
 		}
 
-		function logRequest(method, url, status, duration) {
+		function logRequest(method, url, status, duration)
+		{
 			hideEmptyState();
+
 			const line = document.createElement('div');
 			line.className = 'log';
 			line.innerHTML = `
@@ -432,8 +438,10 @@
 			consoleEl.scrollTop = consoleEl.scrollHeight;
 		}
 
-		function logError(method, url, error) {
+		function logError(method, url, error)
+		{
 			hideEmptyState();
+
 			const line = document.createElement('div');
 			line.className = 'log';
 			line.innerHTML = `
@@ -447,8 +455,10 @@
 			consoleEl.scrollTop = consoleEl.scrollHeight;
 		}
 
-		function logSummary(text, isSuccess) {
+		function logSummary(text, isSuccess)
+		{
 			const line = document.createElement('div');
+	
 			line.className = 'log';
 			line.innerHTML = `
 				<span class="log-time">[${getTime()}]</span>
@@ -459,31 +469,52 @@
 			consoleEl.scrollTop = consoleEl.scrollHeight;
 		}
 
-		function addSeparator() {
+		function addSeparator()
+		{
 			hideEmptyState();
 			const sep = document.createElement('hr');
 			sep.className = 'log-separator';
 			consoleEl.appendChild(sep);
 		}
 
-		async function runTest(method, url, body = null) {
+		async function runTest(method, url, body = null)
+		{
 			const start = performance.now();
 			
 			try {
 				const opts = { method };
-				if (body && method === 'POST') {
+				if (body && method === 'POST')
+				{
 					opts.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
 					opts.body = body;
 				}
 				const res = await fetch(url, opts);
 				const duration = Math.round(performance.now() - start);
 				logRequest(method, url, res.status, duration);
-			} catch (e) {
+			}
+			catch (e) {
 				logError(method, url, e.message);
 			}
 		}
 
-		async function stressTest() {
+		async function runDeleteTest()
+		{
+			const testFileName = 'test-delete-' + Date.now() + '.txt';
+			
+			const formData = new FormData();
+			formData.append('file', new Blob(['test'], {type: 'text/plain'}), testFileName);
+			
+			try {
+				await fetch('/upload', { method: 'POST', body: formData });
+				await runTest('DELETE', '/uploads/' + testFileName);
+			}
+			catch (e) {
+				logError('DELETE', '/uploads/' + testFileName, e.message);
+			}
+		}
+
+		async function stressTest()
+		{
 			const btn = document.getElementById('stressBtn');
 			btn.disabled = true;
 			btn.textContent = 'Test en cours...';
@@ -498,7 +529,8 @@
 						const res = await fetch('/');
 						const duration = Math.round(performance.now() - reqStart);
 						return { ok: res.ok, status: res.status, duration };
-					} catch (e) {
+					}
+					catch (e) {
 						return { ok: false, status: 'ERR', duration: 0, error: e.message };
 					}
 				})

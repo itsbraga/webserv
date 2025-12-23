@@ -3,33 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   err_msg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:04:53 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/16 02:59:54 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 19:59:19 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utilities.hpp"
+#include "Webserv.hpp"
 
-void	err_msg( const std::string& context, const std::string& reason )
+void	err_msg( const char *context, const std::string& reason )
 {
 	std::string msg = ERR_PREFIX;
 
-	if (context.empty())
+	if (context == NULL || context[0] == '\0')
 		msg += reason;
 	else
-		msg += context + ": " + reason;
+		msg += BOLD P_ORANGE + std::string( context ) + ": " + NC + reason;
 	std::cerr << msg << std::endl;
 }
 
-void	err_msg_quoted( const std::string& context, const std::string& reason )
+void	err_msg_quoted( const char *context, const std::string& reason )
 {
 	std::string msg = ERR_PREFIX;
 
-	if (context.empty())
+	if (context == NULL || context[0] == '\0')
 		msg += reason;
 	else
-		msg += "'" + context + "': " + reason;
+		msg += "'" + std::string( context ) + "': " + reason;
 	std::cerr << msg << std::endl;
 }

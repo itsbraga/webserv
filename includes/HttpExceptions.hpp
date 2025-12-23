@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   HttpExceptions.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 02:08:19 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/20 19:57:15 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/22 22:06:29 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-/**************************\
- *	Used libraries
-\**************************/
-
-# include <string>
-# include <exception>
 
 /**************************\
  *	Main class

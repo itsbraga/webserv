@@ -3,29 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/16 02:53:52 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 20:04:00 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-
-// int	main( int argc, char **argv )
-// {
-// 	webserv_t	conf;
-
-// 	if (argc != 2)
-// 		return (err_msg(NULL, ERR_USAGE), FAILURE);
-// 	try {
-// 		Parser::handleFileConfig(argv[1], &conf);
-// 	}
-// 	catch (const std::exception& e) {
-// 		std::cerr << e.what() << '\n';
-// 	}
-// 	return (SUCCESS);
-// }
 
 static void	__initUtilities()
 {
@@ -34,16 +19,32 @@ static void	__initUtilities()
 	Response::initContentTypes();
 }
 
-int	main( void )
+int	main( int argc, char **argv )
 {
-	Webserv	webserv;
+	// (void)argc;
+	if (argc != 2)
+		return (err_msg( NULL, "Configuration file missing" ), FAILURE);
 
-	if (!webserv.addServer( "destination_finale", 8080 ))
+	Webserv	webserv;
+	
+	try {
+		Parser parser( argv[1] );
+		parser.bufferTokenize();
+		std::cout << parser << std::endl;
+		parser.parse();
+		std::cout << BOLD P_GREEN "PARSING OK\n";
+		parser.createAllObjects( webserv );
+	}
+	catch (const std::exception& e) {
+		err_msg( "Parser", e.what() );
 		return (FAILURE);
+	}
+
 	if (!webserv.init())
 		return (FAILURE);
 
 	__initUtilities();
 	webserv.run();
+	
 	return (SUCCESS);
 }

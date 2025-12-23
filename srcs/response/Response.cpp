@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/21 01:16:21 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:30:32 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Response.hpp"
+#include "Webserv.hpp"
 
 std::map<int, Response::ResponseFunction>	Response::_builders;
 std::map<std::string, std::string>			Response::_content_types;
@@ -74,16 +74,16 @@ void	Response::setLocation( const std::string& location )
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-const std::string	Response::getExtension( const std::string& URI ) const
+const std::string	Response::getExtension( const std::string& uri ) const
 {
-	if (URI.empty())
+	if (uri.empty())
 		throw InternalServerErrorException();
 
-	std::size_t dot_pos = URI.find_last_of( '.'  );
+	std::size_t dot_pos = uri.find_last_of( '.'  );
 	if (dot_pos == std::string::npos)
 		throw InternalServerErrorException();
 
-	std::string extension = URI.substr( dot_pos + 1 );
+	std::string extension = uri.substr( dot_pos + 1 );
 	if (extension.empty())
 		throw InternalServerErrorException();
 
@@ -107,9 +107,9 @@ const std::string	Response::getDate() const
 const std::string	Response::getSerializedHeaders() const
 {
 	std::string result;
-	std::vector< std::pair<std::string, std::string> >::const_iterator it;
+	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
 
-	for (it = _headers.begin(); it != _headers.end(); it++)
+	for (; it != _headers.end(); it++)
 		result += it->first + ": " + it->second + "\r\n";
 
 	return (result);
@@ -134,9 +134,8 @@ void	Response::defineContentType()
 	if (extension.empty())
 		throw InternalServerErrorException();
 
-	std::map<std::string, std::string>::const_iterator it;
+	std::map<std::string, std::string>::const_iterator it = _content_types.find( extension );
 
-	it = _content_types.find( extension );
 	if (it != _content_types.end())
 		addHeader( "content-type", it->second );
 	else

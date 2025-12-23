@@ -3,30 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/21 01:53:27 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 20:56:39 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-/**************************\
- *	Used libraries
-\**************************/
-
-# include <iostream>
-# include <string>
-# include <sstream>
-# include <fstream>
-# include <vector>
-# include <sys/stat.h>
-# include <dirent.h>
-# include <unistd.h>
-
-# include "defines.hpp"
-# include "HttpExceptions.hpp"
 
 /**************************\
  *	Basic utilities
@@ -37,8 +21,8 @@ std::vector<std::string>	split( const std::string& str, char delimiter );
 void						erase_whitespace( std::string& str, const std::string& set );
 
 // err_msg.cpp
-void						err_msg( const std::string& context, const std::string& reason );
-void						err_msg_quoted( const std::string& context, const std::string& reason );
+void						err_msg( const char *context, const std::string& reason );
+void						err_msg_quoted( const char *context, const std::string& reason );
 
 /**************************\
  *	Template function
@@ -58,9 +42,9 @@ std::string		toString( const T& value )
 
 // request/Request_utils.cpp
 std::string		extractRequestLine( const std::string& serialized );
-void			parseRequestLine( const std::string& request_line, std::string& method, std::string& URI, std::string& protocol_version );
+void			parseRequestLine( const std::string& request_line, std::string& method, std::string& uri, std::string& protocol_version );
 void			validateMethod( const std::string& method );
-void			validateURI( const std::string& URI );
+void			validateUri( const std::string& uri );
 void			validateProtocolVersion( const std::string& protocolVersion );
 
 bool			isValidHeaderName( const std::string& name );
@@ -74,7 +58,7 @@ class Server;
 
 // file.cpp
 bool			pathExists( const std::string& path );
-std::string		resolvePath( Server& server, const std::string& URI );
+std::string		resolvePath( Server& server, const std::string& uri );
 
 bool			isRegularFile( const std::string& path );
 bool			isReadable( const std::string& path );
@@ -99,7 +83,7 @@ bool			isSafePath( const std::string& root, const std::string& requested_path );
 \**************************/
 
 // autoindex.cpp
-std::string		generateAutoindex( const std::string& path, const std::string& URI );
+std::string		generateAutoIndex( const std::string& path, const std::string& uri );
 
 /**************************\
  *	Exceptions catcher
