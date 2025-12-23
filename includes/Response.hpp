@@ -3,28 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/20 19:33:55 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 20:47:12 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-/**************************\
- *	Used libraries
-\**************************/
-
-# include <iostream>
-# include <string>
-# include <map>
-# include <ctime>
-# include <sys/stat.h>
-
-# include "Message.hpp"
-# include "utilities.hpp"
-# include "colors.hpp"
 
 /**************************\
  *	Class
@@ -42,7 +28,7 @@ class Response : public Message
 		static std::map<int, ResponseFunction>		_builders;
 		static std::map<std::string, std::string>	_content_types;
 
-		void			_setBaseHeaders( bool keepAlive );
+		void			_setCommonHeaders( bool keepAlive );
 		void			_setErrorPage( const std::string& title );
 	
 	public:
@@ -66,7 +52,7 @@ class Response : public Message
 		const std::string&	getStatusName() const		{ return (_status_name); }
 		const std::string&	getResourcePath() const		{ return (_resource_path); }
 		const std::string 	getDate() const;
-		const std::string	getExtension( const std::string& URI ) const; 
+		const std::string	getExtension( const std::string& uri ) const; 
 		const std::string	getSerializedHeaders() const;
 		const std::string	getSerializedResponse();
 
@@ -85,6 +71,7 @@ class Response : public Message
 		
 		// 3xx : Redirection
 		void	MovedPermanently(); 		// 301
+		void	Found();					// 302
 		
 		// 4xx : Client error
 		void	BadRequest();				// 400
@@ -92,6 +79,7 @@ class Response : public Message
 		void	NotFound();					// 404
 		void	MethodNotAllowed();			// 405
 		void	LengthRequired();			// 411
+		void	PayloadTooLarge();			// 413
 		void	URITooLong();				// 414
 		void	ImATeapot();				// 418
 		void	TooManyRequest();			// 429

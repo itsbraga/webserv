@@ -6,23 +6,11 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/18 21:28:35 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/22 22:06:14 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-/**************************\
- *	Used libraries
-\**************************/
-
-# include <string>
-# include <vector>
-# include <utility>
-
-# include "utilities.hpp"
-# include "colors.hpp"
-# include "HttpExceptions.hpp"
 
 /**************************\
  *	Class

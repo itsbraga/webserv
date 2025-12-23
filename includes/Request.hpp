@@ -3,29 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/16 03:01:33 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:35:35 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-/**************************\
- *	Used libraries
-\**************************/
-
-# include <string>
-# include <fstream>
-# include <sstream>
-# include <cctype>
-# include <cstdlib>
-# include <map>
-
-# include "Message.hpp"
-# include "utilities.hpp"
-# include "colors.hpp"
 
 /**************************\
  *	Class
@@ -36,18 +21,18 @@ class Request : public Message
 	private:
 		const std::string	_raw_request;
 		std::string			_method;
-		std::string			_URI;
+		std::string			_uri;
 
-		void			_requestLineCheck( const std::string& serialized );
+		void				_requestLineCheck( const std::string& serialized );
 
-		void			_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end );
-		void			_validateRequiredHeaders();
-		void			_validateContentLength();
-		void			_headerCheck( const std::string& serialized );
+		void				_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end );
+		void				_validateRequiredHeaders();
+		void				_validateContentLength();
+		void				_headerCheck( const std::string& serialized );
 
-		void			_chunkedBodyCase( const std::string& serialized, size_t body_start );
-		void			_fullBodyCase( const std::string& serialized, size_t body_start );
-		void			_bodyCheck( const std::string& serialized );
+		void				_chunkedBodyCase( const std::string& serialized, size_t body_start );
+		void				_fullBodyCase( const std::string& serialized, size_t body_start );
+		void				_bodyCheck( const std::string& serialized );
 
 	public:
 		Request( const std::string& serialized );
@@ -56,5 +41,5 @@ class Request : public Message
 		void				process();
 
 		const std::string&	getMethod() const	{ return (_method); }
-		const std::string&	getURI() const		{ return (_URI); }
+		const std::string&	getUri() const		{ return (_uri); }
 };

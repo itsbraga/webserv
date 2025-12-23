@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/21 01:15:39 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:13:10 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Request.hpp"
+#include "Webserv.hpp"
 
 /*
 	---------------------- [ Object manipulation ] -----------------------
@@ -29,15 +29,15 @@ Request::Request( const std::string& serialized ) : Message(), _raw_request( ser
 void	Request::_requestLineCheck( const std::string& serialized )
 {
 	std::string request_line = extractRequestLine( serialized );
-	std::string method, URI, protocol_version;
+	std::string method, uri, protocol_version;
 
-	parseRequestLine( request_line, method, URI, protocol_version );
+	parseRequestLine( request_line, method, uri, protocol_version );
 	validateMethod( method );
-	validateURI( URI );
+	validateUri( uri );
 	validateProtocolVersion( protocol_version );
 
 	_method = method;
-	_URI = URI;
+	_uri = uri;
 }
 
 void	Request::_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end )
@@ -70,7 +70,7 @@ void	Request::_validateRequiredHeaders()
 	if (_method == "POST")
 	{
 		if (!_hasHeader( "Content-Length") && !_hasHeader( "Transfer-Encoding" ))
-			throw LengthRequiredException(); // Peut-être ailleurs
+			throw LengthRequiredException();
 	}
 }
 

@@ -307,7 +307,8 @@
 			handleFiles(e.target.files);
 		});
 
-		function handleFiles(files) {
+		function handleFiles(files)
+		{
 			fileList.innerHTML = '';
 			Array.from(files).forEach(file => {
 				const item = document.createElement('div');
@@ -324,12 +325,14 @@
 			});
 		}
 
-		function formatSize(bytes) {
-			if (bytes === 0) return '0 B';
+		function formatSize(bytes)
+		{
+			if (bytes === 0)
+				return ('0 B');
 			const k = 1024;
 			const sizes = ['B', 'KB', 'MB', 'GB'];
 			const i = Math.floor(Math.log(bytes) / Math.log(k));
-			return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+			return (parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]);
 		}
 	</script>
 </body>

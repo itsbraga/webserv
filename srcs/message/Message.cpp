@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/21 01:13:55 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 16:10:42 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Message.hpp"
+#include "Webserv.hpp"
 
 /*
 	---------------------------- [ Utilities ] ---------------------------
@@ -53,9 +53,9 @@ static int	__hexToInt( const std::string& hex )
 bool	Message::_hasHeader( const std::string& key ) const
 {
 	std::string lowerKey = __toLower( key );
-	std::vector< std::pair<std::string, std::string> >::const_iterator it;
+	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
 
-	for (it = _headers.begin(); it != _headers.end(); ++it)
+	for (; it != _headers.end(); ++it)
 	{
 		if (__toLower( it->first ) == lowerKey)
 			return (true);
@@ -163,9 +163,9 @@ void	Message::setHeaderValue( const std::string& key, const std::string& value )
 	if (key.empty())
 		return ;
 
-	std::vector< std::pair<std::string, std::string> >::iterator it;
+	std::vector< std::pair<std::string, std::string> >::iterator it = _headers.begin();
 
-	for (it = _headers.begin(); it != _headers.end(); ++it)
+	for (; it != _headers.end(); ++it)
 	{
 		if (it->first == key)
 		{
@@ -173,6 +173,7 @@ void	Message::setHeaderValue( const std::string& key, const std::string& value )
 			return ;
 		}
 	}
+
 	addHeader( key, value );
 }
 
@@ -203,9 +204,9 @@ const std::string	Message::getHeaderValue( const std::string& key ) const
 		return ("");
 
 	std::string lower_key = __toLower(key);
-	std::vector< std::pair<std::string, std::string> >::const_iterator it;
+	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
 
-    for (it = _headers.begin(); it != _headers.end(); ++it)
+    for (; it != _headers.end(); ++it)
 	{
         if (__toLower( it->first ) == lower_key)
             return (it->second);

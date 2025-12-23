@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/21 01:44:42 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:30:46 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utilities.hpp"
-#include "Server.hpp"
+#include "Webserv.hpp"
 
 bool	pathExists( const std::string& path )
 {
@@ -20,12 +19,12 @@ bool	pathExists( const std::string& path )
 	return (stat( path.c_str(), &buffer ) == 0);
 }
 
-std::string		resolvePath( Server& server, const std::string& URI )
+std::string		resolvePath( Server& server, const std::string& uri )
 {
-	if (URI == "/")
+	if (uri == "/")
 		return (server.getRoot() + "/" + server.getIndex());
 
-	return (server.getRoot() + URI);
+	return (server.getRoot() + uri);
 }
 
 bool	isRegularFile( const std::string& path )

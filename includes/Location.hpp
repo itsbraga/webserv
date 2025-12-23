@@ -3,24 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/16 02:33:15 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 18:39:37 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-/**************************\
- *	Used libraries
-\**************************/
-
-# include <string>
-# include <vector>
-# include <sys/stat.h>
-
-# include "ErrorPage.hpp"
 
 /**************************\
  *	Class
@@ -29,39 +19,60 @@
 class Location
 {
 	private:
-		std::string					_root;
-		std::string					_index;
-		bool						_auto_index;
-		bool						_upload_allowed;
-		unsigned int				_return_code;
-		std::string					_return_URI;
-		std::vector<ErrorPage>		_error_page;
-		std::vector<std::string>	_allowed_methods;
-		std::vector<std::pair<std::string, std::string> >	_cgi_bin;
+		std::string							_uri;
+		std::string 						_root;
+		std::string 							_index;
+		std::vector<ErrorPage>						 _err_page;
+		std::vector<std::string> 						_allowed_methods;
+		std::vector<std::pair<std::string, std::string> >	_cgi_bin; //first == extension; second == path_to_script;
+		std::string										_client_max_size_body;
+		bool											_auto_index;
+		bool										_upload_allowed;
+		std::string									_upload_path;
+		unsigned int							_return_code;
+		std::string							_return_uri;
 
 	public:
-		Location() : _auto_index( false ), _upload_allowed( false ), _return_code( 0 ) {}
-		~Location() {}
+		Location();
+		~Location();
+		Location&	operator=( const Location& toCopy );
 
+		void		setUri( const std::string& uri );
 		void		setRoot( const std::string& root );
 		void		setIndex( const std::string& index );
-		void		setErrorPage( const std::vector<ErrorPage>& error_page );
 		void		setAllowedMethods( const std::vector<std::string>& allowed_methods );
-		void		setCgiBin( const std::vector< std::pair<std::string, std::string> >& cgi_bin );
+		void		setClientMaxSizeBody( const std::string& max_size );
 		void		setAutoIndex( bool auto_index );
 		void		setUploadAllowed( bool upload_allowed );
+		void		setUploadPath( const std::string& path );
 		void		setReturnCode( unsigned int return_code );
-		void		setReturnURI( const std::string& return_URI );
+		void		setReturnUri( const std::string& return_uri );
 
-		const std::string&					getRoot() const				{ return (_root); }
-		const std::string&					getIndex() const			{ return (_index); }
-		bool								getAutoIndex() const		{ return (_auto_index); }
-		bool								getUploadAllowed() const	{ return (_upload_allowed); }
-		unsigned int						getReturnCode() const		{ return (_return_code); }
-		const std::string&					getReturnURI() const		{ return (_return_URI); }
-		const std::vector<ErrorPage>&		getErrorPage() const;
-		const std::vector<std::string>&		getAllowedMethods() const;
-		const std::vector<std::pair<std::string, std::string> >&	getCgiBin() const;
+		const std::string&											getUri() const					{ return (_uri); }
+		const std::string&											getRoot() const					{ return (_root); }
+		const std::string& 											getIndex() const				{ return (_index); }
+		const std::vector<ErrorPage>&								getErrorPage() const			{ return (_err_page); }
+		const std::vector<std::string>&								getAllowedMethods() const		{ return (_allowed_methods); }
+		const std::vector<std::pair<std::string, std::string> >&	getCgiBin() const				{ return (_cgi_bin); }
+		const std::string&											getClientMaxSizeBody() const	{ return (_client_max_size_body); }
+		bool														getAutoIndex() const			{ return (_auto_index); }
+		bool														getUploadAllowed() const		{ return (_upload_allowed); }
+		const std::string&											getUploadPath() const			{ return (_upload_path); }
+		unsigned int												getReturnCode() const			{ return (_return_code); }
+		const std::string&											getReturnUri() const			{ return (_return_uri); }
+
+		std::string&											getUri()				{ return (_uri); }
+		std::string&											getRoot()				{ return (_root); }
+		std::string& 											getIndex()				{ return (_index); }
+		std::vector<ErrorPage>&									getErrorPage()			{ return (_err_page); }
+		std::vector<std::string>&								getAllowedMethods()		{ return (_allowed_methods); }
+		std::vector<std::pair<std::string, std::string> >&		getCgiBin()				{ return (_cgi_bin); }
+		std::string&											getClientMaxSizeBody()	{ return (_client_max_size_body); }
+		bool&													getAutoIndex()			{ return (_auto_index); }
+		bool&													getUploadAllowed()		{ return (_upload_allowed); }
+		std::string&											getUploadPath()			{ return (_upload_path); }
+		unsigned int&											getReturnCode()			{ return (_return_code); }
+		std::string&											getReturnUri()			{ return (_return_uri); }
 };
 
 //hierarchie des directives nginx

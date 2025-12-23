@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   upload.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/21 01:44:26 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:30:47 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utilities.hpp"
+#include "Webserv.hpp"
 
 /*
 	A boundary is a unique string that separates the different parts of the
@@ -94,7 +94,7 @@ std::string		handleUpload( const std::string& body, const std::string& content_t
 	if (!saveFile( path, file_content ))
 		throw InternalServerErrorException();
 
-	std::string URI = upload_route + "/" + filename;
+	std::string uri = upload_route + "/" + filename;
 
-	return (exists ? "" : URI);
+	return (exists ? "" : uri);
 }

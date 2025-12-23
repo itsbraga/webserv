@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/21 01:31:20 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/23 19:42:41 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,12 @@
 /*
 	---------------------- [ Object manipulation ] -----------------------
 */
+Webserv::Webserv() : _epoll_fd( -1 ) {}
+
 Webserv::~Webserv()
 {
 	if (_epoll_fd != -1)
 		::close( _epoll_fd );
-
-	std::map<int, Client*>::iterator it;
-
-	for (it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		::close( it->first );
-		delete it->second;
-	}
-
-	std::map<int, Server*>::iterator it2;
-
-	for (it2 = _servers.begin(); it2 != _servers.end(); ++it2)
-		delete it2->second;
 }
 
 /*
@@ -41,7 +30,7 @@ static void		__requestReceived( Request& request )
 {
 	std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
 	std::cout << BOLD PINK "Method: " NC << request.getMethod() << std::endl;
-	std::cout << BOLD PINK "URI: " NC << request.getURI() << std::endl;
+	std::cout << BOLD PINK "URI: " NC << request.getUri() << std::endl;
 	std::cout << BOLD PINK "Headers:\n" NC << request.getHeaderMap() << std::endl;
 	std::cout << P_YELLOW "------------------------\n" NC << std::endl;
 }
@@ -49,16 +38,16 @@ static void		__requestReceived( Request& request )
 /*
 	------------------------ [ Private methods ] -------------------------
 */
-bool	Webserv::_addServerToEpoll( Server* server )
+bool	Webserv::_addServerToEpoll( int server_fd )
 {
 	epoll_event ev;
 	std::memset(&ev, 0, sizeof(ev));
 	ev.events = EPOLLIN;
-	ev.data.fd = server->getSocket();
+	ev.data.fd = server_fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, ev.data.fd, &ev ) == -1)
 	{
-		std::cerr << ERR_PREFIX << P_ORANGE "epoll_ctl(ADD server): " NC << strerror( errno ) << std::endl;
+		err_msg( "epoll_ctl(ADD server)", strerror( errno ) );
 		return (false);
 	}
 
@@ -74,7 +63,7 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, client_fd, &ev ) == -1)
 	{
-		std::cerr << ERR_PREFIX << P_ORANGE "epoll_ctl(ADD client): " NC << strerror( errno ) << std::endl;
+		err_msg( "epoll_ctl(ADD client)", strerror( errno ) );
 		return (false);
 	}
 
@@ -84,20 +73,21 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 void	Webserv::_removeClient( int client_fd )
 {
 	epoll_ctl( _epoll_fd, EPOLL_CTL_DEL, client_fd, NULL );
-	::close( client_fd );
-
-	delete _clients[client_fd];
 	_clients.erase( client_fd );
 }
 
 // ajouter verif MAX_CONNECTIONS
 void	Webserv::_handleServerEvent( int server_fd )
 {
-	Server* server = _servers[server_fd];
+	std::map<int, Server>::iterator it = _servers.find( server_fd );
+	if (it == _servers.end())
+		return ;
+
+	Server& server = it->second;
 
 	while (true)
 	{
-		int client_fd = server->acceptNewClient();
+		int client_fd = server.acceptNewClient();
 		if (client_fd == -1)
 			break ;
 
@@ -107,18 +97,19 @@ void	Webserv::_handleServerEvent( int server_fd )
 			continue ;
 		}
 
-		_clients.insert( std::make_pair( client_fd, new Client( client_fd, server ) ) );
+		Client new_client( client_fd, server_fd );
+		_clients.insert( std::make_pair( client_fd, new_client ) );
+
 		std::cout << P_BLUE "[INFO] " NC "Client accepted (fd=" << client_fd << ")" << std::endl; 
 	}
 }
 
 // EPOLLET a implementer
-void	Webserv::_handleClientEvent( int client_fd, uint32_t events )
+void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 {
-	if (_clients.find( client_fd ) == _clients.end() )
+	std::map<int, Client>::iterator it = _clients.find( client_fd );
+	if (it == _clients.end())
 		return ;
-
-	Client*	client = _clients[client_fd];
 
 	if (events & EPOLLERR)
 	{
@@ -127,11 +118,16 @@ void	Webserv::_handleClientEvent( int client_fd, uint32_t events )
 		return ;
 	}
 	if (events & EPOLLIN)
-		_handleClientData( client_fd, client );
+		_handleClientData( client_fd );
 }
 
-void	Webserv::_handleClientData( int client_fd, Client* client )
+void	Webserv::_handleClientData( int client_fd )
 {
+	std::map<int, Client>::iterator it = _clients.find( client_fd );
+	if (it == _clients.end())
+		return ;
+
+	Client& client = it->second;
 	char buffer[8192];
 
 	ssize_t nBytes = ::recv( client_fd, buffer, sizeof( buffer ), 0 );
@@ -147,22 +143,37 @@ void	Webserv::_handleClientData( int client_fd, Client* client )
 		return ;
 	}
 
-	client->appendToReadBuffer( buffer, nBytes );
-	client->updateLastActivity();
+	client.appendToReadBuffer( buffer, nBytes );
+	client.updateLastActivity();
 
-	if (client->hasCompleteRequest())
-		_processRequest( client_fd, client );
+	if (client.hasCompleteRequest())
+		_processRequest( client_fd );
 }
 
-void	Webserv::_processRequest( int client_fd, Client* client )
+void	Webserv::_processRequest( int client_fd )
 {
+	std::map<int, Client>::iterator cit = _clients.find( client_fd );
+	if (cit == _clients.end())
+		return ;
+
+	Client& client = cit->second;
+
+	std::map<int, Server>::iterator sit = _servers.find( client.getServerFd() );
+	if (sit == _servers.end())
+	{
+		err_msg( NULL, "Server not found for client" );
+		_removeClient( client_fd );
+		return ;
+	}
+
+	Server& server = sit->second;
 	Response* response = NULL;
 
 	try {
-		Request request( client->getReadBuffer() );
+		Request request( client.getReadBuffer() );
 		__requestReceived( request );
 
-		response = handleMethod( *client->getServer(), request );
+		response = handleMethod( server, request );
 	}
 	catch (const BadRequestException& e) {
 		std::cerr << P_YELLOW "[DEBUG] " NC << e.what() << std::endl;
@@ -175,16 +186,16 @@ void	Webserv::_processRequest( int client_fd, Client* client )
 	std::string serialized = response->getSerializedResponse();
 	::send( client_fd, serialized.c_str(), serialized.size(), 0 );
 	delete response;
-	client->clearReadBuffer();
+	client.clearReadBuffer();
 }
 
 void	Webserv::_checkClientTimeout()
 {
-	std::map<int, Client*>::iterator it = _clients.begin();
+	std::map<int, Client>::iterator it = _clients.begin();
 
 	while (it != _clients.end())
 	{
-		if (it->second->isTimedOut( TIMEOUT ))
+		if (it->second.isTimedOut( TIMEOUT ))
 		{
 			int client_fd = it->first;
 			++it;
@@ -197,37 +208,57 @@ void	Webserv::_checkClientTimeout()
 }
 
 /*
+	----------------------------- [ Getters ] ----------------------------
+*/
+Server*		Webserv::getServer( int fd )
+{
+	std::map<int, Server>::iterator it = _servers.find( fd );
+	if (it == _servers.end())
+		return (NULL);
+
+	return (&it->second);
+}
+
+const Server*	Webserv::getServer( int fd ) const
+{
+	std::map<int, Server>::const_iterator it = _servers.find( fd );
+	if (it == _servers.end())
+		return (NULL);
+
+	return (&it->second);
+}
+
+/*
 	------------------------- [ Public methods ] -------------------------
 */
-bool	Webserv::addServer( const std::string& server_name, uint16_t port )
+bool	Webserv::addServer( Server& server )
 {
-	Server* server = new Server( server_name, port );
-
-	if (!server->init())
+	int fd = server.getSocket();
+	if (fd == -1)
 	{
-		delete server;
+		err_msg( NULL, "Cannot add server with invalid socket" );
 		return (false);
 	}
 
-	_servers.insert( std::make_pair( server->getSocket(), server ) );
+	_servers.insert( std::make_pair( fd, server ) );
 
 	return (true);
 }
 
-bool	Webserv::init(/* config file */)
+bool	Webserv::init()
 {
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
 	{
-		std::cerr << ERR_PREFIX << P_ORANGE "epoll_create(): " NC << strerror( errno ) << std::endl;
+		err_msg( "epoll_create()", strerror( errno ) );
 		return (false);
 	}
 
-	std::map<int, Server*>::iterator it;
+	std::map<int, Server>::iterator it = _servers.begin();
 
-	for (it = _servers.begin(); it != _servers.end(); ++it)
+	for (; it != _servers.end(); ++it)
 	{
-		if (!_addServerToEpoll( it->second ))
+		if (!_addServerToEpoll( it->first ))
 			return (false);
 	}
 	
@@ -248,7 +279,7 @@ void	Webserv::run()
 		{
 			if (errno == EINTR)
 				continue ;
-			std::cerr << ERR_PREFIX << P_ORANGE "epoll_wait(): " NC << strerror( errno ) << std::endl;
+			err_msg( "epoll_wait()", strerror( errno ) );
 			break ;
 		}
 
