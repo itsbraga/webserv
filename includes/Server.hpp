@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 21:50:24 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 19:44:46 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 class ErrorPage;
 class Location;
+class Request;
 
 class Server
 {
@@ -29,11 +30,12 @@ class Server
 		std::string						_root;
 		std::string						_index;
 		bool							_auto_index;
-		std::string						_client_max_size_body;
+		std::string						_client_max_body_size;
 		unsigned int					_return_code;
 		std::string						_return_uri;
 		std::vector<ErrorPage>			_err_page;
 		std::map<std::string, Location>	_locations;
+		bool							_is_tmp;
 
 		bool		_createSocket();
 		bool		_configureSocket();
@@ -49,6 +51,10 @@ class Server
 		bool		init();
 		int			acceptNewClient();
 
+		std::map<std::string, Location>::const_iterator		findMatchingLocation( const Request& request ) const;
+		Location	resolveRoute( const Request& request ) const;
+		bool		isMethodAllowed( const Location& location, const std::string& method );
+
 		void		setPort( unsigned short int port );
 		void		setServerName( const std::string& server_name );
 		void		setRoot( const std::string& root );
@@ -57,6 +63,7 @@ class Server
 		void		setAutoIndex( bool auto_index );
 		void		setReturnCode( unsigned int return_code );
 		void		setReturnUri( const std::string& return_uri );
+		void		setTmp( bool tmp );
 
 		const int&								getSocket() const				{ return (_socket); }
 		const sockaddr_in&						getAddress() const				{ return (_addr); }
@@ -64,7 +71,7 @@ class Server
 		const std::string&						getServerName() const			{ return (_server_name); }
 		const std::string&						getRoot() const					{ return (_root); }
 		const std::string& 						getIndex() const				{ return (_index); }
-		const std::string&						getClientMaxSizeBody() const	{ return (_client_max_size_body); }
+		const std::string&						getClientMaxSizeBody() const	{ return (_client_max_body_size); }
 		const bool&								getAutoIndex() const			{ return (_auto_index); }
 		const unsigned int&						getReturnCode() const			{ return (_return_code); }
 		const std::string&						getReturnUri() const			{ return (_return_uri); }
@@ -77,12 +84,10 @@ class Server
 		std::string&							getServerName()					{ return (_server_name); }
 		std::string&							getRoot()						{ return (_root); }
 		std::string& 							getIndex()						{ return (_index); }
-		std::string&							getClientMaxSizeBody()			{ return (_client_max_size_body); }
+		std::string&							getClientMaxSizeBody()			{ return (_client_max_body_size); }
 		bool&									getAutoIndex()					{ return (_auto_index); }
 		unsigned int&							getReturnCode()					{ return (_return_code); }
 		std::string&							getReturnUri()					{ return (_return_uri); }
 		std::vector<ErrorPage>&					getErrorPage()					{ return (_err_page); }
 		std::map<std::string, Location>& 		getLocations()					{ return (_locations); }
-
-		Location&	findMatchingLocation( Server& server, const std::string& uri );
 };

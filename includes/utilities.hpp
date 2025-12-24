@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 21:34:46 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:46:40 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,11 @@ size_t			findHeaderBoundaries( const std::string& serialized, size_t& header_sta
  *	File
 \**************************/
 
-class Server;
+class Location;
 
 // file.cpp
 bool			pathExists( const std::string& path );
-std::string		resolvePath( Server& server, const std::string& uri );
+std::string		resolvePath( Location& route, const std::string& uri );
 
 bool			isRegularFile( const std::string& path );
 bool			isReadable( const std::string& path );

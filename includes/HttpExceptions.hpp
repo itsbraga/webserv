@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 02:08:19 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/22 22:06:29 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:39:20 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,12 @@ class LengthRequiredException : public HttpException
 {
 	public:
 		LengthRequiredException() : HttpException( 411, "Length Required" ) {}
+};
+
+class PayloadTooLargeException : public HttpException
+{
+	public:
+		PayloadTooLargeException() : HttpException( 413, "Payload Too Large" ) {}
 };
 
 class URITooLongException : public HttpException

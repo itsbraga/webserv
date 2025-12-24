@@ -6,30 +6,28 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/23 17:34:45 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:43:25 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-static std::string	__resolvePath( Server& server, const std::string& uri )
-{
-	return (server.getRoot() + uri);
-}
-
 Response*	handleDELETE( Server& server, Request& request )
 {
+	Location route = server.resolveRoute( request );
+	std::string root = route.getRoot();
+
+	if (!server.isMethodAllowed( route, "DELETE" ))
+		throw MethodNotAllowedException();
+
 	std::string	uri = request.getUri();
 
 	if (uri == "/")
 		throw ForbiddenException();
-	if (!isSafePath( server.getRoot(), uri )) // modifier getRoot quand Location OK
+	if (!isSafePath( root, uri ))
 		throw ForbiddenException();
 
-	// Récupérer la location qui match avec l'URI + si la methode est autorisee pour cette route
-	// sinon throw MethodNotAllowedException()
-
-	std::string	path = __resolvePath( server, uri );
+	std::string	path = root + uri;
 
 	if (!pathExists( path ))
 		throw NotFoundException();

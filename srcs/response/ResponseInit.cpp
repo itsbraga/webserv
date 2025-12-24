@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:51:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/22 22:02:51 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:38:26 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	Response::initBuilders()
 	Response::_builders[404] = &Response::NotFound;
 	Response::_builders[405] = &Response::MethodNotAllowed;
 	Response::_builders[411] = &Response::LengthRequired;
+	Response::_builders[413] = &Response::PayloadTooLarge;
 	Response::_builders[414] = &Response::URITooLong;
 	Response::_builders[418] = &Response::ImATeapot;
 	Response::_builders[429] = &Response::TooManyRequest;

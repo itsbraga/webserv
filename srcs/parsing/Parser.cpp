@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 21:37:16 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 19:45:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,13 +214,13 @@ void	Parser::parse()
 
 			case K_CLIENTMAXSIZEBODY :
 				if (!isInContext( SERVER_BLOCK ))
-					throw SyntaxErrorException( "The keyword CLIENT_MAX_SIZE_BODY is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
+					throw SyntaxErrorException( "The keyword client_max_body_size is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_STR)
-					throw SyntaxErrorException( "The keyword CLIENT_MAX_SIZE_BODY need to be followed by a STR token" );
+					throw SyntaxErrorException( "The keyword client_max_body_size need to be followed by a STR token" );
 				else if (!isValidBodySize( (current + 1)->getValue() ))
-					throw ConfigurationErrorException( "Value for CLIENT_MAX_SIZE_BODY isn't valid" );
+					throw ConfigurationErrorException( "Value for client_max_body_size isn't valid" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
-					throw SyntaxErrorException( "A SEMICOLON token is missing after CLIENT_MAX_SIZE_BODY keyword" );
+					throw SyntaxErrorException( "A SEMICOLON token is missing after client_max_body_size keyword" );
 				current += 3;
 				break ;
 			
@@ -268,6 +268,8 @@ void	Parser::parse()
 					throw SyntaxErrorException( "Only a PATH token is expected between EXTENSION and SEMICOLON for CGI" );
 				else if (peekType( current, 3 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON is missing after CGI keyword" );
+				if (isValidExtension( (current + 1)->getValue() ) == false)
+					throw ConfigurationErrorException( "The extension given after CGI keyword is incorrect" );
 				current += 4;
 				break ;
 
@@ -305,7 +307,6 @@ void	Parser::parse()
 				break ;
 			
 			default :
-				std::cout << "fautif = " << current->getValue() << std::endl;
 				throw SyntaxErrorException( "An unknown syntax error has occured" );	
 					
 		}
@@ -330,6 +331,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 		{
 			case K_SERVER :
 				current_server = Server();
+				current_server.setTmp( true );
 
 				enterContext( SERVER_BLOCK );
 				current += 2;
@@ -541,12 +543,12 @@ TokenType	Parser::identifyValue( const std::string& to_identify ) const
 		return (V_STATUSCODE);
 	else if (isNumber( to_identify ))
 		return (V_NUMBER);
-	else if (isString( to_identify ))
-		return (V_STR);
 	else if (isPath( to_identify ))
 		return (V_PATH);
-	else
+	else if (isExtension( to_identify ))
 		return (V_EXTENSION);
+	else
+		return (V_STR);
 }
 
 void		Parser::createTokenDelimiter( std::string::const_iterator it )
@@ -577,6 +579,7 @@ void	Parser::initStatusCodesVector()
 	_status_codes.push_back( 404 );
 	_status_codes.push_back( 405 );
 	_status_codes.push_back( 411 );
+	_status_codes.push_back( 413 );
 	_status_codes.push_back( 414 );
 	_status_codes.push_back( 418 );
 	_status_codes.push_back( 429 );
@@ -598,7 +601,7 @@ void	Parser::initKeywordMap()
 	_keywords["index"] = K_INDEX;
 	_keywords["error_page"] = K_ERRORPAGE;
 	_keywords["allowed_methods"] = K_ALLOWEDMETHODS;
-	_keywords["client_max_size_body"] = K_CLIENTMAXSIZEBODY;
+	_keywords["client_max_body_size"] = K_CLIENTMAXSIZEBODY;
 	_keywords["cgi"] = K_CGI;
 	_keywords["autoindex"] = K_AUTOINDEX;
 	_keywords["upload_allowed"] = K_UPLOADALLOWED;
@@ -673,7 +676,8 @@ bool	Parser::isString( const std::string& to_compare ) const
 
 	for (; it != to_compare.end(); it++)
 	{
-		if (std::isalpha( static_cast<int>(*it) ) == 0 && *it != '.')
+		if (std::isalnum( static_cast<int>(*it) ) == 0 && *it != '.' 
+			&& *it != '-' && *it != '_')
 			return (false);
 	}
 
@@ -690,10 +694,10 @@ bool	Parser::isPath( const std::string& to_compare ) const
 
 bool	Parser::isExtension( const std::string& to_compare ) const
 {
-	if (to_compare.find_last_of( '.' ) == std::string::npos)
+	if (to_compare[0] != '.')
 		return (false);
-	
-	return (true);
+	else
+		return (true);
 }
 
 bool	Parser::isStatusCode( const std::string& to_compare ) const
@@ -777,6 +781,14 @@ bool	Parser::isValidBodySize( const std::string& value ) const
 	return (unit == 'k' || unit == 'K' || 
 			unit == 'm' || unit == 'M' || 
 			unit == 'g' || unit == 'G');
+}
+
+bool	Parser::isValidExtension( const std::string& to_compare ) const
+{
+	if (to_compare == ".py" || to_compare == ".sh" || to_compare == ".php")
+		return (true);
+	else
+		return (false);
 }
 
 bool	Parser::isServer( const std::string& to_compare ) const

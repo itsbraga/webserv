@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 19:34:43 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 01:19:47 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ class Parser
 		bool				isValidPort( const std::string& to_check ) const;
 		bool				isValidMethod( const std::string& to_check ) const;
 		bool 				isValidBodySize( const std::string& value ) const;
+		bool				isValidExtension( const std::string& to_compare ) const;
 
 		TokenType			peekType( std::vector<Token>::const_iterator it, size_t offset ) const;
 		std::string			peekValue( std::vector<Token>::const_iterator it, size_t offset ) const;
