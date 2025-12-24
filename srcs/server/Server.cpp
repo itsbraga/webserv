@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 18:49:15 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 02:57:57 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,44 @@ void	Server::_closeSocket()
 		::close( _socket );
 		_socket = -1;
 	}
+}
+
+std::map<std::string, Location>::iterator \
+		Server::findMatchingLocation( const Request& request )
+{
+	std::string uri = request.getUri();
+	std::map<std::string, Location>::iterator it;
+	std::map<std::string, Location>::iterator current_match;
+	size_t current_match_length = 0;
+	it = _locations.begin();
+	current_match = _locations.end();
+	
+	for (; it != _locations.end(); ++it)
+	{
+		std::string path = it->first;
+		size_t	path_length = path.length();
+		if (path == "/")
+		{
+			if (path_length > current_match_length)
+			{
+				current_match = it;
+				current_match_length = path_length;
+			}
+			continue;
+		}
+		if (uri.find(path) == 0)
+		{
+			if (uri.length() == path_length || uri[path_length] == '/')
+			{
+				if (path_length > current_match_length)
+				{
+					current_match = it;
+					current_match_length = path_length;
+				}
+			}
+		}
+	}
+	return (current_match);
 }
 
 /*

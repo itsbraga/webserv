@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 21:14:55 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 01:19:16 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,6 +268,8 @@ void	Parser::parse()
 					throw SyntaxErrorException( "Only a PATH token is expected between EXTENSION and SEMICOLON for CGI" );
 				else if (peekType( current, 3 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON is missing after CGI keyword" );
+				if (isValidExtension( (current + 1)->getValue() ) == false)
+					throw ConfigurationErrorException( "The extension given after CGI keyword is incorrect" );
 				current += 4;
 				break ;
 
@@ -305,7 +307,6 @@ void	Parser::parse()
 				break ;
 			
 			default :
-				std::cout << "fautif = " << current->getValue() << std::endl;
 				throw SyntaxErrorException( "An unknown syntax error has occured" );	
 					
 		}
@@ -777,6 +778,14 @@ bool	Parser::isValidBodySize( const std::string& value ) const
 	return (unit == 'k' || unit == 'K' || 
 			unit == 'm' || unit == 'M' || 
 			unit == 'g' || unit == 'G');
+}
+
+bool	Parser::isValidExtension( const std::string& to_compare ) const
+{
+	if (to_compare == ".py" || to_compare == ".sh" || to_compare == ".php")
+		return (true);
+	else
+		return (false);
 }
 
 bool	Parser::isServer( const std::string& to_compare ) const

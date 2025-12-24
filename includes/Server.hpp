@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 19:36:22 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 02:08:29 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,9 @@ class Server
 
 		bool		init();
 		int			acceptNewClient();
+
+		std::map<std::string, Location>::iterator \
+		findMatchingLocation( const Request& request );
 
 		void		setPort( unsigned short int port );
 		void		setServerName( const std::string& server_name );
