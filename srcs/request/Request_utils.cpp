@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/23 17:36:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 17:41:49 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ std::string		extractRequestLine( const std::string& serialized )
 
 void	parseRequestLine( const std::string& request_line, std::string& method, std::string& uri, std::string& protocol_version )
 {
-	std::stringstream	ss( request_line );
+	std::stringstream ss( request_line );
 
 	if (!(ss >> method >> uri >> protocol_version))
 		throw BadRequestException( "Incomplete request line" );

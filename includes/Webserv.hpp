@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/24 18:42:38 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/24 23:02:15 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@
 # include <cstring>
 # include <cstdlib>
 # include <utility>
+# include <algorithm>
 # include <exception>
+# include <limits>
 # include <vector>
 # include <map>
 

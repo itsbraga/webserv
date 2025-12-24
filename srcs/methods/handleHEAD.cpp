@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 20:57:39 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:46:55 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,13 @@ static Response*	__handleFileRequest( const std::string& path )
 
 Response*	handleHEAD( Server& server, Request& request )
 {
-	std::string	uri = request.getUri();
-	std::string	path = resolvePath( server, uri );
+	Location route = server.resolveRoute( request );
 
-	// Récupérer la location qui match avec l'uri + si la methode est autorisee pour cette route
-	// sinon throw MethodNotAllowedException()
+	if (!server.isMethodAllowed( route, "HEAD" ))
+		throw MethodNotAllowedException();
+
+	std::string	uri = request.getUri();
+	std::string	path = resolvePath( route, uri );
 
 	if (!pathExists( path ))
 		throw NotFoundException();

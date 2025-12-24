@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   upload.cpp                                         :+:      :+:    :+:   */
+/*   POST_utils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 17:30:47 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:34:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,39 @@ std::string		handleUpload( const std::string& body, const std::string& content_t
 	std::string uri = upload_route + "/" + filename;
 
 	return (exists ? "" : uri);
+}
+
+size_t	convertBodySize( const std::string& value )
+{
+	if (value.empty())
+		return (0);
+
+	unsigned long long size;
+	std::stringstream ss( value );
+	if (!(ss >> size))
+		return (0);
+
+	char unit;
+	if (ss >> unit)
+	{
+		switch (unit)
+		{
+			case 'k': case 'K':
+				size *= 1024ULL;
+				break ;
+
+			case 'm': case 'M':
+				size *= 1024ULL * 1024ULL;
+				break ;
+
+			case 'g': case 'G':
+				size *= 1024ULL * 1024ULL * 1024ULL;
+				break ;
+
+			default:
+				break ;
+		}
+	}
+
+	return (static_cast<size_t>( size ));
 }

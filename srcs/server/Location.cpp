@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 18:38:20 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:57:53 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ Location&		Location::operator=( const Location& toCopy )
 		_err_page = toCopy._err_page;
 		_allowed_methods = toCopy._allowed_methods;
 		_cgi_bin = toCopy._cgi_bin;
-		_client_max_size_body = toCopy._client_max_size_body;
+		_client_max_body_size = toCopy._client_max_body_size;
 		_auto_index = toCopy._auto_index;
 		_upload_allowed = toCopy._upload_allowed; 
 		_upload_path = toCopy._upload_path;
@@ -79,7 +79,7 @@ void	Location::setClientMaxSizeBody( const std::string& max_size )
 	if (max_size.empty())
 		return ;
 
-	_client_max_size_body = max_size;
+	_client_max_body_size = max_size;
 }
 
 void	Location::setAutoIndex( bool auto_index )
