@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 02:08:29 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/24 18:17:24 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ class Server
 		bool		init();
 		int			acceptNewClient();
 
-		std::map<std::string, Location>::iterator \
-		findMatchingLocation( const Request& request );
+		std::map<std::string, Location>::const_iterator \
+		findMatchingLocation( const Request& request ) const;
 
 		void		setPort( unsigned short int port );
 		void		setServerName( const std::string& server_name );

@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 02:57:57 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/24 18:17:32 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,12 +120,12 @@ void	Server::_closeSocket()
 	}
 }
 
-std::map<std::string, Location>::iterator \
-		Server::findMatchingLocation( const Request& request )
+std::map<std::string, Location>::const_iterator \
+		Server::findMatchingLocation( const Request& request ) const
 {
 	std::string uri = request.getUri();
-	std::map<std::string, Location>::iterator it;
-	std::map<std::string, Location>::iterator current_match;
+	std::map<std::string, Location>::const_iterator it;
+	std::map<std::string, Location>::const_iterator current_match;
 	size_t current_match_length = 0;
 	it = _locations.begin();
 	current_match = _locations.end();

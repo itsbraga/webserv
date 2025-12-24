@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 19:42:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 21:36:52 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,9 @@ void	Webserv::_processRequest( int client_fd )
 		Request request( client.getReadBuffer() );
 		__requestReceived( request );
 
+		// if (isCgiRequest(request, server) == true)
+		// 	response = handleCgi();
+		
 		response = handleMethod( server, request );
 	}
 	catch (const BadRequestException& e) {
@@ -183,6 +186,7 @@ void	Webserv::_processRequest( int client_fd )
 		response = handleHttpException( e );
 	}
 
+	//check valeur header connection et si closed ferme la connection 
 	std::string serialized = response->getSerializedResponse();
 	::send( client_fd, serialized.c_str(), serialized.size(), 0 );
 	delete response;

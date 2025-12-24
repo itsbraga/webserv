@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/23 18:36:08 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:42:38 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@
 # include "Message.hpp"
 # include "Request.hpp"
 # include "Response.hpp"
+# include "Cgi.hpp"
 
 /**************************\
  *	Method Handler
