@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   err_msg.cpp                                        :+:      :+:    :+:   */
+/*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 18:04:53 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/23 19:59:19 by annabrag         ###   ########.fr       */
+/*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
+/*   Updated: 2025/12/23 21:27:06 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,16 @@ void	err_msg_quoted( const char *context, const std::string& reason )
 	else
 		msg += "'" + std::string( context ) + "': " + reason;
 	std::cerr << msg << std::endl;
+}
+
+std::vector<std::string>	split( const std::string& str, char delimiter )
+{
+	std::vector<std::string>	tokens;
+	std::string					token;
+	std::stringstream			ss(str);
+
+	while (std::getline(ss, token, delimiter))
+		tokens.push_back(token);
+
+	return (tokens);
 }

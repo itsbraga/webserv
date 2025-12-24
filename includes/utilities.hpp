@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 20:56:39 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:34:46 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,10 @@
  *	Basic utilities
 \**************************/
 
-// string.cpp
-std::vector<std::string>	split( const std::string& str, char delimiter );
-void						erase_whitespace( std::string& str, const std::string& set );
-
-// err_msg.cpp
+// basic_utils.cpp
 void						err_msg( const char *context, const std::string& reason );
 void						err_msg_quoted( const char *context, const std::string& reason );
+std::vector<std::string>	split( const std::string& str, char delimiter );
 
 /**************************\
  *	Template function
@@ -33,6 +30,7 @@ std::string		toString( const T& value )
 {
 	std::ostringstream oss;
 	oss << value;
+
 	return (oss.str());
 }
 
@@ -95,8 +93,9 @@ class Response;
 Response*		handleHttpException( const std::exception& e );
 
 /**************************\
- *	Upload handling
+ *	POST method utils
 \**************************/
 
-// upload.cpp
+// POST_utils.cpp
 std::string		handleUpload( const std::string& body, const std::string& content_type, const std::string& upload_dir, const std::string& upload_route );
+size_t			convertBodySize( const std::string& value );

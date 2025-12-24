@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/23 18:36:08 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:23:38 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <cstdlib>
 # include <utility>
 # include <exception>
+# include <limits>
 # include <vector>
 # include <map>
 
