@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 18:49:15 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 15:41:07 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,12 @@ int		Server::acceptNewClient()
 
 	return (client_fd);
 }
+
+// Location&	Server::findMatchingLocation( Server& server, const std::string& uri )
+// {
+	
+// }
+
 
 /*
 	---------------------------- [ Operator ] ----------------------------

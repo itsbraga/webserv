@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 19:36:22 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/23 21:50:24 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,6 @@ class Server
 		std::string&							getReturnUri()					{ return (_return_uri); }
 		std::vector<ErrorPage>&					getErrorPage()					{ return (_err_page); }
 		std::map<std::string, Location>& 		getLocations()					{ return (_locations); }
+
+		Location&	findMatchingLocation( Server& server, const std::string& uri );
 };
