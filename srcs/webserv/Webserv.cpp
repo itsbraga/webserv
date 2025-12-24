@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 19:42:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 19:47:23 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +240,7 @@ bool	Webserv::addServer( Server& server )
 		return (false);
 	}
 
+	server.setTmp( false );
 	_servers.insert( std::make_pair( fd, server ) );
 
 	return (true);
