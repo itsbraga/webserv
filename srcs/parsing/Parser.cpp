@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 01:19:16 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/24 19:45:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void	Parser::parse()
 				break ;
 			
 			case K_LOCATION :
-				if (isInContext( SERVER_BLOCK ) == false)
+				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "A LOCATION_BLOCK can't be outside a SERVER_BLOCK context" );
 				else if (getCurrentContext() == LOCATION_BLOCK)
 					throw SyntaxErrorException( "A LOCATION_BLOCK can't be inside another LOCATION_BLOCK (i wish that were the case)" );
@@ -142,13 +142,13 @@ void	Parser::parse()
 					throw SyntaxErrorException( "The keyword LOCATION need to be followed by an UNSIGNED NUMBER token" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after LISTEN keyword" );
-				else if (isValidPort( (current + 1)->getValue() ) == false)
+				else if (!isValidPort( (current + 1)->getValue() ))
 					throw ConfigurationErrorException( "The port given after LISTEN keyword is not a valid port" );
 				current += 3;
 				break ;
 			
 			case K_ROOT :
-				if (isInContext( SERVER_BLOCK ) == false)
+				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_PATH)
 					throw SyntaxErrorException( "The keyword ROOT need to be followed by a PATH token" );
@@ -158,7 +158,7 @@ void	Parser::parse()
 				break ;
 
 			case K_INDEX :
-				if (isInContext( SERVER_BLOCK ) == false)
+				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_STR)
 					throw SyntaxErrorException( "The keyword INDEX need to be followed by a STR token representing a file name" );
@@ -178,7 +178,7 @@ void	Parser::parse()
 				break ;
 
 			case K_ERRORPAGE : {
-				if (isInContext( SERVER_BLOCK ) == false)
+				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword ERROR_PAGE is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_STATUSCODE)
 						throw SyntaxErrorException( "The keyword ERROR_PAGE need to be followed by a STATUS_CODE token" );
@@ -188,7 +188,7 @@ void	Parser::parse()
 				{
 					if (current->getType() != V_STATUSCODE)
 						throw SyntaxErrorException( "Only STATUS_CODE are expected between ERROR_PAGE keyword and PATH" );
-					if (isErrorStatusCode( current->getValue() ) == false)
+					if (!isErrorStatusCode( current->getValue() ))
 						throw ConfigurationErrorException( "Only ERROR STATUS_CODE (400-599) are expected for ERROR_PAGE keyword" );
 					else if (i >= 8)
 						throw SyntaxErrorException( "No more than 8 STATUS_CODE can be assigned to only one ERROR_PAGE, you also need to check if PATH or SEMICOLON are missing" );
@@ -213,19 +213,19 @@ void	Parser::parse()
 				break ;
 
 			case K_CLIENTMAXSIZEBODY :
-				if (isInContext( SERVER_BLOCK ) == false)
-					throw SyntaxErrorException( "The keyword CLIENT_MAX_SIZE_BODY is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
+				if (!isInContext( SERVER_BLOCK ))
+					throw SyntaxErrorException( "The keyword client_max_body_size is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_STR)
-					throw SyntaxErrorException( "The keyword CLIENT_MAX_SIZE_BODY need to be followed by a STR token" );
-				else if (isValidBodySize( (current + 1)->getValue() ) == false)
-					throw ConfigurationErrorException( "Value for CLIENT_MAX_SIZE_BODY isn't valid" );
+					throw SyntaxErrorException( "The keyword client_max_body_size need to be followed by a STR token" );
+				else if (!isValidBodySize( (current + 1)->getValue() ))
+					throw ConfigurationErrorException( "Value for client_max_body_size isn't valid" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
-					throw SyntaxErrorException( "A SEMICOLON token is missing after CLIENT_MAX_SIZE_BODY keyword" );
+					throw SyntaxErrorException( "A SEMICOLON token is missing after client_max_body_size keyword" );
 				current += 3;
 				break ;
 			
 			case K_AUTOINDEX :
-				if (isInContext( SERVER_BLOCK ) == false)
+				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword AUTO_INDEX is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != K_ON)
 					throw SyntaxErrorException( "The keyword AUTO_INDEX need to be followed by an 'ON' keyword" );
@@ -245,7 +245,7 @@ void	Parser::parse()
 				{
 					if (current->getType() != V_STR)
 						throw SyntaxErrorException( "Only STR are expected between ALLOWED_METHODS and SEMICOLON" );
-					else if (isValidMethod( current->getValue() ) == false)
+					else if (!isValidMethod( current->getValue() ))
 						throw ConfigurationErrorException( "There is a invalid METHOD name between ALLOWED_METHODS keyword and SEMICOLON" );
 					else if (i >= 4)
 						throw SyntaxErrorException( "No more than 4 METHODS can be allowed in a LOCATION_BLOCK context, you need also to check if SEMICOLON is missing" );
@@ -274,11 +274,11 @@ void	Parser::parse()
 				break ;
 
 			case K_RETURN : 
-				if (isInContext( SERVER_BLOCK ) == false)
+				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword RETURN is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_STATUSCODE)
 					throw SyntaxErrorException( "The keyword RETURN need to be followed by a STATUS_CODE token" );
-				else if (isReturnStatusCode( (current + 1)->getValue() ) == false)
+				else if (!isReturnStatusCode( (current + 1)->getValue() ))
 					throw ConfigurationErrorException( "The STATUS_CODE given after RETURN token isn't accepted for a return directive" );
 				if ((current + 1)->getValue() == "301" )
 				{
@@ -331,6 +331,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 		{
 			case K_SERVER :
 				current_server = Server();
+				current_server.setTmp( true );
 
 				enterContext( SERVER_BLOCK );
 				current += 2;
@@ -346,9 +347,9 @@ void		Parser::createAllObjects( Webserv& webserv )
 			
 			case K_LISTEN : {
 				unsigned short int value;
-
 				std::stringstream ss( (current + 1)->getValue() );
 				ss >> value;
+
 				current_server.setPort( value );
 				current += 3;
 				break ;
@@ -380,7 +381,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 				std::vector<int> status;
 				std::string	file;
-				int value = 0;
+				int value;
 				std::stringstream ss;
 
 				while (current->getType() != V_PATH)
@@ -449,7 +450,6 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 			case K_RETURN : {
 				unsigned int return_code;
-
 				std::stringstream ss( (current + 1)->getValue() );
 				ss >> return_code;
 
@@ -543,12 +543,12 @@ TokenType	Parser::identifyValue( const std::string& to_identify ) const
 		return (V_STATUSCODE);
 	else if (isNumber( to_identify ))
 		return (V_NUMBER);
-	else if (isString( to_identify ))
-		return (V_STR);
 	else if (isPath( to_identify ))
 		return (V_PATH);
-	else
+	else if (isExtension( to_identify ))
 		return (V_EXTENSION);
+	else
+		return (V_STR);
 }
 
 void		Parser::createTokenDelimiter( std::string::const_iterator it )
@@ -561,6 +561,7 @@ void		Parser::fillBuffer(const std::ifstream& infile)
 {
 	std::ostringstream	buffer;
 	buffer << infile.rdbuf();
+
 	_buffer = buffer.str();
 }
 
@@ -578,6 +579,7 @@ void	Parser::initStatusCodesVector()
 	_status_codes.push_back( 404 );
 	_status_codes.push_back( 405 );
 	_status_codes.push_back( 411 );
+	_status_codes.push_back( 413 );
 	_status_codes.push_back( 414 );
 	_status_codes.push_back( 418 );
 	_status_codes.push_back( 429 );
@@ -599,7 +601,7 @@ void	Parser::initKeywordMap()
 	_keywords["index"] = K_INDEX;
 	_keywords["error_page"] = K_ERRORPAGE;
 	_keywords["allowed_methods"] = K_ALLOWEDMETHODS;
-	_keywords["client_max_size_body"] = K_CLIENTMAXSIZEBODY;
+	_keywords["client_max_body_size"] = K_CLIENTMAXSIZEBODY;
 	_keywords["cgi"] = K_CGI;
 	_keywords["autoindex"] = K_AUTOINDEX;
 	_keywords["upload_allowed"] = K_UPLOADALLOWED;
@@ -674,7 +676,8 @@ bool	Parser::isString( const std::string& to_compare ) const
 
 	for (; it != to_compare.end(); it++)
 	{
-		if (std::isalpha( static_cast<int>(*it) ) == 0 && *it != '.')
+		if (std::isalnum( static_cast<int>(*it) ) == 0 && *it != '.' 
+			&& *it != '-' && *it != '_')
 			return (false);
 	}
 
@@ -691,10 +694,10 @@ bool	Parser::isPath( const std::string& to_compare ) const
 
 bool	Parser::isExtension( const std::string& to_compare ) const
 {
-	if (to_compare.find_last_of( '.' ) == std::string::npos)
+	if (to_compare[0] != '.')
 		return (false);
-	
-	return (true);
+	else
+		return (true);
 }
 
 bool	Parser::isStatusCode( const std::string& to_compare ) const
@@ -821,7 +824,7 @@ void	Parser::enterContext( Context context )
 
 void	Parser::exitContext()
 {
-	if (_context_stack.empty() == false)
+	if (!_context_stack.empty())
 		_context_stack.pop_back();
 }
 

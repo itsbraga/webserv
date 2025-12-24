@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 18:17:32 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/24 23:05:37 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 /*
 	---------------------- [ Object manipulation ] -----------------------
 */
-Server::Server() : _socket( -1 ), _port( 0 ), _auto_index( false ), _return_code( 0 )
+Server::Server() : _socket( -1 ), _port( 0 ), _auto_index( false ), _return_code( 0 ), _is_tmp( false )
 {
 	std::memset( &_addr, 0, sizeof(_addr) );
 }
 
 Server::~Server()
 {
-	if (_socket != -1)
+	if (_socket != -1 && _is_tmp == true)
 		::close( _socket );
 }
 
@@ -30,8 +30,6 @@ Server&		Server::operator=( const Server& toCopy )
 {
 	if (this != &toCopy)
 	{
-		if (_socket != -1)
-			::close( _socket );
 		_socket = toCopy._socket;
 		_addr = toCopy._addr;
 		_port = toCopy._port;
@@ -39,13 +37,11 @@ Server&		Server::operator=( const Server& toCopy )
 		_root = toCopy._root;
 		_index = toCopy._index;
 		_auto_index = toCopy._auto_index;
-		_client_max_size_body = toCopy._client_max_size_body;
+		_client_max_body_size = toCopy._client_max_body_size;
 		_return_code = toCopy._return_code;
 		_return_uri = toCopy._return_uri; 
 		_err_page = toCopy._err_page;
 		_locations = toCopy._locations;
-
-		const_cast<Server&>( toCopy )._socket = -1;
 	}
 	return (*this);
 }
@@ -120,20 +116,21 @@ void	Server::_closeSocket()
 	}
 }
 
-std::map<std::string, Location>::const_iterator \
-		Server::findMatchingLocation( const Request& request ) const
+/*
+	------------------------- [ Public methods ] -------------------------
+*/
+std::map<std::string, Location>::const_iterator		Server::findMatchingLocation( const Request& request ) const
 {
 	std::string uri = request.getUri();
-	std::map<std::string, Location>::const_iterator it;
-	std::map<std::string, Location>::const_iterator current_match;
+
+	std::map<std::string, Location>::const_iterator it = _locations.begin();
+	std::map<std::string, Location>::const_iterator current_match = _locations.end();
 	size_t current_match_length = 0;
-	it = _locations.begin();
-	current_match = _locations.end();
 	
 	for (; it != _locations.end(); ++it)
 	{
 		std::string path = it->first;
-		size_t	path_length = path.length();
+		size_t path_length = path.length();
 		if (path == "/")
 		{
 			if (path_length > current_match_length)
@@ -141,7 +138,7 @@ std::map<std::string, Location>::const_iterator \
 				current_match = it;
 				current_match_length = path_length;
 			}
-			continue;
+			continue ;
 		}
 		if (uri.find(path) == 0)
 		{
@@ -155,7 +152,45 @@ std::map<std::string, Location>::const_iterator \
 			}
 		}
 	}
+
 	return (current_match);
+}
+
+Location	Server::resolveRoute( const Request& request ) const
+{
+	std::map<std::string, Location>::const_iterator it = findMatchingLocation( request );
+
+	if (it == _locations.end())
+	{
+		Location defaultLoc;
+		defaultLoc.setRoot( _root );
+		defaultLoc.setIndex( _index );
+		defaultLoc.setAutoIndex( _auto_index );
+		defaultLoc.setClientMaxSizeBody( _client_max_body_size );
+		defaultLoc.setUploadAllowed( false ); // peut-etre supprimer si par defaut = false
+
+		return (defaultLoc);
+	}
+
+	Location resolved = it->second;
+	if (resolved.getRoot().empty())
+		resolved.setRoot( _root );
+	if (resolved.getIndex().empty())
+		resolved.setIndex( _index );
+	if (resolved.getClientMaxSizeBody().empty())
+		resolved.setClientMaxSizeBody( _client_max_body_size );
+
+	return (resolved);
+}
+
+bool	Server::isMethodAllowed( const Location& location, const std::string& method )
+{
+	const std::vector<std::string>& allowed = location.getAllowedMethods();
+
+	if (allowed.empty())
+		return (true);
+
+	return (std::find( allowed.begin(), allowed.end(), method ) != allowed.end());
 }
 
 /*
@@ -195,7 +230,7 @@ void	Server::setClientMaxSizeBody( const std::string& max_size )
 	if (max_size.empty())
 		return ;
 
-	_client_max_size_body = max_size;
+	_client_max_body_size = max_size;
 }
 
 void	Server::setAutoIndex( bool auto_index )
@@ -214,6 +249,11 @@ void	Server::setReturnUri( const std::string& return_uri )
 		return ;
 
 	_return_uri = return_uri;
+}
+
+void	Server::setTmp( bool tmp )
+{
+	_is_tmp = tmp;
 }
 
 /*
@@ -281,7 +321,7 @@ std::ostream&	operator<<( std::ostream &os, const Server& server )
 	else
 		os << "false" << NC << std::endl;
 	if (server.getClientMaxSizeBody() != "")
-		os << P_BLUE << "CLIENT_MAX_SIZE_BODY -> " << P_YELLOW << server.getClientMaxSizeBody() << NC << std::endl;
+		os << P_BLUE << "client_max_body_size -> " << P_YELLOW << server.getClientMaxSizeBody() << NC << std::endl;
 	if (server.getReturnCode() != 0)
 		os << P_BLUE << "RETURN_CODE -> " << P_YELLOW << server.getReturnCode() << NC << std::endl;
 	if (server.getReturnUri() != "")

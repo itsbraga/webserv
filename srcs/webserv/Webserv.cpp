@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 21:36:52 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/24 23:06:15 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,7 @@ bool	Webserv::addServer( Server& server )
 		return (false);
 	}
 
+	server.setTmp( false );
 	_servers.insert( std::make_pair( fd, server ) );
 
 	return (true);

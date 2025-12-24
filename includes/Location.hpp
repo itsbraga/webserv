@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 18:39:37 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/24 18:57:53 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ class Location
 		std::vector<ErrorPage>						 _err_page;
 		std::vector<std::string> 						_allowed_methods;
 		std::vector<std::pair<std::string, std::string> >	_cgi_bin; //first == extension; second == path_to_script;
-		std::string										_client_max_size_body;
 		bool											_auto_index;
+		std::string										_client_max_body_size;
 		bool										_upload_allowed;
 		std::string									_upload_path;
 		unsigned int							_return_code;
@@ -54,7 +54,7 @@ class Location
 		const std::vector<ErrorPage>&								getErrorPage() const			{ return (_err_page); }
 		const std::vector<std::string>&								getAllowedMethods() const		{ return (_allowed_methods); }
 		const std::vector<std::pair<std::string, std::string> >&	getCgiBin() const				{ return (_cgi_bin); }
-		const std::string&											getClientMaxSizeBody() const	{ return (_client_max_size_body); }
+		const std::string&											getClientMaxSizeBody() const	{ return (_client_max_body_size); }
 		bool														getAutoIndex() const			{ return (_auto_index); }
 		bool														getUploadAllowed() const		{ return (_upload_allowed); }
 		const std::string&											getUploadPath() const			{ return (_upload_path); }
@@ -67,7 +67,7 @@ class Location
 		std::vector<ErrorPage>&									getErrorPage()			{ return (_err_page); }
 		std::vector<std::string>&								getAllowedMethods()		{ return (_allowed_methods); }
 		std::vector<std::pair<std::string, std::string> >&		getCgiBin()				{ return (_cgi_bin); }
-		std::string&											getClientMaxSizeBody()	{ return (_client_max_size_body); }
+		std::string&											getClientMaxSizeBody()	{ return (_client_max_body_size); }
 		bool&													getAutoIndex()			{ return (_auto_index); }
 		bool&													getUploadAllowed()		{ return (_upload_allowed); }
 		std::string&											getUploadPath()			{ return (_upload_path); }
