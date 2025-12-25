@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 20:47:12 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 17:44:07 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,10 @@ class Response : public Message
 	
 	public:
 		Response( const int status_code, const std::string& status_name );
-		~Response() {}
-
-		static void			initBuilders();
-		static void			initContentTypes();
+		~Response();
 
 		void				process();
-
+		
 		void				setStatusCode( const int status_code );
 		void				setStatusName( const std::string& status_name );
 		void				setResourcePath( const std::string& requested_resource_path );
@@ -55,6 +52,9 @@ class Response : public Message
 		const std::string	getExtension( const std::string& uri ) const; 
 		const std::string	getSerializedHeaders() const;
 		const std::string	getSerializedResponse();
+		
+		static void			initBuilders();
+		static void			initContentTypes();
 
 		void				defineContentType();
 		void				loadContent( const std::string& body, const std::string& path );

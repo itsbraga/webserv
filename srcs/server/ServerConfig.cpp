@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 23:05:37 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 19:03:41 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,14 @@
 /*
 	---------------------- [ Object manipulation ] -----------------------
 */
-Server::Server() : _socket( -1 ), _port( 0 ), _auto_index( false ), _return_code( 0 ), _is_tmp( false )
-{
-	std::memset( &_addr, 0, sizeof(_addr) );
-}
+ServerConfig::ServerConfig() : _port( 0 ), _auto_index( false ), _return_code( 0 ) {}
 
-Server::~Server()
-{
-	if (_socket != -1 && _is_tmp == true)
-		::close( _socket );
-}
+ServerConfig::~ServerConfig() {}
 
-Server&		Server::operator=( const Server& toCopy )
+ServerConfig&		ServerConfig::operator=( const ServerConfig& toCopy )
 {
 	if (this != &toCopy)
 	{
-		_socket = toCopy._socket;
-		_addr = toCopy._addr;
 		_port = toCopy._port;
 		_server_name = toCopy._server_name;
 		_root = toCopy._root;
@@ -47,79 +38,67 @@ Server&		Server::operator=( const Server& toCopy )
 }
 
 /*
-	------------------------ [ Private methods ] -------------------------
+	---------------------------- [ Setters ] -----------------------------
 */
-bool	Server::_createSocket()
+void	ServerConfig::setPort( unsigned short int port )
 {
-	_socket = ::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
-	if (_socket == -1)
-	{
-		err_msg( "socket()", strerror( errno ) );
-		return (false);
-	}
-
-	return (true);
+	_port = port;
 }
 
-bool	Server::_configureSocket()
+void	ServerConfig::setServerName( const std::string& server_name )
 {
-	int opt = 1;
+	if (server_name.empty())
+		return ;
 
-	if (setsockopt( _socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof( opt ) ) == -1)
-	{
-		err_msg( "setsockopt()", strerror( errno ) );
-		return (false);
-	}
-
-	return (true);
+	_server_name = server_name;
 }
 
-bool	Server::_bindAndListen()
+void	ServerConfig::setRoot( const std::string& root )
 {
-	_addr.sin_family = AF_INET;
-	_addr.sin_port = htons( _port );
-	_addr.sin_addr.s_addr = htonl( INADDR_ANY );
+	if (root.empty())
+		return ;
 
-	// Associates the socket with a specific IP address and port
-	if (bind( _socket, reinterpret_cast<sockaddr*>( &_addr ), sizeof( _addr ) ) == -1)
-	{
-		err_msg( "bind()", strerror( errno ) );
-		return (false);
-	}
-	// Marks the socket as a passive socket for incoming connection requests (telephone switchboard)
-	if (listen( _socket, SOMAXCONN ) == -1)
-	{
-		err_msg( "listen()", strerror( errno ) );
-		return (false);
-	}
-
-	return (true);
+	_root = root;
 }
 
-bool	Server::_setNonBlocking( int fd )
+void	ServerConfig::setIndex( const std::string& index )
 {
-	if (fcntl( fd, F_SETFL, O_NONBLOCK ) == -1)
-	{
-		err_msg( "fcntl(F_SETFL | O_NONBLOCK)", strerror( errno ) );
-		return (false);
-	}
+	if (index.empty())
+		return ;
 
-	return (true);
+	_index = index;
 }
 
-void	Server::_closeSocket()
+void	ServerConfig::setClientMaxSizeBody( const std::string& max_size )
 {
-	if (_socket != -1)
-	{
-		::close( _socket );
-		_socket = -1;
-	}
+	if (max_size.empty())
+		return ;
+
+	_client_max_body_size = max_size;
+}
+
+void	ServerConfig::setAutoIndex( bool auto_index )
+{
+	_auto_index = auto_index;
+}
+
+void	ServerConfig::setReturnCode( unsigned int return_code )
+{
+	_return_code = return_code;
+}
+
+void	ServerConfig::setReturnUri( const std::string& return_uri )
+{
+	if (return_uri.empty())
+		return ;
+
+	_return_uri = return_uri;
 }
 
 /*
 	------------------------- [ Public methods ] -------------------------
 */
-std::map<std::string, Location>::const_iterator		Server::findMatchingLocation( const Request& request ) const
+std::map<std::string, Location>::const_iterator		ServerConfig::findMatchingLocation( const Request& request ) const
 {
 	std::string uri = request.getUri();
 
@@ -156,7 +135,7 @@ std::map<std::string, Location>::const_iterator		Server::findMatchingLocation( c
 	return (current_match);
 }
 
-Location	Server::resolveRoute( const Request& request ) const
+Location	ServerConfig::resolveRoute( const Request& request ) const
 {
 	std::map<std::string, Location>::const_iterator it = findMatchingLocation( request );
 
@@ -183,7 +162,7 @@ Location	Server::resolveRoute( const Request& request ) const
 	return (resolved);
 }
 
-bool	Server::isMethodAllowed( const Location& location, const std::string& method )
+bool	ServerConfig::isMethodAllowed( const Location& location, const std::string& method ) const
 {
 	const std::vector<std::string>& allowed = location.getAllowedMethods();
 
@@ -194,107 +173,9 @@ bool	Server::isMethodAllowed( const Location& location, const std::string& metho
 }
 
 /*
-	---------------------------- [ Setters ] -----------------------------
-*/
-void	Server::setPort( unsigned short int port )
-{
-	_port = port;
-}
-
-void	Server::setServerName( const std::string& server_name )
-{
-	if (server_name.empty())
-		return ;
-
-	_server_name = server_name;
-}
-
-void	Server::setRoot( const std::string& root )
-{
-	if (root.empty())
-		return ;
-
-	_root = root;
-}
-
-void	Server::setIndex( const std::string& index )
-{
-	if (index.empty())
-		return ;
-
-	_index = index;
-}
-
-void	Server::setClientMaxSizeBody( const std::string& max_size )
-{
-	if (max_size.empty())
-		return ;
-
-	_client_max_body_size = max_size;
-}
-
-void	Server::setAutoIndex( bool auto_index )
-{
-	_auto_index = auto_index;
-}
-
-void	Server::setReturnCode( unsigned int return_code )
-{
-	_return_code = return_code;
-}
-
-void	Server::setReturnUri( const std::string& return_uri )
-{
-	if (return_uri.empty())
-		return ;
-
-	_return_uri = return_uri;
-}
-
-void	Server::setTmp( bool tmp )
-{
-	_is_tmp = tmp;
-}
-
-/*
-	------------------------- [ Public methods ] -------------------------
-*/
-bool	Server::init()
-{
-	if (!_createSocket())
-		return (false);
-	if (!_configureSocket() || !_bindAndListen() || !_setNonBlocking( _socket ))
-	{
-		_closeSocket();
-		return (false);
-	}
-	std::cout << BOLD P_PURPLE "[" << _server_name << "] " NC P_PURPLE "Listening on port " << _port << NC "\n\n";
-
-	return (true);
-}
-
-int		Server::acceptNewClient()
-{
-	int client_fd = ::accept( _socket, NULL, NULL );
-	if (client_fd == -1)
-	{
-		if (errno != EAGAIN && errno != EWOULDBLOCK)
-			err_msg( "accept()", strerror( errno ) );
-		return (-1);
-	}
-	if (!_setNonBlocking( client_fd ))
-	{
-		::close( client_fd );
-		return (-1);
-	}
-
-	return (client_fd);
-}
-
-/*
 	---------------------------- [ Operator ] ----------------------------
 */
-std::ostream&	operator<<( std::ostream &os, const Server& server )
+std::ostream&	operator<<( std::ostream &os, const ServerConfig& server )
 {
 	os << RED << "###### [SERVER] ######" << NC << std::endl;
 
@@ -311,7 +192,7 @@ std::ostream&	operator<<( std::ostream &os, const Server& server )
 		{
 			os << P_BLUE << "ERR_PAGE -> " << NC;
 			for (size_t j = 0; j < server.getErrorPage()[i].getStatus().size(); ++j)
-				os << P_YELLOW << server.getErrorPage()[i].getStatus()[j] << ' -> ';
+				os << P_YELLOW << server.getErrorPage()[i].getStatus()[j] << " -> ";
 			os << server.getErrorPage()[i].getFile() << NC << std::endl;
 		}
 	}

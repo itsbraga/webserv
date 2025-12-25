@@ -323,7 +323,7 @@
 						<span class="test-name">POST</span>
 						<span class="test-method method-post">POST</span>
 					</div>
-					<button class="test-btn" onclick="runTest('POST', '/upload', 'test=data')">Test</button>
+					<button class="test-btn" onclick="runTest('POST', '/uploads/test_upload', 'salut toi')">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -331,7 +331,7 @@
 						<span class="test-name">DELETE</span>
 						<span class="test-method method-delete">DELETE</span>
 					</div>
-					<button class="test-btn" onclick="runDeleteTest()">Test</button>
+					<button class="test-btn" onclick="runTest('DELETE', '/uploads/test.txt')">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -494,22 +494,6 @@
 			}
 			catch (e) {
 				logError(method, url, e.message);
-			}
-		}
-
-		async function runDeleteTest()
-		{
-			const testFileName = 'test-delete-' + Date.now() + '.txt';
-			
-			const formData = new FormData();
-			formData.append('file', new Blob(['test'], {type: 'text/plain'}), testFileName);
-			
-			try {
-				await fetch('/upload', { method: 'POST', body: formData });
-				await runTest('DELETE', '/uploads/' + testFileName);
-			}
-			catch (e) {
-				logError('DELETE', '/uploads/' + testFileName, e.message);
 			}
 		}
 

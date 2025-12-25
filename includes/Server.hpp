@@ -3,14 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 23:04:31 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 20:36:29 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+
+/********************************\
+ *	Struct for Virtual Hosting
+\********************************/
+
+class ServerConfig;
+
+struct Listener
+{
+	int							socket_fd;
+	sockaddr_in					addr;
+	unsigned short				port;
+	std::vector<ServerConfig*>	servers;	// First = default
+
+	bool			createSocketFd();
+	bool			configureSocket();
+	bool			bindAndListen();
+	bool			setNonBlocking( int fd );
+	bool			init();
+	
+	void			closeFd();
+	int				acceptClient();
+	ServerConfig&	resolveVirtualHosting( const std::string& hostname );
+
+	void			printInfo() const;
+};
 
 /**************************\
  *	Class
@@ -20,11 +46,9 @@ class ErrorPage;
 class Location;
 class Request;
 
-class Server
+class ServerConfig
 {
 	private:
-		int								_socket;
-		sockaddr_in						_addr;
 		unsigned short int 				_port;
 		std::string 					_server_name;
 		std::string						_root;
@@ -35,25 +59,11 @@ class Server
 		std::string						_return_uri;
 		std::vector<ErrorPage>			_err_page;
 		std::map<std::string, Location>	_locations;
-		bool							_is_tmp;
-
-		bool		_createSocket();
-		bool		_configureSocket();
-		bool		_bindAndListen();
-		bool		_setNonBlocking( int fd );
-		void		_closeSocket();
 		
 	public:
-		Server();
-		~Server();
-		Server&		operator=( const Server& toCopy );
-
-		bool		init();
-		int			acceptNewClient();
-
-		std::map<std::string, Location>::const_iterator		findMatchingLocation( const Request& request ) const;
-		Location	resolveRoute( const Request& request ) const;
-		bool		isMethodAllowed( const Location& location, const std::string& method );
+		ServerConfig();
+		~ServerConfig();
+		ServerConfig&		operator=( const ServerConfig& toCopy );
 
 		void		setPort( unsigned short int port );
 		void		setServerName( const std::string& server_name );
@@ -63,10 +73,18 @@ class Server
 		void		setAutoIndex( bool auto_index );
 		void		setReturnCode( unsigned int return_code );
 		void		setReturnUri( const std::string& return_uri );
-		void		setTmp( bool tmp );
 
-		const int&								getSocket() const				{ return (_socket); }
-		const sockaddr_in&						getAddress() const				{ return (_addr); }
+		unsigned short int&						getPort()						{ return (_port); }
+		std::string&							getServerName()					{ return (_server_name); }
+		std::string&							getRoot()						{ return (_root); }
+		std::string& 							getIndex()						{ return (_index); }
+		std::string&							getClientMaxSizeBody()			{ return (_client_max_body_size); }
+		bool&									getAutoIndex()					{ return (_auto_index); }
+		unsigned int&							getReturnCode()					{ return (_return_code); }
+		std::string&							getReturnUri()					{ return (_return_uri); }
+		std::vector<ErrorPage>&					getErrorPage()					{ return (_err_page); }
+		std::map<std::string, Location>& 		getLocations()					{ return (_locations); }
+
 		const unsigned short int&				getPort() const					{ return (_port); }
 		const std::string&						getServerName() const			{ return (_server_name); }
 		const std::string&						getRoot() const					{ return (_root); }
@@ -78,16 +96,7 @@ class Server
 		const std::vector<ErrorPage>&			getErrorPage() const			{ return (_err_page); }
 		const std::map<std::string, Location>& 	getLocations() const			{ return (_locations); }
 
-		int&									getSocket()						{ return (_socket); }
-		sockaddr_in&							getAddress()					{ return (_addr); }
-		unsigned short int&						getPort()						{ return (_port); }
-		std::string&							getServerName()					{ return (_server_name); }
-		std::string&							getRoot()						{ return (_root); }
-		std::string& 							getIndex()						{ return (_index); }
-		std::string&							getClientMaxSizeBody()			{ return (_client_max_body_size); }
-		bool&									getAutoIndex()					{ return (_auto_index); }
-		unsigned int&							getReturnCode()					{ return (_return_code); }
-		std::string&							getReturnUri()					{ return (_return_uri); }
-		std::vector<ErrorPage>&					getErrorPage()					{ return (_err_page); }
-		std::map<std::string, Location>& 		getLocations()					{ return (_locations); }
+		std::map<std::string, Location>::const_iterator		findMatchingLocation( const Request& request ) const;
+		Location	resolveRoute( const Request& request ) const;
+		bool		isMethodAllowed( const Location& location, const std::string& method ) const;
 };

@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   handleHEAD.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 18:46:55 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:37:56 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-static Response*	__handleDirectoryRequest( Server& server, std::string& path, const std::string& uri )
+static Response*	__handleDirectoryRequest( const Location& route, std::string& path, const std::string& uri )
 {
-	std::string idx = path + (path[path.size() - 1] == '/' ? "" : "/") + server.getIndex();
+	std::string idx = path + (path[path.size() - 1] == '/' ? "" : "/") + route.getIndex();
 	std::string	body;
 
 	if (pathExists( idx ) && isRegularFile( idx ) && isReadable( idx ))
@@ -22,7 +22,7 @@ static Response*	__handleDirectoryRequest( Server& server, std::string& path, co
 		body = readFileContent( idx );
 		path = idx;
 	}
-	else if (server.getAutoIndex())
+	else if (route.getAutoIndex())
 		body = generateAutoIndex( path, uri );
 	else
 		throw ForbiddenException();
@@ -43,7 +43,7 @@ static Response*	__handleFileRequest( const std::string& path )
 	return (response);
 }
 
-Response*	handleHEAD( Server& server, Request& request )
+Response*	handleHEAD( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
@@ -58,7 +58,7 @@ Response*	handleHEAD( Server& server, Request& request )
 	if (!isReadable( path ))
 		throw ForbiddenException();
 	if (isDirectory( path ))
-		return (__handleDirectoryRequest( server, path, uri ));
+		return (__handleDirectoryRequest( route, path, uri ));
 
 	return (__handleFileRequest( path ));
 }

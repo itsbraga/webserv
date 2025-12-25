@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   handleDELETE.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/24 18:43:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:37:35 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-Response*	handleDELETE( Server& server, Request& request )
+Response*	handleDELETE( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 	std::string root = route.getRoot();
@@ -21,9 +21,9 @@ Response*	handleDELETE( Server& server, Request& request )
 		throw MethodNotAllowedException();
 
 	std::string	uri = request.getUri();
-
 	if (uri == "/")
 		throw ForbiddenException();
+
 	if (!isSafePath( root, uri ))
 		throw ForbiddenException();
 
@@ -38,6 +38,8 @@ Response*	handleDELETE( Server& server, Request& request )
 	if (!deleteFile( path ))
 		throw InternalServerErrorException();
 
-	// setBody --> Fichier "blabla" supprimé.
-	return (new Response( 200, "OK" )); // 204 No Content ou 200 OK
+	Response* response = new Response( 200, "OK" ); // 204 ou 200
+	response->loadContent( "File " + uri + " deleted", path ); // setBody --> Fichier "blabla" supprimé.
+
+	return (response);
 }

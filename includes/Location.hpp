@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 18:57:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 17:43:06 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@
 class Location
 {
 	private:
-		std::string							_uri;
+		std::string						_uri;
 		std::string 						_root;
 		std::string 							_index;
 		std::vector<ErrorPage>						 _err_page;
 		std::vector<std::string> 						_allowed_methods;
 		std::vector<std::pair<std::string, std::string> >	_cgi_bin; //first == extension; second == path_to_script;
 		bool											_auto_index;
-		std::string										_client_max_body_size;
-		bool										_upload_allowed;
-		std::string									_upload_path;
-		unsigned int							_return_code;
-		std::string							_return_uri;
+		std::string									_client_max_body_size;
+		bool									_upload_allowed;
+		std::string							_upload_path;
+		unsigned int					_return_code;
+		std::string					_return_uri;
 
 	public:
 		Location();
@@ -47,6 +47,19 @@ class Location
 		void		setUploadPath( const std::string& path );
 		void		setReturnCode( unsigned int return_code );
 		void		setReturnUri( const std::string& return_uri );
+		
+		std::string&												getUri()						{ return (_uri); }
+		std::string&												getRoot()						{ return (_root); }
+		std::string& 												getIndex()						{ return (_index); }
+		std::vector<ErrorPage>&										getErrorPage()					{ return (_err_page); }
+		std::vector<std::string>&									getAllowedMethods()				{ return (_allowed_methods); }
+		std::vector<std::pair<std::string, std::string> >&			getCgiBin()						{ return (_cgi_bin); }
+		std::string&												getClientMaxSizeBody()			{ return (_client_max_body_size); }
+		bool&														getAutoIndex()					{ return (_auto_index); }
+		bool&														getUploadAllowed()				{ return (_upload_allowed); }
+		std::string&												getUploadPath()					{ return (_upload_path); }
+		unsigned int&												getReturnCode()					{ return (_return_code); }
+		std::string&												getReturnUri()					{ return (_return_uri); }
 
 		const std::string&											getUri() const					{ return (_uri); }
 		const std::string&											getRoot() const					{ return (_root); }
@@ -60,19 +73,4 @@ class Location
 		const std::string&											getUploadPath() const			{ return (_upload_path); }
 		unsigned int												getReturnCode() const			{ return (_return_code); }
 		const std::string&											getReturnUri() const			{ return (_return_uri); }
-
-		std::string&											getUri()				{ return (_uri); }
-		std::string&											getRoot()				{ return (_root); }
-		std::string& 											getIndex()				{ return (_index); }
-		std::vector<ErrorPage>&									getErrorPage()			{ return (_err_page); }
-		std::vector<std::string>&								getAllowedMethods()		{ return (_allowed_methods); }
-		std::vector<std::pair<std::string, std::string> >&		getCgiBin()				{ return (_cgi_bin); }
-		std::string&											getClientMaxSizeBody()	{ return (_client_max_body_size); }
-		bool&													getAutoIndex()			{ return (_auto_index); }
-		bool&													getUploadAllowed()		{ return (_upload_allowed); }
-		std::string&											getUploadPath()			{ return (_upload_path); }
-		unsigned int&											getReturnCode()			{ return (_return_code); }
-		std::string&											getReturnUri()			{ return (_return_uri); }
-};
-
-//hierarchie des directives nginx
+	};

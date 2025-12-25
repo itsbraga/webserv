@@ -3,33 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 19:45:22 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 19:11:58 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-// void	Parser::handleFileConfig(char *arg, webserv_s *data)
-// {
-// 	Parser* parser = NULL;
-// 	try
-// 	{
-// 		parser = new Parser(arg);
-// 		parser->bufferTokenize();
-// 	}
-// 	catch (const std::exception &)
-// 	{
-// 		if (parser != NULL)
-// 			delete parser;
-// 		throw;
-// 	}
-// }
+/*
+	---------------------- [ Object manipulation ] -----------------------
+*/
+Parser::Parser( char *arg )
+{
+	try {
+		_checkPath(arg);
+
+		std::ifstream infile;
+		infile.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+		infile.open(arg);
+		if (infile.peek() == EOF)
+			throw std::invalid_argument( "Configuration file is empty !" );
+
+		_fillBuffer( infile );
+		infile.close();
+		_initKeywordMap();
+		_initStatusCodesVector();
+	}
+	catch (const std::exception& e) {
+		throw ;
+	}
+}
+
+Parser::~Parser() {}
 
 /*
-	------------------------ [ Private methods ] -------------------------
+	-------------------------- [ P: Utilities ] --------------------------
 */
 std::string		Parser::_checkPath( char *arg )
 {
@@ -50,29 +60,88 @@ std::string		Parser::_checkPath( char *arg )
 	return (path);
 }
 
-/*
-	---------------------- [ Object manipulation ] -----------------------
-*/
-Parser::Parser( char *arg )
+void	Parser::_fillBuffer(const std::ifstream& infile)
 {
-	try {
-		_checkPath(arg);
+	std::ostringstream	buffer;
+	buffer << infile.rdbuf();
 
-		std::ifstream infile;
-		infile.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-		infile.open(arg);
-		if (infile.peek() == EOF)
-			throw std::invalid_argument( "Configuration file is empty !" );
-
-		fillBuffer( infile );
-		infile.close();
-		initKeywordMap();
-	}
-	catch (const std::exception& e) {
-		throw ;
-	}
+	_buffer = buffer.str();
 }
 
+/*
+	----------------------- [ P: Initializations ] -----------------------
+*/
+void	Parser::_initStatusCodesVector()
+{
+	_status_codes.push_back( 200 );
+	_status_codes.push_back( 201 );
+	_status_codes.push_back( 202 );
+	_status_codes.push_back( 301 );
+	_status_codes.push_back( 400 );
+	_status_codes.push_back( 403 );
+	_status_codes.push_back( 404 );
+	_status_codes.push_back( 405 );
+	_status_codes.push_back( 411 );
+	_status_codes.push_back( 413 );
+	_status_codes.push_back( 414 );
+	_status_codes.push_back( 418 );
+	_status_codes.push_back( 429 );
+	_status_codes.push_back( 500 );
+	_status_codes.push_back( 501 );
+	_status_codes.push_back( 502 );
+	_status_codes.push_back( 503 );
+	_status_codes.push_back( 504 );
+	_status_codes.push_back( 505 );
+}
+
+void	Parser::_initKeywordMap()
+{
+	_keywords["server"] = K_SERVER;
+	_keywords["location"] = K_LOCATION;
+	_keywords["listen"] = K_LISTEN;
+	_keywords["server_name"] = K_SERVERNAME;
+	_keywords["root"] = K_ROOT;
+	_keywords["index"] = K_INDEX;
+	_keywords["error_page"] = K_ERRORPAGE;
+	_keywords["allowed_methods"] = K_ALLOWEDMETHODS;
+	_keywords["client_max_body_size"] = K_CLIENTMAXSIZEBODY;
+	_keywords["cgi"] = K_CGI;
+	_keywords["autoindex"] = K_AUTOINDEX;
+	_keywords["upload_allowed"] = K_UPLOADALLOWED;
+	_keywords["return"] = K_RETURN;
+	_keywords["on"] = K_ON;
+}
+
+/*
+	----------------------- [ P: Token creation ] ------------------------
+*/
+Token	Parser::_createToken( std::string& value ) const
+{
+	TokenType type;
+	lowerStr( value );
+
+	if (isKeyword( value ))
+		type = identifyKeyword( value );
+	else if (isSymbol( value ))
+		type = identifySymbol( value );
+	else if (isValue( value ))
+		type = identifyValue( value );
+	else
+		type = UNKNOWN;
+	
+	Token token( type, value );
+	return (token);
+}
+
+void	Parser::_createTokenDelimiter( std::string::const_iterator it )
+{
+	std::string token_value( it, it + 1 );
+	_tokens.push_back( _createToken( token_value ) );
+}
+
+/*
+	-------------------------- [ Tokenization ] --------------------------
+*/
 void	Parser::bufferTokenize()
 {
 	std::string::const_iterator start_tok = _buffer.begin();
@@ -88,13 +157,13 @@ void	Parser::bufferTokenize()
 
 		if (start_tok != end_tok)
 		{
-			Token token( createToken( token_value ) );
+			Token token( _createToken( token_value ) );
 			_tokens.push_back( token );
 		}
 		if (end_tok != _buffer.end())
 		{
 			if (isSymbol( *end_tok ))
-				createTokenDelimiter( end_tok );
+				_createTokenDelimiter( end_tok );
 		}
 		start_tok = end_tok;
 		if (start_tok != _buffer.end())
@@ -102,6 +171,9 @@ void	Parser::bufferTokenize()
 	}
 }
 
+/*
+	--------------------- [ Main parsing function ] ----------------------
+*/
 void	Parser::parse()
 {
 	std::vector<Token>::const_iterator current = _tokens.begin();
@@ -315,10 +387,13 @@ void	Parser::parse()
 		throw SyntaxErrorException( "A BLOCK has not been closed properly" );
 }
 
+/*
+	-------------------- [ Server objects creation ] ---------------------
+*/
 void		Parser::createAllObjects( Webserv& webserv )
 {
-	Server 		current_server;
-	Location	current_location;
+	ServerConfig	current_server;
+	Location		current_location;
 
 	std::vector<Token>::const_iterator current = _tokens.begin();
 	std::vector<Token>::const_iterator end = _tokens.end();
@@ -330,8 +405,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 		switch (current->getType())
 		{
 			case K_SERVER :
-				current_server = Server();
-				current_server.setTmp( true );
+				current_server = ServerConfig();
 
 				enterContext( SERVER_BLOCK );
 				current += 2;
@@ -378,7 +452,6 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 			case K_ERRORPAGE : {
 				++current;
-
 				std::vector<int> status;
 				std::string	file;
 				int value;
@@ -426,12 +499,15 @@ void		Parser::createAllObjects( Webserv& webserv )
 			
 			case K_ALLOWEDMETHODS : {
 				++current;
-
 				std::vector<std::string> methods;
 
 				while (current->getType() != S_SEMICOLON)
 				{
-					methods.push_back( current->getValue() );
+					std::string method = current->getValue();
+
+					for (size_t i = 0; i < method.length(); ++i)
+						method[i] = std::toupper( method[i] );
+					methods.push_back( method );
 					++current;
 				}
 				current_location.setAllowedMethods( methods );
@@ -481,8 +557,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 			case S_RBRACE :
 				if (getCurrentContext() == SERVER_BLOCK)
 				{
-					if (current_server.init())
-						webserv.addServer( current_server );
+					webserv.addServerConfig( current_server );
 					exitContext();
 				}
 				else
@@ -499,24 +574,9 @@ void		Parser::createAllObjects( Webserv& webserv )
 	}
 }
 
-Token		Parser::createToken( std::string& value ) const
-{
-	TokenType type;
-	Parser::lowerStr( value );
-
-	if (isKeyword( value ))
-		type = identifyKeyword( value );
-	else if (isSymbol( value ))
-		type = identifySymbol( value );
-	else if (isValue( value ))
-		type = identifyValue( value );
-	else
-		type = UNKNOWN;
-	
-	Token token( type, value );
-	return (token);
-}
-
+/*
+	-------------------------- [ Identifiers ] ---------------------------
+*/
 TokenType	Parser::identifyKeyword( const std::string& to_identify ) const
 {
 	std::map<std::string, TokenType>::const_iterator it = _keywords.find( to_identify );
@@ -551,256 +611,9 @@ TokenType	Parser::identifyValue( const std::string& to_identify ) const
 		return (V_STR);
 }
 
-void		Parser::createTokenDelimiter( std::string::const_iterator it )
-{
-	std::string token_value( it, it + 1 );
-	_tokens.push_back( createToken( token_value ) );
-}
-
-void		Parser::fillBuffer(const std::ifstream& infile)
-{
-	std::ostringstream	buffer;
-	buffer << infile.rdbuf();
-
-	_buffer = buffer.str();
-}
-
 /*
-	-------------------------- [ Init methods ] --------------------------
+	-------------------------- [ Peek getters ] --------------------------
 */
-void	Parser::initStatusCodesVector()
-{
-	_status_codes.push_back( 200 );
-	_status_codes.push_back( 201 );
-	_status_codes.push_back( 202 );
-	_status_codes.push_back( 301 );
-	_status_codes.push_back( 400 );
-	_status_codes.push_back( 403 );
-	_status_codes.push_back( 404 );
-	_status_codes.push_back( 405 );
-	_status_codes.push_back( 411 );
-	_status_codes.push_back( 413 );
-	_status_codes.push_back( 414 );
-	_status_codes.push_back( 418 );
-	_status_codes.push_back( 429 );
-	_status_codes.push_back( 500 );
-	_status_codes.push_back( 501 );
-	_status_codes.push_back( 502 );
-	_status_codes.push_back( 503 );
-	_status_codes.push_back( 504 );
-	_status_codes.push_back( 505 );
-}
-
-void	Parser::initKeywordMap()
-{
-	_keywords["server"] = K_SERVER;
-	_keywords["location"] = K_LOCATION;
-	_keywords["listen"] = K_LISTEN;
-	_keywords["server_name"] = K_SERVERNAME;
-	_keywords["root"] = K_ROOT;
-	_keywords["index"] = K_INDEX;
-	_keywords["error_page"] = K_ERRORPAGE;
-	_keywords["allowed_methods"] = K_ALLOWEDMETHODS;
-	_keywords["client_max_body_size"] = K_CLIENTMAXSIZEBODY;
-	_keywords["cgi"] = K_CGI;
-	_keywords["autoindex"] = K_AUTOINDEX;
-	_keywords["upload_allowed"] = K_UPLOADALLOWED;
-	_keywords["return"] = K_RETURN;
-	_keywords["on"] = K_ON;
-}
-
-/*
-	--------------------------- [ Utilities ] ----------------------------
-*/
-bool	Parser::isLeftBrace( const char c ) const
-{
-	return (c == '{');
-}
-
-bool	Parser::isRightBrace( const char c ) const
-{
-	return (c == '}');
-}
-
-bool	Parser::isSemiColon( const char c ) const
-{
-	return (c == ';');
-}
-
-bool	Parser::isWhiteSpace( const char c ) const
-{
-	return (c == ' ' || c == '\n' || c == '\t' || c == '\r');
-}
-
-bool	Parser::isSymbol( const char c ) const
-{
-	return (c == '{' || c == '}' || c == ';');
-}
-
-bool	Parser::isKeyword( const std::string& to_compare ) const
-{
-	return (_keywords.find( to_compare ) != _keywords.end());
-}
-
-bool	Parser::isSymbol( const std::string& to_compare ) const
-{
-	return (to_compare == "{" || to_compare == "}" || to_compare == ";" );
-}
-
-bool	Parser::isValue( const std::string& to_compare ) const
-{
-	return (isNumber( to_compare ) || isString( to_compare ) \
-			|| isPath( to_compare ) || isExtension( to_compare ) \
-			|| isStatusCode( to_compare ));
-}
-
-bool	Parser::isNumber( const std::string& to_compare ) const
-{
-	std::string::const_iterator it = to_compare.begin();
-	
-	for (; it != to_compare.end(); it++)
-	{
-		if (std::isdigit( static_cast<int>(*it) ) == 0)
-			return (false);
-	}
-
-	return (true);
-}
-
-bool	Parser::isString( const std::string& to_compare ) const
-{
-	if (to_compare[0] == '.')
-		return (false);
-
-	std::string::const_iterator it = to_compare.begin();
-
-	for (; it != to_compare.end(); it++)
-	{
-		if (std::isalnum( static_cast<int>(*it) ) == 0 && *it != '.' 
-			&& *it != '-' && *it != '_')
-			return (false);
-	}
-
-	return (true);
-}
-
-bool	Parser::isPath( const std::string& to_compare ) const
-{
-	if (to_compare.find( '/' ) == std::string::npos)
-		return (false);
-	
-	return (true);
-}
-
-bool	Parser::isExtension( const std::string& to_compare ) const
-{
-	if (to_compare[0] != '.')
-		return (false);
-	else
-		return (true);
-}
-
-bool	Parser::isStatusCode( const std::string& to_compare ) const
-{
-	if (!isNumber( to_compare ) && to_compare.length() != 3)
-		return (false);
-
-	unsigned int to_find;
-	std::stringstream ss( to_compare );
-	ss >> to_find;
-
-	std::vector<unsigned int>::const_iterator it = _status_codes.begin();
-
-	for (; it != _status_codes.end(); ++it)
-	{
-		if (*it == to_find)
-			return (true);
-	}
-
-	return (false);
-}
-
-bool 	Parser::isErrorStatusCode( const std::string& to_compare ) const
-{
-	unsigned int code;
-	std::stringstream ss( to_compare );
-	ss >> code;
-
-	if (code >= 400 && code <= 599)
-		return (true);
-	
-	return (false);
-}
-
-bool	Parser::isReturnStatusCode( const std::string& to_compare ) const
-{
-	if (to_compare == "301" || to_compare == "403" || to_compare == "404" \
-		|| to_compare == "418" || to_compare == "503" )
-		return (true);
-	
-	return (false);
-}
-
-bool	Parser::isValidPort( const std::string& to_check ) const
-{
-	unsigned int port;
-	std::stringstream ss( to_check );
-	ss >> port;
-
-	if (port == 0 || port > 65536)
-		return (false);
-	
-	return (true);
-}
-
-bool	Parser::isValidMethod( const std::string& to_check ) const
-{
-	if (to_check == "get" || to_check == "head" || to_check == "post" || to_check == "delete" )
-		return (true);
-
-	return (false);
-}
-
-bool	Parser::isValidBodySize( const std::string& value ) const
-{
-	if (value[0] == '-')
-		return (false);
-	
-	size_t i = 0;
-	while (i < value.length() && std::isdigit( value[i] ))
-		i++;
-	
-	if (i == 0)
-		return (false);
-	else if (i == value.length())
-		return (true);
-	else if (i != value.length() - 1)
-		return (false);
-
-	char unit = value[i];
-	return (unit == 'k' || unit == 'K' || 
-			unit == 'm' || unit == 'M' || 
-			unit == 'g' || unit == 'G');
-}
-
-bool	Parser::isValidExtension( const std::string& to_compare ) const
-{
-	if (to_compare == ".py" || to_compare == ".sh" || to_compare == ".php")
-		return (true);
-	else
-		return (false);
-}
-
-bool	Parser::isServer( const std::string& to_compare ) const
-{
-	return (to_compare == "server");
-}
-
-bool	Parser::isLocation( const std::string& to_compare ) const
-{
-	return (to_compare == "location");
-}
-
 TokenType	Parser::peekType( std::vector<Token>::const_iterator it, size_t offset ) const
 {
 	if (it + offset >= _tokens.end())
@@ -817,6 +630,9 @@ std::string		Parser::peekValue( std::vector<Token>::const_iterator it, size_t of
 	return ((it + offset)->getValue());
 }
 
+/*
+	---------------------------- [ Context ] -----------------------------
+*/
 void	Parser::enterContext( Context context )
 {
 	_context_stack.push_back( context );
@@ -847,14 +663,6 @@ Context		Parser::getCurrentContext() const
 		return (_context_stack.back());
 
 	return (EMPTY);
-}
-
-void	Parser::lowerStr( std::string& str )
-{
-	std::string::iterator it = str.begin();
-
-	for (; it != str.end(); ++it)
-		*it = std::tolower( *it );
 }
 
 /*

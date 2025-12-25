@@ -3,18 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/24 17:41:49 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-/*
-	---------------------------- [ Utilities ] ---------------------------
-*/
 std::string		extractRequestLine( const std::string& serialized )
 {
 	size_t eol = serialized.find( "\r\n", 0 );
@@ -49,7 +46,7 @@ void	parseRequestLine( const std::string& request_line, std::string& method, std
 
 void	validateMethod( const std::string& method )
 {
-	for (size_t i = 0; i < method.size(); i++)
+	for (size_t i = 0; i < method.size(); ++i)
 	{
 		if (method[i] < 'A' || method[i] > 'Z')
 			throw BadRequestException( "Method not in uppercase" );
@@ -75,7 +72,7 @@ bool	isValidHeaderName( const std::string& name )
 {
 	const std::string allowed = "!#$%&'*+-.^_`|~";
 
-	for (size_t i = 0; i < name.size(); i++)
+	for (size_t i = 0; i < name.size(); ++i)
 	{
 		char c = name[i];
 		if (!std::isalnum( static_cast<unsigned char>( c ) ) && allowed.find( c ) == std::string::npos)

@@ -3,25 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 19:28:05 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:47:59 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-
-/*
-	---------------------- [ Object manipulation ] -----------------------
-*/
-Client::Client( int socket, int server_fd ) : _socket( socket ), _server_fd( server_fd ), _last_activity( time( NULL ) ) {}
-
-Client::~Client()
-{
-	if (_socket != -1)
-		::close( _socket );
-}
 
 /*
 	------------------------ [ Private methods ] -------------------------
@@ -64,6 +53,30 @@ void	Client::appendToReadBuffer( const char *data, size_t len )
 	_read_buffer.append( data, len );
 }
 
+void	Client::appendToWriteBuffer( const std::string& data )
+{
+	_write_buffer.append( data );
+}
+
+bool	Client::hasDataToSend() const
+{
+	return (!_write_buffer.empty());
+}
+
+bool	Client::sendData()
+{
+	if (_write_buffer.empty())
+		return (true);
+
+	ssize_t sent = ::send( _socket_fd, _write_buffer.c_str(), _write_buffer.size(), 0 );
+	if (sent < 0)
+		return (false);
+
+	_write_buffer.erase( 0, sent );
+
+	return (_write_buffer.empty());
+}
+
 void	Client::updateLastActivity()
 {
 	_last_activity = time( NULL );
@@ -95,6 +108,11 @@ bool	Client::hasCompleteRequest() const
 void	Client::clearReadBuffer()
 {
 	_read_buffer.clear();
+}
+
+void	Client::clearWriteBuffer()
+{
+	_write_buffer.clear();
 }
 
 bool	Client::isTimedOut( int timeout ) const

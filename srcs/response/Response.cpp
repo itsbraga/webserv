@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 17:30:32 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 15:19:12 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,17 @@ std::map<std::string, std::string>			Response::_content_types;
 /*
 	---------------------- [ Object manipulation ] -----------------------
 */
-Response::Response( const int status_code, const std::string& status_name )
-					: Message(), _status_code( status_code ), _status_name( status_name )
+Response::Response( const int status_code, const std::string& status_name ) : Message(),
+																			_status_code( status_code ),
+																			_status_name( status_name )
 {
 	if (status_name.empty())
 		return ;
 
 	process();
 }
+
+Response::~Response() {}
 
 /*
 	----------------------------- [ Setters ] ----------------------------
