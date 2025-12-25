@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 18:46:40 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 16:09:21 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,14 @@
  *	Basic utilities
 \**************************/
 
-// basic_utils.cpp
+// err_msg.cpp
 void						err_msg( const char *context, const std::string& reason );
 void						err_msg_quoted( const char *context, const std::string& reason );
+
+// string.cpp
 std::vector<std::string>	split( const std::string& str, char delimiter );
+std::string					toLower( const std::string& str );
+void						lowerStr( std::string& str );
 
 /**************************\
  *	Template function
@@ -47,6 +51,14 @@ void			validateProtocolVersion( const std::string& protocolVersion );
 
 bool			isValidHeaderName( const std::string& name );
 size_t			findHeaderBoundaries( const std::string& serialized, size_t& header_start, size_t& header_end );
+
+/**************************\
+ *	POST method utils
+\**************************/
+
+// methods/handlePOST_utils.cpp
+std::string		handleUpload( const std::string& body, const std::string& content_type, const std::string& upload_dir, const std::string& upload_route );
+size_t			convertBodySize( const std::string& value );
 
 /**************************\
  *	File
@@ -82,20 +94,3 @@ bool			isSafePath( const std::string& root, const std::string& requested_path );
 
 // autoindex.cpp
 std::string		generateAutoIndex( const std::string& path, const std::string& uri );
-
-/**************************\
- *	Exceptions catcher
-\**************************/
-
-class Response;
-
-// http_exceptions.cpp
-Response*		handleHttpException( const std::exception& e );
-
-/**************************\
- *	POST method utils
-\**************************/
-
-// POST_utils.cpp
-std::string		handleUpload( const std::string& body, const std::string& content_type, const std::string& upload_dir, const std::string& upload_route );
-size_t			convertBodySize( const std::string& value );

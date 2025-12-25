@@ -3,28 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 21:46:25 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 18:39:10 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-Response*	cgiHandler( const Request& request, const Server& server )
-{
-	Response* response = NULL;
-	response = checkCgiArguments();
+// Response*	cgiHandler( const Request& request, const ServerConfig& server )
+// {
+// 	Response* response = NULL;
+// 	response = checkCgiArguments();
 	
-}
+// }
 
-Response*	checkCgiArguments( )
-{
+// Response*	checkCgiArguments( )
+// {
 	
-}
+// }
 
-bool	isCgiRequest( const Request& request, const Server& server )
+bool	isCgiRequest( const Request& request, const ServerConfig& server )
 {
 	std::map<std::string, Location>::const_iterator it;
 	

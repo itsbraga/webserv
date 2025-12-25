@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 21:13:10 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ Request::Request( const std::string& serialized ) : Message(), _raw_request( ser
 	process();
 }
 
+Request::~Request() {}
+
 /*
-	-------------------- [ Parsing private methods ] ---------------------
+	-------------------- [ P: Request line checker ] ---------------------
 */
 void	Request::_requestLineCheck( const std::string& serialized )
 {
@@ -40,6 +42,9 @@ void	Request::_requestLineCheck( const std::string& serialized )
 	_uri = uri;
 }
 
+/*
+	----------------------- [ P: Header checker ] ------------------------
+*/
 void	Request::_parseAllHeaders( const std::string& serialized, size_t header_start, size_t header_end )
 {
 	size_t pos = header_start;
@@ -81,7 +86,7 @@ void	Request::_validateContentLength()
 
 	std::string cl_value = getHeaderValue( "Content-Length" );
 
-	for (size_t i = 0; i < cl_value.size(); i++)
+	for (size_t i = 0; i < cl_value.size(); ++i)
 	{
 		if (!std::isdigit( static_cast<unsigned char>( cl_value[i] ) ))
 			throw BadRequestException( "Invalid Content-Length" );
@@ -98,7 +103,10 @@ void	Request::_headerCheck( const std::string& serialized )
 	_validateContentLength();
 }
 
-void	Request::_chunkedBodyCase( const std::string& serialized, size_t body_start )
+/*
+	------------------------ [ P: Body checker ] -------------------------
+*/
+void	Request::_handleChunkedBody( const std::string& serialized, size_t body_start )
 {
 	std::string te_value = getHeaderValue( "Transfer-Encoding" );
 
@@ -111,7 +119,7 @@ void	Request::_chunkedBodyCase( const std::string& serialized, size_t body_start
 	}
 }
 
-void	Request::_fullBodyCase( const std::string& serialized, size_t body_start )
+void	Request::_handleBody( const std::string& serialized, size_t body_start )
 {
 	std::string cl_value = getHeaderValue( "Content-Length" );
 
@@ -133,10 +141,10 @@ void	Request::_bodyCheck( const std::string& serialized )
 
 	size_t body_start = header_end + 4;
 
-	if (_hasHeader( "Transfer-Encoding" ))
-		_chunkedBodyCase( serialized, body_start );
-	else if (_hasHeader( "Content-Length" ))
-		_fullBodyCase( serialized, body_start );
+	if (_hasHeader( "Content-Length" ))
+		_handleBody( serialized, body_start );
+	else if (_hasHeader( "Transfer-Encoding" ))
+		_handleChunkedBody( serialized, body_start );
 }
 
 /*

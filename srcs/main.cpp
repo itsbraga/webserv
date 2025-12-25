@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/23 20:04:00 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:57:18 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	main( int argc, char **argv )
 		parser.bufferTokenize();
 		std::cout << parser << std::endl;
 		parser.parse();
-		std::cout << BOLD P_GREEN "PARSING OK\n";
+		std::cout << BOLD P_GREEN "PARSING OK\n" << std::endl;
 		parser.createAllObjects( webserv );
 	}
 	catch (const std::exception& e) {
@@ -40,7 +40,7 @@ int	main( int argc, char **argv )
 		return (FAILURE);
 	}
 
-	if (!webserv.init())
+	if (!webserv.initEpoll())
 		return (FAILURE);
 
 	__initUtilities();

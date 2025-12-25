@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/24 18:39:26 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:38:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ static Response*	__buildPOSTResponse( bool created, const std::string& uri )
 	return (response);
 }
 
-static Response*	__uploadPOST( std::string& path, std::string& route, std::string& body, std::string& content_type )
+static Response*	__uploadPOST( const std::string& path, const std::string& route, std::string& body, std::string& content_type )
 {
 	std::string uri = handleUpload( body, content_type, path, route );
 
 	return (__buildPOSTResponse( !uri.empty(), uri ));
 }
 
-static Response*	__classicPOST( std::string& path, std::string& uri, std::string& body )
+static Response*	__classicPOST( const std::string& path, const std::string& uri, const std::string& body )
 {
 	std::string parent_dir = getParentDir( path );
 
@@ -49,7 +49,7 @@ static Response*	__classicPOST( std::string& path, std::string& uri, std::string
 	return (__buildPOSTResponse( !exists, uri ));
 }
 
-static bool	__isValidBodySize( Request& request, Location& route )
+static bool	__isValidBodySize( const Request& request, const Location& route )
 {
 	size_t body_size = convertBodySize( request.getHeaderValue( "Content-Length" ) );
 	size_t max_body_size = convertBodySize( route.getClientMaxSizeBody() );
@@ -60,7 +60,7 @@ static bool	__isValidBodySize( Request& request, Location& route )
 	return (true);
 }
 
-Response*	handlePOST( Server& server, Request& request )
+Response*	handlePOST( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 

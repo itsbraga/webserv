@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 01:19:47 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 13:24:46 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,36 @@ enum Context
 };
 
 /**************************\
+ *	Exceptions
+\**************************/
+
+class SyntaxErrorException : public std::exception
+{
+	private:
+		std::string _detail;
+	
+	public:
+		SyntaxErrorException( const std::string& detail ) : _detail( "Syntax Error: " + detail ) {}
+		virtual ~SyntaxErrorException() throw() {}
+
+		virtual const char		*what() const throw()
+		{ return (_detail.c_str()); }	
+};
+
+class ConfigurationErrorException : public std::exception
+{
+	private:
+		std::string _detail;
+
+	public:
+		ConfigurationErrorException( const std::string& detail) : _detail( "Configuration Error: " + detail ) {}
+		virtual ~ConfigurationErrorException() throw() {}
+
+		virtual const char		*what() const throw()
+		{ return (_detail.c_str()); }
+};
+
+/**************************\
  *	Class
 \**************************/
 
@@ -47,21 +77,25 @@ class Parser
 		std::vector<unsigned int>			_status_codes;
 
 		std::string 		_checkPath( char *arg );
+		void				_fillBuffer( const std::ifstream& infile );
+		void				_initKeywordMap();
+		void				_initStatusCodesVector();
+		Token				_createToken( std::string& value ) const;
+		void				_createTokenDelimiter( std::string::const_iterator it );
 
 	public:
 		Parser( char* arg );
-		~Parser() {}
-		
-		// static		handleFileConfig(char *arg, webserv_s *data);
-		void				initKeywordMap();
-		void				initStatusCodesVector();
+		~Parser();
+
+		std::string&					getConfPath()		{ return (_conf_path); }
+		std::string&					getBuffer()			{ return (_buffer); }
+		std::vector<Token>&				getTokens()			{ return (_tokens); }
+		const std::vector<Token>&		getTokens() const	{ return (_tokens); }
+		std::vector<Context>&			getContextStack()	{ return (_context_stack); }
+
 		void				bufferTokenize();
 		void				parse();
 		void				createAllObjects( Webserv& webserv );
-		void				fillBuffer( const std::ifstream& infile );
-		Token				createToken( std::string& value ) const;
-		void				createTokenDelimiter( std::string::const_iterator it );
-		static void			lowerStr( std::string& str );
 
 		TokenType			identifyKeyword( const std::string& to_identify ) const;
 		TokenType			identifySymbol( const std::string& to_identify ) const;
@@ -96,38 +130,6 @@ class Parser
 		void				exitContext();
 		bool 				isInContext( const Context& ctx ) const;
 		Context				getCurrentContext() const;
-
-		std::string&					getConfPath()		{ return (_conf_path); }
-		std::string&					getBuffer()			{ return (_buffer); }
-		std::vector<Token>&				getTokens()			{ return (_tokens); }
-		const std::vector<Token>&		getTokens() const	{ return (_tokens); }
-		std::vector<Context>&			getContextStack()	{ return (_context_stack); }
-
-		class SyntaxErrorException : public std::exception
-		{
-			private:
-				std::string _detail;
-			
-			public:
-				SyntaxErrorException( const std::string& detail ) : _detail( "Syntax Error: " + detail ) {}
-				virtual ~SyntaxErrorException() throw() {}
-
-				virtual const char		*what() const throw()
-				{ return (_detail.c_str()); }	
-		};
-
-		class ConfigurationErrorException : public std::exception
-		{
-			private:
-				std::string _detail;
-
-			public:
-				ConfigurationErrorException( const std::string& detail) : _detail( "Configuration Error: " + detail ) {}
-				virtual ~ConfigurationErrorException() throw() {}
-
-				virtual const char		*what() const throw()
-				{ return (_detail.c_str()); }
-		};		
 };
 
 /**************************\

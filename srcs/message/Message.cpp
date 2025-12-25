@@ -3,33 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/23 16:10:42 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
 /*
-	---------------------------- [ Utilities ] ---------------------------
+	----------------------------- [ Helper ] -----------------------------
 */
-static std::string	__toLower( const std::string& str )
-{
-	std::string result = str;
-
-	for (size_t i = 0; i < result.size(); i++)
-		result[i] = std::tolower( static_cast<unsigned char>( result[i] ) );
-
-	return (result);
-}
-
 static int	__hexToInt( const std::string& hex )
 {
 	int result = 0;
 
-	for (size_t i = 0; i < hex.size(); i++)
+	for (size_t i = 0; i < hex.size(); ++i)
 	{
 		char c = hex[i];
 		result *= 16;
@@ -52,12 +42,12 @@ static int	__hexToInt( const std::string& hex )
 */
 bool	Message::_hasHeader( const std::string& key ) const
 {
-	std::string lowerKey = __toLower( key );
+	std::string lowerKey = toLower( key );
 	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
 
 	for (; it != _headers.end(); ++it)
 	{
-		if (__toLower( it->first ) == lowerKey)
+		if (toLower( it->first ) == lowerKey)
 			return (true);
 	}
 
@@ -203,14 +193,15 @@ const std::string	Message::getHeaderValue( const std::string& key ) const
 	if (key.empty())
 		return ("");
 
-	std::string lower_key = __toLower(key);
+	std::string lower_key = toLower(key);
 	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
 
     for (; it != _headers.end(); ++it)
 	{
-        if (__toLower( it->first ) == lower_key)
+        if (toLower( it->first ) == lower_key)
             return (it->second);
     }
 
-    return (ERR_PREFIX "Header not found: " + key);
+    // return (ERR_PREFIX "Header not found: " + key);
+	return ("");
 }

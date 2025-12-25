@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/24 23:02:15 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 20:23:59 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,11 @@
  *	Method Handler
 \**************************/
 
-class Server;
+class ServerConfig;
 class Request;
 class Response;
 
-typedef Response* (*MethodHandler)( Server& server, Request& request );
+typedef Response* (*MethodHandler)( const ServerConfig& server, const Request& request );
 
 extern std::map<std::string, MethodHandler> g_method_map;
 
@@ -80,19 +80,26 @@ class Client;
 class Webserv
 {
 	private:
-		int						_epoll_fd;
-		std::map<int, Server>	_servers;
-		std::map<int, Client>	_clients;
+		int							_epoll_fd;
+		std::vector<ServerConfig>	_servers;
+		std::vector<Listener>		_listeners;
+		std::map<int, Client>		_clients;
 
-		bool	_addServerToEpoll( int server_fd );
-		bool	_addClientToEpoll( int client_fd );
-		void	_removeClient( int client_fd );
+		Listener*	_getListenerByFd( int fd );
 
-		void	_handleServerEvent( int server_fd );
-		void	_handleClientEvent( int client_fd, unsigned int events );
-		void	_handleClientData( int client_fd );
-		void	_processRequest( int client_fd );
-		void	_checkClientTimeout();
+		bool		_addServerToEpoll( int server_fd );
+		bool		_addClientToEpoll( int client_fd );
+		void		_removeClient( int client_fd );
+		bool		_modifyEpollEvents( int fd, unsigned int events );
+
+		void		_handleListenerEvent( Listener& listener );
+		void		_handleClientEvent( int client_fd, unsigned int events );
+		void		_handleClientRead( int client_fd );
+		void		_handleClientWrite( int client_fd );
+
+		Response*	_buildResponse( Request& request, Listener& listener );
+		void		_processRequest( int client_fd );
+		void		_checkClientTimeout();
 
 		Webserv( const Webserv& toCopy );
 		Webserv&	operator=( const Webserv& toCopy );
@@ -101,13 +108,10 @@ class Webserv
 		Webserv();
 		~Webserv();
 
-		bool	addServer( Server& server );
-
-		Server*			getServer( int fd );
-		const Server*	getServer( int fd ) const;
-
-		bool	init();
-		void	run();
+		void		addServerConfig( ServerConfig& server );
+		bool		initListeners();
+		bool		initEpoll();
+		void		run();
 };
 
 /**************************\
@@ -115,17 +119,18 @@ class Webserv
 \**************************/
 
 // method_map.cpp
-void		init_method_map();
-Response*	handleMethod( Server& server, Request& request );
+void			init_method_map();
+Response*		handleMethod( const ServerConfig& server, const Request& request );
+Response*		handleHttpException( const std::exception& e );
 
 // handleGET.cpp
-Response*	handleGET( Server& server, Request& request );
+Response*		handleGET( const ServerConfig& server, const Request& request );
 
 // handlePOST.cpp
-Response*	handlePOST( Server& server, Request& request );
+Response*		handlePOST( const ServerConfig& server, const Request& request );
 
 // handleHEAD.cpp
-Response*	handleHEAD( Server& server, Request& request );
+Response*		handleHEAD( const ServerConfig& server, const Request& request );
 
 // handleDELETE.cpp
-Response*	handleDELETE( Server& server, Request& request );
+Response*		handleDELETE( const ServerConfig& server, const Request& request );

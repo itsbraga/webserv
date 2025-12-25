@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseStatus.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 20:46:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 14:51:39 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
 /*
-	------------------------ [ Private methods ] -------------------------
+	--------------------- [ Private setter methods ] ---------------------
 */
 void	Response::_setCommonHeaders( bool keepAlive )
 {
