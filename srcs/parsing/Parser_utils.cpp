@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 12:57:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:24:07 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ bool	Parser::isNumber( const std::string& to_compare ) const
 		if (std::isdigit( static_cast<int>(*it) ) == 0)
 			return (false);
 	}
-
 	return (true);
 }
 
@@ -83,7 +82,6 @@ bool	Parser::isString( const std::string& to_compare ) const
 			&& *it != '-' && *it != '_')
 			return (false);
 	}
-
 	return (true);
 }
 
@@ -99,8 +97,8 @@ bool	Parser::isExtension( const std::string& to_compare ) const
 {
 	if (to_compare[0] != '.')
 		return (false);
-	else
-		return (true);
+
+	return (true);
 }
 
 bool	Parser::isStatusCode( const std::string& to_compare ) const
@@ -119,7 +117,6 @@ bool	Parser::isStatusCode( const std::string& to_compare ) const
 		if (*it == to_find)
 			return (true);
 	}
-
 	return (false);
 }
 
@@ -181,9 +178,7 @@ bool	Parser::isValidBodySize( const std::string& value ) const
 		return (false);
 
 	char unit = value[i];
-	return (unit == 'k' || unit == 'K' || 
-			unit == 'm' || unit == 'M' || 
-			unit == 'g' || unit == 'G');
+	return (unit == 'k' || unit == 'K' || unit == 'm' || unit == 'M' || unit == 'g' || unit == 'G');
 }
 
 bool	Parser::isValidExtension( const std::string& to_compare ) const

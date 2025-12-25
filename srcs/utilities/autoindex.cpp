@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 23:12:32 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/23 20:56:39 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 21:26:20 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static std::string	__buildAutoIndexHeader( const std::string& uri )
 
 	if (uri != "/")
 		html += "<li><a href=\"../\">../</a></li>";
-
 	return (html);
 }
 
@@ -33,7 +32,6 @@ static std::string	__buildEntryLink( const std::string& uri, const std::string& 
 
 	if (isDir)
 		link += "/";
-
 	return ("<li><a href=\"" + link + "\">" + name + "</a></li>");
 }
 
@@ -56,6 +54,5 @@ std::string		generateAutoIndex( const std::string& path, const std::string& uri 
 	}
 	html += "</ul></body></html>";
 	closedir( dir );
-
 	return (html);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   POST_utils.cpp                                     :+:      :+:    :+:   */
+/*   handlePOST_utils.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 21:34:22 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 21:23:31 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ std::string		handleUpload( const std::string& body, const std::string& content_t
 		throw InternalServerErrorException();
 
 	std::string uri = upload_route + "/" + filename;
-
 	return (exists ? "" : uri);
 }
 
@@ -130,6 +129,5 @@ size_t	convertBodySize( const std::string& value )
 				break ;
 		}
 	}
-
 	return (static_cast<size_t>( size ));
 }

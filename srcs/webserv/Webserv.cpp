@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 20:38:16 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:30:13 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ bool	Webserv::_addServerToEpoll( int server_fd )
 		err_msg( "epoll_ctl(ADD server)", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -76,7 +75,6 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 		err_msg( "epoll_ctl(ADD client)", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -102,7 +100,6 @@ bool	Webserv::_modifyEpollEvents( int fd, unsigned int events )
 		err_msg( "epoll_ctl(MODIFY)", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -303,11 +300,10 @@ bool	Webserv::initListeners()
 		_listeners.push_back( listener );
 		listener.printInfo();
 	}
-
 	return (true);
 }
 
-bool	Webserv::initEpoll()
+bool	Webserv::init()
 {
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
@@ -321,7 +317,6 @@ bool	Webserv::initEpoll()
 		if (!_addServerToEpoll( _listeners[i].socket_fd ))
 			return (false);
 	}
-	
 	return (true);
 }
 
@@ -330,7 +325,7 @@ void	Webserv::run()
 {
 	epoll_event events[MAX_EVENTS];
 
-	std::cout << P_YELLOW "Waiting for new connections...\n" NC << std::endl;
+	std::cout << P_YELLOW "\nWaiting for new connections...\n" NC << std::endl;
 
 	while (true)
 	{

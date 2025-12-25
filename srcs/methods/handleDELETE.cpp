@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 18:37:35 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:21:55 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,5 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 
 	Response* response = new Response( 200, "OK" ); // 204 ou 200
 	response->loadContent( "File " + uri + " deleted", path ); // setBody --> Fichier "blabla" supprimé.
-
 	return (response);
 }

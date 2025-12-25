@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 18:47:59 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:21:11 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 		return (true);
 
 	size_t body_received = _read_buffer.size() - body_start;
-
 	return (body_received >= static_cast<size_t>( content_length ));
 }
 
@@ -73,7 +72,6 @@ bool	Client::sendData()
 		return (false);
 
 	_write_buffer.erase( 0, sent );
-
 	return (_write_buffer.empty());
 }
 
@@ -101,7 +99,6 @@ bool	Client::hasCompleteRequest() const
 		if (te_value.find( "chunked" ) != std::string::npos)
 			return (_isChunkedComplete( body_start ));
 	}
-
 	return (_isContentLengthComplete( header_end, body_start ));
 }
 

@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 23:10:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:26:30 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ bool	isDirectory( const std::string& path )
 
 	if (stat( path.c_str(), &buffer ) != 0)
 		return (false);
+
 	return (S_ISDIR( buffer.st_mode ));
 }
 
@@ -39,7 +40,6 @@ static std::vector<std::string>		__removeEmptySegments( const std::vector<std::s
 		if (!root_vec[i].empty())
 			cleaned_vec.push_back( root_vec[i] );
 	}
-
 	return (cleaned_vec);
 }
 

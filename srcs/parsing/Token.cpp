@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 16:24:35 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 13:05:58 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:25:11 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,5 @@ std::string		Token::getTypeStr() const
 		type_map[V_STATUSCODE] = "V_STATUSCODE";
 		type_map[UNKNOWN] = "UNKNOWN";
 	}
-
 	return (type_map[_type]);
 }

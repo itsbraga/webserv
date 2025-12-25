@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:44:33 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 20:38:43 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:29:21 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ bool	Listener::createSocketFd()
 		err_msg( "socket()", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -33,7 +32,6 @@ bool	Listener::configureSocket()
 		err_msg( "setsockopt()", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -57,7 +55,6 @@ bool	Listener::bindAndListen()
 		err_msg( "listen()", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -68,7 +65,6 @@ bool	Listener::setNonBlocking( int fd )
 		err_msg( "fcntl(F_SETFL | O_NONBLOCK)", strerror( errno ) );
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -90,7 +86,6 @@ bool	Listener::init()
 		closeFd();
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -109,7 +104,6 @@ int		Listener::acceptClient()
 		::close( client_fd );
 		return (-1);
 	}
-
 	return (client_fd);
 }
 
@@ -126,7 +120,6 @@ ServerConfig&	Listener::resolveVirtualHosting( const std::string& host )
 		if (servers[i]->getServerName() == hostname)
 			return (*servers[i]);
 	}
-
 	return (*servers[0]);
 }
 

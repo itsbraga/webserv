@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 19:03:41 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:26:13 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,6 @@ std::map<std::string, Location>::const_iterator		ServerConfig::findMatchingLocat
 			}
 		}
 	}
-
 	return (current_match);
 }
 
@@ -146,8 +145,7 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 		defaultLoc.setIndex( _index );
 		defaultLoc.setAutoIndex( _auto_index );
 		defaultLoc.setClientMaxSizeBody( _client_max_body_size );
-		defaultLoc.setUploadAllowed( false ); // peut-etre supprimer si par defaut = false
-
+		defaultLoc.setUploadAllowed( false );
 		return (defaultLoc);
 	}
 
@@ -158,7 +156,6 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 		resolved.setIndex( _index );
 	if (resolved.getClientMaxSizeBody().empty())
 		resolved.setClientMaxSizeBody( _client_max_body_size );
-
 	return (resolved);
 }
 

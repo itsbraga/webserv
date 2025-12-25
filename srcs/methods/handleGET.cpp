@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 18:37:48 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:22:04 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static Response*	__handleDirectoryRequest( const Location& route, std::string& p
 
 	Response* response = new Response( 200, "OK" );
 	response->loadContent( body, path );
-
 	return (response);
 }
 
@@ -39,7 +38,6 @@ static Response*	__handleFileRequest( const std::string& path )
 
 	Response* response = new Response( 200, "OK" );
 	response->loadContent( body, path );
-
 	return (response);
 }
 
@@ -59,6 +57,5 @@ Response*	handleGET( const ServerConfig& server, const Request& request )
 		throw ForbiddenException();
 	if (isDirectory( path ))
 		return (__handleDirectoryRequest( route, path, uri ));
-
 	return (__handleFileRequest( path ));
 }

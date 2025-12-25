@@ -6,17 +6,21 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 18:57:18 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:28:25 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-static void	__initUtilities()
+static bool	__initUtilities( Webserv& webserv )
 {
+	if (!webserv.initListeners())
+		return (false);
+
 	init_method_map();
 	Response::initBuilders();
 	Response::initContentTypes();
+	return (true);
 }
 
 int	main( int argc, char **argv )
@@ -40,11 +44,11 @@ int	main( int argc, char **argv )
 		return (FAILURE);
 	}
 
-	if (!webserv.initEpoll())
+	if (!__initUtilities( webserv ))
 		return (FAILURE);
 
-	__initUtilities();
+	if (!webserv.init())
+		return (FAILURE);
 	webserv.run();
-	
 	return (SUCCESS);
 }

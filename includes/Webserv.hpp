@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 20:23:59 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:15:30 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ class Webserv
 
 		void		addServerConfig( ServerConfig& server );
 		bool		initListeners();
-		bool		initEpoll();
+		bool		init();
 		void		run();
 };
 

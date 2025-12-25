@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 18:46:14 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 21:27:16 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ std::string		readFileContent( const std::string& path )
 	if (!file.is_open())
 		throw std::runtime_error( "Cannot open file" );
 	buffer << file.rdbuf();
-
 	return (buffer.str());
 }
 
@@ -71,7 +70,6 @@ bool	saveFile( const std::string& path, const std::string& content )
 
 	file.write( content.c_str(), content.size() );
 	file.close();
-
 	return (true);
 }
 
@@ -97,6 +95,5 @@ bool	isValidFilename( const std::string& filename )
 		return (false);
 	if (filename[0] == '/')
 		return (false);
-
 	return (true);
 }
