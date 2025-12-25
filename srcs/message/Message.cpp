@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:21:47 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ static int	__hexToInt( const std::string& hex )
 		else
 			return (-1);
 	}
-
 	return (result);
 }
 
@@ -50,7 +49,6 @@ bool	Message::_hasHeader( const std::string& key ) const
 		if (toLower( it->first ) == lowerKey)
 			return (true);
 	}
-
 	return (false);
 }
 
@@ -130,7 +128,6 @@ void	Message::_unchunkBody( const std::string& chunked_data )
 		result.append( chunked_data, data_start, chunk_size );
 		pos = data_start + chunk_size + 2;
 	}
-
 	_body = result;
 }
 
@@ -163,7 +160,6 @@ void	Message::setHeaderValue( const std::string& key, const std::string& value )
 			return ;
 		}
 	}
-
 	addHeader( key, value );
 }
 
@@ -184,7 +180,6 @@ const std::string	Message::getHeaderMap() const
 
 	if (result.empty())
 		return (ERR_PREFIX "No header found\n");
-
 	return (result);
 }
 

@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 18:38:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:23:14 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static Response*	__buildPOSTResponse( bool created, const std::string& uri )
 	response->setContentType( "text/plain" );
 	if (created)
 		response->setLocation( uri );
-
 	return (response);
 }
 
@@ -45,7 +44,6 @@ static Response*	__classicPOST( const std::string& path, const std::string& uri,
 
 	bool exists = isRegularFile( path );
 	saveFile( path, body );
-
 	return (__buildPOSTResponse( !exists, uri ));
 }
 
@@ -56,7 +54,7 @@ static bool	__isValidBodySize( const Request& request, const Location& route )
 
 	if (body_size > max_body_size)
 		return (false);
-
+	
 	return (true);
 }
 

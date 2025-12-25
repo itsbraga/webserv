@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:25:22 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ std::string		extractRequestLine( const std::string& serialized )
 		throw BadRequestException( "TAB not allowed" );
 	if (request_line.find( "  " ) != std::string::npos)
 		throw BadRequestException( "Double space not allowed" );
-
 	return (request_line);
 }
 
@@ -78,7 +77,6 @@ bool	isValidHeaderName( const std::string& name )
 		if (!std::isalnum( static_cast<unsigned char>( c ) ) && allowed.find( c ) == std::string::npos)
 			return (false);
 	}
-
 	return (true);
 }
 
@@ -92,6 +90,5 @@ size_t	findHeaderBoundaries( const std::string& serialized, size_t& header_start
 	header_end = serialized.find( "\r\n\r\n", header_start );
 	if (header_end == std::string::npos)
 		throw BadRequestException( "Missing double CRLF - end of headers" );
-
 	return (header_end);
 }

@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 15:19:12 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/25 21:25:33 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ const std::string	Response::getExtension( const std::string& uri ) const
 	std::string extension = uri.substr( dot_pos + 1 );
 	if (extension.empty())
 		throw InternalServerErrorException();
-
 	return (extension);
 }
 
@@ -103,7 +102,6 @@ const std::string	Response::getDate() const
 	struct tm datetime = *localtime( &timestamp );
 	strftime( buffer, 30, "%a, %d %b %G %T GMT", &datetime );
 	std::string result = buffer;
-
 	return (result);
 }
 
@@ -114,7 +112,6 @@ const std::string	Response::getSerializedHeaders() const
 
 	for (; it != _headers.end(); it++)
 		result += it->first + ": " + it->second + "\r\n";
-
 	return (result);
 }
 
@@ -127,7 +124,6 @@ const std::string	Response::getSerializedResponse()
 	response += _http_version + " ";
 	response += toString( _status_code ) + " " + _status_name + "\r\n";
 	response += getSerializedHeaders() + "\r\n" + getBody() + "\n";
-
 	return (response);
 }
 
