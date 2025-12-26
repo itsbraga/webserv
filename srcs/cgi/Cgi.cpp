@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 18:35:56 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 21:03:07 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,21 @@ Response*	cgiHandler( const Request& request, const ServerConfig& server )
 
 	struct stat st;
 	if (stat(path.c_str(), &st) != 0)
+	{
+		std::cerr << "cgi file not found !\n";
 		return (new Response(404, "Not Found"));
+	}
 	if (!S_ISREG(st.st_mode))
+	{
+		std::cerr << "cgi file not regular !\n";
 		return (new Response(404, "Not Found"));
+	}
 	if (!(st.st_mode & S_IXUSR))
+	{
+		std::cerr << "script is found but not executable\n";
 		return (new Response(403, "Forbidden"));
+	}
+	
 
 	return (doCgi(request, server, path));
 	
@@ -94,10 +104,21 @@ void	childExec( const Request& request, const ServerConfig& server, \
 	std::string path_dir;
 	
 	close(pipes[0][1]);
-	dup2(pipes[0][0], STDIN_FILENO); // protéger ?
+	if (dup2(pipes[0][0], STDIN_FILENO) == -1)
+	{
+		std::cerr << strerror(errno) << std::endl;
+		close(pipes[0][0]);
+		close(pipes[1][0]), close(pipes[1][1]);
+		exit(EXIT_FAILURE);
+	}
 	close(pipes[0][0]);
 	close(pipes[1][0]);
-	dup2(pipes[1][1], STDOUT_FILENO);
+	if (dup2(pipes[1][1], STDOUT_FILENO) == -1)
+	{
+		std::cerr << strerror(errno) << std::endl;
+		close(pipes[1][1]);
+		exit(EXIT_FAILURE);
+	}
 	close(pipes[1][1]);
 
 	size_t pos = path.find_last_of('/');
@@ -113,13 +134,21 @@ void	childExec( const Request& request, const ServerConfig& server, \
 		std::cerr << "chdir failed" << std::endl;
 		exit(EXIT_FAILURE);
 	}
+
+	std::string	file_name;
+	if (pos == std::string::npos)
+		file_name = path;
+	else
+		file_name = path.substr(pos + 1);
 	
-	argv[0] = const_cast<char*>(path.c_str());
+	argv[0] = const_cast<char*>(file_name.c_str());
 	argv[1] = NULL; 
 	try
 	{
 		envp = createEnvp(request, server, path);
-		if (execve(path.c_str(), argv, envp) == -1)
+		std::cerr << "path = " << path << std::endl;
+		std::cerr << "argv[0] = " << argv[0] << std::endl;
+		if (execve(file_name.c_str(), argv, envp) == -1)
 			throw std::runtime_error("execve failed");
 	}
 	catch (std::bad_alloc& e)
@@ -129,7 +158,8 @@ void	childExec( const Request& request, const ServerConfig& server, \
 	}
 	catch (std::runtime_error& e)
 	{
-		std::cerr << "runtime_error: " << e.what() << std::endl;
+		std::string reason(strerror(errno));
+		std::cerr << "runtime_error: " << e.what() << " : "  << reason << std::endl;
 		if (envp != NULL)
 		{
 			for (size_t i = 0; envp[i] != NULL; ++i)
@@ -304,12 +334,16 @@ bool	isCgiRequest( const Request& request, const ServerConfig& server )
 	std::map<std::string, Location>::const_iterator it;
 	
 	it = server.findMatchingLocation(request);
+	if (it == server.getLocations().end())
+		std::cerr << "findMatchLocation failed\n";
 	if (it != server.getLocations().end() && it->second.getCgiExtension().empty() == false)
 		cgi_exts = &it->second.getCgiExtension();
 	else if (server.getCgiExtension().empty() == false)
 		cgi_exts = &server.getCgiExtension();
 	else
 		return (false);
+
+	std::cerr << "findMatchingLocation good\n";
 
 	std::string clean_path = request.getUri();
 	size_t pos = clean_path.find('?');

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/26 18:50:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 22:45:47 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,6 +206,9 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 
 		std::string hostname = request.getHeaderValue( "Host" );
 		ServerConfig server = listener.resolveVirtualHosting( hostname );
+
+		if (isReturn( request, server ) == true)
+			return (returnHandler( request, server ));
 
 		if (isCgiRequest( request, server ) == true)
 			return (cgiHandler( request, server ));

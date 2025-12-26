@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 18:38:51 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 23:12:54 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,14 @@ void	Parser::_initStatusCodesVector()
 	_status_codes.push_back( 201 );
 	_status_codes.push_back( 202 );
 	_status_codes.push_back( 301 );
+	_status_codes.push_back( 302 );
+	_status_codes.push_back( 307 );
+	_status_codes.push_back( 308 );
 	_status_codes.push_back( 400 );
 	_status_codes.push_back( 403 );
 	_status_codes.push_back( 404 );
 	_status_codes.push_back( 405 );
+	_status_codes.push_back( 410 );
 	_status_codes.push_back( 411 );
 	_status_codes.push_back( 413 );
 	_status_codes.push_back( 414 );
@@ -356,14 +360,15 @@ void	Parser::parse()
 				break ;
 			}
 
-			case K_RETURN : 
+			case K_RETURN : {
 				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword RETURN is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_STATUSCODE)
 					throw SyntaxErrorException( "The keyword RETURN need to be followed by a STATUS_CODE token" );
 				else if (!isReturnStatusCode( (current + 1)->getValue() ))
 					throw ConfigurationErrorException( "The STATUS_CODE given after RETURN token isn't accepted for a return directive" );
-				if ((current + 1)->getValue() == "301" )
+				std::string status_code_str = (current + 1)->getValue();
+				if (status_code_str == "301" || status_code_str == "302" || status_code_str == "307" || status_code_str == "308")
 				{
 					if (peekType( current, 2 ) != V_PATH)
 						throw ConfigurationErrorException( "A PATH is needed between 301 STATUS_CODE and SEMICOLON for a RETURN" );
@@ -378,6 +383,7 @@ void	Parser::parse()
 					current += 3;
 				}
 				break ;
+			}
 
 			case S_RBRACE : 
 				if (getCurrentContext() == HTTP)
@@ -548,7 +554,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				if (getCurrentContext() == SERVER_BLOCK)
 				{
 					current_server.setReturnCode( return_code );
-					if ((current + 1)->getValue() == "301" )
+					if (return_code == 301 || return_code == 302 || return_code == 307 || return_code == 308)
 					{
 						current_server.setReturnUri( (current + 2)->getValue() );
 						current += 4;
@@ -559,7 +565,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 				{
 					current_location.setReturnCode( return_code );
-					if ((current + 1)->getValue() == "301" )
+					if (return_code == 301 || return_code == 302 || return_code == 307 || return_code == 308)
 					{
 						current_location.setReturnUri( (current + 2)->getValue() );
 						current += 4;

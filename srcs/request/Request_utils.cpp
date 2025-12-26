@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/26 18:24:59 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 23:43:50 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,47 @@ size_t	findHeaderBoundaries( const std::string& serialized, size_t& header_start
 	if (header_end == std::string::npos)
 		throw BadRequestException( "Missing double CRLF - end of headers" );
 	return (header_end);
+}
+
+Response*	returnHandler(const Request& request, const ServerConfig& server)
+{
+	int status_code;
+	std::string status_name;
+	std::map<std::string, Location>::const_iterator it;
+	it = server.findMatchingLocation(request.getUri());
+	if (it != server.getLocations().end())
+		status_code = it->second.getReturnCode();
+	else
+		status_code = server.getReturnCode();
+	status_name = Response::getStatusNameFromStatusCode(status_code);
+	
+	Response* response = new Response(status_code, status_name);
+	if (status_code == 301 || status_code == 302 || status_code == 307 || status_code == 308)
+	{
+		std::string return_uri;
+		if (it != server.getLocations().end())
+			return_uri = it->second.getReturnUri();
+		else
+			return_uri = server.getReturnUri();
+		response->addHeader("location", return_uri);
+	}
+	return (response);
+}
+
+bool	isReturn(const Request& request, const ServerConfig& server)
+{
+	std::map<std::string, Location>::const_iterator it;
+	it = server.findMatchingLocation(request.getUri());
+	if (it != server.getLocations().end())
+	{
+		if (it->second.getReturnCode() != 0)
+			return (true);
+	}
+	else
+	{
+		if (server.getReturnCode() != 0)
+			return (true);
+		else
+			return (false);
+	}
 }

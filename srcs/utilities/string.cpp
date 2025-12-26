@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 13:08:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 17:52:51 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 21:35:39 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,33 @@ std::string		extractQueryString( const std::string &uri )
 	}
 	else
 		return ("");
+}
+
+std::string	decodeUri( const std::string& uri )
+{
+	std::string result;
+	size_t i = 0;
+
+	while (i < uri.length())
+	{
+		if (uri[i] == '+')
+		{
+			result += ' ';
+			i++;	
+		}
+		else if (uri[i] == '%' && i + 2 < uri.length())
+		{
+			std::string hex = uri.substr(i + 1, 2);
+			long converted = strtol( hex.c_str(), NULL, 16 );
+			char decoded_char = static_cast<char>(converted);
+			result += decoded_char;
+			i += 3;
+		}
+		else
+		{
+			result += uri[i];
+			i++;
+		}
+	}
+	return result;
 }

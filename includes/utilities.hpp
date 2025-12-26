@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/26 17:51:18 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 23:44:52 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ std::vector<std::string>	split( const std::string& str, char delimiter );
 void						lowerStr( std::string& str );
 std::string					toLower( const std::string& str );
 std::string					extractQueryString( const std::string &uri );
+std::string					decodeUri( const std::string& uri );
 
 /**************************\
  *	Template function
@@ -52,6 +53,9 @@ void			validateProtocolVersion( const std::string& protocolVersion );
 
 bool			isValidHeaderName( const std::string& name );
 size_t			findHeaderBoundaries( const std::string& serialized, size_t& header_start, size_t& header_end );
+
+bool			isReturn(const Request& request, const ServerConfig& server);
+Response*		returnHandler(const Request& request, const ServerConfig& server);
 
 /**************************\
  *	POST method utils

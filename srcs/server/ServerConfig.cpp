@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/26 18:31:01 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 19:48:02 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,10 @@ void	ServerConfig::setReturnUri( const std::string& return_uri )
 std::map<std::string, Location>::const_iterator		ServerConfig::findMatchingLocation( const Request& request ) const
 {
 	std::string uri = request.getUri();
+
+	size_t pos = uri.find('?');
+	if (pos != std::string::npos)
+		uri = uri.substr(0, pos);
 
 	std::map<std::string, Location>::const_iterator it = _locations.begin();
 	std::map<std::string, Location>::const_iterator current_match = _locations.end();
