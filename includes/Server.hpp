@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 23:04:31 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 01:09:25 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Server
 		std::string 					_server_name;
 		std::string						_root;
 		std::string						_index;
+		std::vector<std::string>		_cgi_extension;
 		bool							_auto_index;
 		std::string						_client_max_body_size;
 		unsigned int					_return_code;
@@ -60,6 +61,7 @@ class Server
 		void		setRoot( const std::string& root );
 		void		setIndex( const std::string& index );
 		void		setClientMaxSizeBody( const std::string& max_size );
+		void		setCgiExtension( const std::vector<std::string>& cgi_extension );
 		void		setAutoIndex( bool auto_index );
 		void		setReturnCode( unsigned int return_code );
 		void		setReturnUri( const std::string& return_uri );
@@ -72,6 +74,7 @@ class Server
 		const std::string&						getRoot() const					{ return (_root); }
 		const std::string& 						getIndex() const				{ return (_index); }
 		const std::string&						getClientMaxSizeBody() const	{ return (_client_max_body_size); }
+		const std::vector<std::string>&			getCgiExtension() const			{ return (_cgi_extension); }
 		const bool&								getAutoIndex() const			{ return (_auto_index); }
 		const unsigned int&						getReturnCode() const			{ return (_return_code); }
 		const std::string&						getReturnUri() const			{ return (_return_uri); }
@@ -85,6 +88,7 @@ class Server
 		std::string&							getRoot()						{ return (_root); }
 		std::string& 							getIndex()						{ return (_index); }
 		std::string&							getClientMaxSizeBody()			{ return (_client_max_body_size); }
+		std::vector<std::string>&				getCgiExtension()				{ return (_cgi_extension); }
 		bool&									getAutoIndex()					{ return (_auto_index); }
 		unsigned int&							getReturnCode()					{ return (_return_code); }
 		std::string&							getReturnUri()					{ return (_return_uri); }

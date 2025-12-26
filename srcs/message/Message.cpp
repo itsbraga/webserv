@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/23 16:10:42 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 22:42:31 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,30 @@ static int	__hexToInt( const std::string& hex )
 /*
 	------------------------ [ Private methods ] -------------------------
 */
-bool	Message::_hasHeader( const std::string& key ) const
+bool	Message::hasHeader( const std::string& key ) const
 {
-	std::string lowerKey = __toLower( key );
-	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
+	if (key.empty())
+		return (false);
 
-	for (; it != _headers.end(); ++it)
+	std::string lower_key = __toLower(key);
+	std::multimap<std::string, std::string>::const_iterator it = _headers.find(key);
+    if (it != _headers.end())
+		return (true);
+    return (false);
+}
+
+bool	Message::_checkProhibitedDuplicate( const std::string& name )
+{
+	static const std::set<std::string> uniqueHeaders = {
+        "host", "content-type", "content-length", "transfer-encoding",
+        "authorization", "from", "referer", "user-agent", "max-forwards", "if-match", "if-none-match",
+        "if-modified-since", "if-unmodified-since", "if-range", "range"
+    };
+	if (uniqueHeaders.count( name ) == 1)
 	{
-		if (__toLower( it->first ) == lowerKey)
+		if (_headers.count( name ) == 1)
 			return (true);
 	}
-
 	return (false);
 }
 
@@ -75,6 +88,8 @@ std::pair<std::string, std::string>		Message::_parseHeaderLine( const std::strin
 		throw BadRequestException( "No header name" );
 	if (name.find( ' ' ) != std::string::npos || name.find( '\t' ) != std::string::npos)
 		throw BadRequestException( "Space in header name" );
+	
+	name = __toLower( name );
 
 	size_t value_start = colonPos + 1;
 	while (value_start < line.size() && (line[value_start] == ' ' || line[value_start] == '\t'))
@@ -152,7 +167,7 @@ void	Message::addHeader( const std::string& key, const std::string& value )
 	if (key.empty() || value.empty())
 		return ;
 
-	_headers.push_back( std::make_pair( key, value ) );
+	_headers.insert( std::make_pair(key, value) );
 }
 
 /*
@@ -185,18 +200,6 @@ void	Message::setBody( const std::string& body )
 /*
 	----------------------------- [ Getters ] ----------------------------
 */
-const std::string	Message::getHeaderMap() const
-{
-	std::string result;
-
-	for (size_t i = 0; i < _headers.size(); ++i)
-		result += _headers[i].first + ": " + _headers[i].second + "\n";
-
-	if (result.empty())
-		return (ERR_PREFIX "No header found\n");
-
-	return (result);
-}
 
 const std::string	Message::getHeaderValue( const std::string& key ) const
 {
@@ -204,13 +207,8 @@ const std::string	Message::getHeaderValue( const std::string& key ) const
 		return ("");
 
 	std::string lower_key = __toLower(key);
-	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
-
-    for (; it != _headers.end(); ++it)
-	{
-        if (__toLower( it->first ) == lower_key)
-            return (it->second);
-    }
-
+	std::multimap<std::string, std::string>::const_iterator it = _headers.find(key);
+    if (it != _headers.end())
+		return (it->second);
     return (ERR_PREFIX "Header not found: " + key);
 }
