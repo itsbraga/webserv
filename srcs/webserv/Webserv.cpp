@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 21:30:13 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 16:19:07 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Webserv::~Webserv()
 	_clients.clear();
 
 	for (size_t i = 0; i < _listeners.size(); ++i)
-		_listeners[i].closeFd();
+		_listeners[i].closeSocketFd();
 	_listeners.clear();
 
 	if (_epoll_fd != -1)
@@ -275,6 +275,9 @@ void	Webserv::addServerConfig( ServerConfig& server )
 
 bool	Webserv::initListeners()
 {
+	std::cout << BOLD P_YELLOW "===== initListeners =====\n" NC << std::endl;
+	std::cout << "_servers.size() = " << _servers.size() << std::endl;
+
 	std::map<unsigned short, std::vector<ServerConfig*> > serversByPort;
 
 	for (size_t i = 0; i < _servers.size(); ++i)
@@ -285,21 +288,33 @@ bool	Webserv::initListeners()
 		serversByPort[port].push_back( server );
 	}
 
+	std::cout << "Unique ports: " << serversByPort.size() << std::endl;
+
 	std::map<unsigned short, std::vector<ServerConfig*> >::iterator it = serversByPort.begin();
 
 	for (; it != serversByPort.end(); ++it)
 	{
+		std::cout << "Creating listener for port " << it->first 
+				  << " with " << it->second.size() << " server(s)" << std::endl;
+
 		Listener listener;
 		listener.socket_fd = -1;
 		listener.port = it->first;
 		listener.servers = it->second;
 
 		if (!listener.init())
+		{
+			std::cerr << ERR_PREFIX << "listener.init(): Failed to init listener on port " << it->first << std::endl;
 			return (false);
+		}
+
+		std::cout << "Listener created with fd=" << listener.socket_fd << std::endl;
 
 		_listeners.push_back( listener );
 		listener.printInfo();
 	}
+
+	std::cout << "Total listeners: " << _listeners.size() << "\n\n";
 	return (true);
 }
 

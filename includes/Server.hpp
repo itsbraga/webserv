@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 20:36:29 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 15:15:11 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ struct Listener
 	bool			setNonBlocking( int fd );
 	bool			init();
 	
-	void			closeFd();
+	void			closeSocketFd();
 	int				acceptClient();
 	ServerConfig&	resolveVirtualHosting( const std::string& hostname );
 
