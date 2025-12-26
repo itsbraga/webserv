@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 16:42:57 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 23:38:45 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,9 @@ class Response : public Message
 		static void			initBuilders();
 		static void			initContentTypes();
 
+		static std::string	getStatusNameFromStatusCode( int status_code );
+
+
 		void				defineContentType();
 		void				setFileContent( const std::string& body, const std::string& file_path );
 		void				loadHeaders( const std::string& body, const std::string& path );
@@ -72,12 +75,15 @@ class Response : public Message
 		// 3xx : Redirection
 		void	MovedPermanently(); 		// 301
 		void	Found();					// 302
+		void	TemporaryRedirect();		// 307
+		void	PermanentRedirect();		// 308
 		
 		// 4xx : Client error
 		void	BadRequest();				// 400
 		void	Forbidden();				// 403
 		void	NotFound();					// 404
 		void	MethodNotAllowed();			// 405
+		void	Gone();						// 410
 		void	LengthRequired();			// 411
 		void	PayloadTooLarge();			// 413
 		void	URITooLong();				// 414

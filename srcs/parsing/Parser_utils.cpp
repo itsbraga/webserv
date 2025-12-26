@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 12:57:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:24:07 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 23:09:00 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,9 @@ bool 	Parser::isErrorStatusCode( const std::string& to_compare ) const
 
 bool	Parser::isReturnStatusCode( const std::string& to_compare ) const
 {
-	if (to_compare == "301" || to_compare == "403" || to_compare == "404" \
+	if (to_compare == "200" || to_compare == "301" || to_compare == "302" \
+		|| to_compare == "307" || to_compare == "308" \
+		|| to_compare == "403" || to_compare == "404" || to_compare == "410" \
 		|| to_compare == "418" || to_compare == "503" )
 		return (true);
 	
