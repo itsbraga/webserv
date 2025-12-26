@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string.cpp                                         :+:      :+:    :+:   */
+/*   basic_utils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 16:00:39 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/23 21:27:06 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:56:46 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,17 @@ std::vector<std::string>	split( const std::string& str, char delimiter )
 		tokens.push_back(token);
 
 	return (tokens);
+}
+
+std::string	extractQueryString( const std::string &uri )
+{
+	std::string result;
+	size_t pos = uri.find('?');
+	if (pos != std::string::npos)
+	{
+		result = uri.substr(pos + 1);
+		return (result);
+	}
+	else
+		return ("");
 }

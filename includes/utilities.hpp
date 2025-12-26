@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 18:46:40 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 18:58:44 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 void						err_msg( const char *context, const std::string& reason );
 void						err_msg_quoted( const char *context, const std::string& reason );
 std::vector<std::string>	split( const std::string& str, char delimiter );
+std::string					extractQueryString( const std::string &uri );
 
 /**************************\
  *	Template function

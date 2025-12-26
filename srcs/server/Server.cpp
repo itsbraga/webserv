@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/24 23:05:37 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/25 01:10:10 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,14 @@ void	Server::setClientMaxSizeBody( const std::string& max_size )
 		return ;
 
 	_client_max_body_size = max_size;
+}
+
+void	Server::setCgiExtension( const std::vector<std::string>& cgi_extension)
+{
+	if (cgi_extension.empty())
+		return ;
+
+	_cgi_extension = cgi_extension;
 }
 
 void	Server::setAutoIndex( bool auto_index )

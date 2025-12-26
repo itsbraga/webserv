@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 18:57:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 05:07:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Location
 		std::string 							_index;
 		std::vector<ErrorPage>						 _err_page;
 		std::vector<std::string> 						_allowed_methods;
-		std::vector<std::pair<std::string, std::string> >	_cgi_bin; //first == extension; second == path_to_script;
+		std::vector<std::string>						_cgi_extension;
 		bool											_auto_index;
 		std::string										_client_max_body_size;
 		bool										_upload_allowed;
@@ -41,6 +41,7 @@ class Location
 		void		setRoot( const std::string& root );
 		void		setIndex( const std::string& index );
 		void		setAllowedMethods( const std::vector<std::string>& allowed_methods );
+		void		setCgiExtension( const std::vector<std::string>& cgi_extension );
 		void		setClientMaxSizeBody( const std::string& max_size );
 		void		setAutoIndex( bool auto_index );
 		void		setUploadAllowed( bool upload_allowed );
@@ -53,7 +54,7 @@ class Location
 		const std::string& 											getIndex() const				{ return (_index); }
 		const std::vector<ErrorPage>&								getErrorPage() const			{ return (_err_page); }
 		const std::vector<std::string>&								getAllowedMethods() const		{ return (_allowed_methods); }
-		const std::vector<std::pair<std::string, std::string> >&	getCgiBin() const				{ return (_cgi_bin); }
+		const std::vector<std::string>&								getCgiExtension() const			{ return (_cgi_extension); }
 		const std::string&											getClientMaxSizeBody() const	{ return (_client_max_body_size); }
 		bool														getAutoIndex() const			{ return (_auto_index); }
 		bool														getUploadAllowed() const		{ return (_upload_allowed); }
@@ -66,7 +67,7 @@ class Location
 		std::string& 											getIndex()				{ return (_index); }
 		std::vector<ErrorPage>&									getErrorPage()			{ return (_err_page); }
 		std::vector<std::string>&								getAllowedMethods()		{ return (_allowed_methods); }
-		std::vector<std::pair<std::string, std::string> >&		getCgiBin()				{ return (_cgi_bin); }
+		std::vector<std::string>&								getCgiExtension() 		{ return (_cgi_extension); }
 		std::string&											getClientMaxSizeBody()	{ return (_client_max_body_size); }
 		bool&													getAutoIndex()			{ return (_auto_index); }
 		bool&													getUploadAllowed()		{ return (_upload_allowed); }
