@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 16:43:26 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 18:40:13 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ const std::string	Response::getDate() const
 const std::string	Response::getSerializedHeaders() const
 {
 	std::string result;
-	std::vector< std::pair<std::string, std::string> >::const_iterator it = _headers.begin();
+	std::multimap<std::string, std::string>::const_iterator it = _headers.begin();
 
 	for (; it != _headers.end(); it++)
 		result += it->first + ": " + it->second + "\r\n";

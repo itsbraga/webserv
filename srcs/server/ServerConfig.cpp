@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 21:26:13 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 18:31:01 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ ServerConfig&		ServerConfig::operator=( const ServerConfig& toCopy )
 		_index = toCopy._index;
 		_auto_index = toCopy._auto_index;
 		_client_max_body_size = toCopy._client_max_body_size;
+		_cgi_extension = toCopy._cgi_extension;
 		_return_code = toCopy._return_code;
 		_return_uri = toCopy._return_uri; 
 		_err_page = toCopy._err_page;
@@ -40,7 +41,7 @@ ServerConfig&		ServerConfig::operator=( const ServerConfig& toCopy )
 /*
 	---------------------------- [ Setters ] -----------------------------
 */
-void	ServerConfig::setPort( unsigned short int port )
+void	ServerConfig::setPort( unsigned short port )
 {
 	_port = port;
 }
@@ -75,6 +76,14 @@ void	ServerConfig::setClientMaxSizeBody( const std::string& max_size )
 		return ;
 
 	_client_max_body_size = max_size;
+}
+
+void	ServerConfig::setCgiExtension( const std::vector<std::string>& cgi_extension)
+{
+	if (cgi_extension.empty())
+		return ;
+
+	_cgi_extension = cgi_extension;
 }
 
 void	ServerConfig::setAutoIndex( bool auto_index )
