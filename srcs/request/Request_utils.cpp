@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/25 21:25:22 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 18:24:59 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ void	validateProtocolVersion( const std::string& protocol_version )
 
 bool	isValidHeaderName( const std::string& name )
 {
+	if (name.empty() == true)
+		return (false);
+	
 	const std::string allowed = "!#$%&'*+-.^_`|~";
 
 	for (size_t i = 0; i < name.size(); ++i)

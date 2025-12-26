@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 13:08:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:27:30 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 17:52:51 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,18 @@ void	lowerStr( std::string& str )
 {
 	for (size_t i = 0; i < str.size(); ++i)
 		str[i] = std::tolower( static_cast<unsigned char>( str[i] ) );
+}
+
+std::string		extractQueryString( const std::string &uri )
+{
+	std::string result;
+
+	size_t pos = uri.find('?');
+	if (pos != std::string::npos)
+	{
+		result = uri.substr(pos + 1);
+		return (result);
+	}
+	else
+		return ("");
 }

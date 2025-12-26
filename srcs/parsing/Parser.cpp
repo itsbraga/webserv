@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 17:30:02 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 18:38:51 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,19 +331,30 @@ void	Parser::parse()
 				break ;
 			}
 
-			case K_CGI :
-				if (getCurrentContext() != LOCATION_BLOCK)
-					throw SyntaxErrorException( "The keyword CGI is only expected in a LOCATION_BLOCK context" );
+			case K_CGI : {
+				if (!isInContext( SERVER_BLOCK ))
+					throw SyntaxErrorException( "The keyword CGI is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_EXTENSION)
 					throw SyntaxErrorException( "The keyword CGI need to be followed by an EXTENSION keyword" );
-				else if (peekType( current, 2 ) != V_PATH)
-					throw SyntaxErrorException( "Only a PATH token is expected between EXTENSION and SEMICOLON for CGI" );
-				else if (peekType( current, 3 ) != S_SEMICOLON)
+				++current;
+				int i = 0;
+				while (current != end && current->getType() != S_SEMICOLON)
+				{
+					if (current->getType() != V_EXTENSION)
+						throw SyntaxErrorException( "Only STR are expected between ALLOWED_METHODS and SEMICOLON" );
+					else if (isValidExtension( current->getValue() ) == false)
+						throw ConfigurationErrorException( "One of the extensions given after CGI keyword is incorrect" );
+					else if (i >= 3)
+						throw SyntaxErrorException( "No more than 3 different extensions can be allowed after a CGI keyword, you need also to check if SEMICOLON is missing" );
+					++current, ++i;
+				}
+				if (current == end)
+					throw SyntaxErrorException( "Unexpected end of file" );
+				else if (current->getType() != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON is missing after CGI keyword" );
-				if (isValidExtension( (current + 1)->getValue() ) == false)
-					throw ConfigurationErrorException( "The extension given after CGI keyword is incorrect" );
-				current += 4;
+				++current;
 				break ;
+			}
 
 			case K_RETURN : 
 				if (!isInContext( SERVER_BLOCK ))
@@ -420,7 +431,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				break ;
 			
 			case K_LISTEN : {
-				unsigned short int value;
+				unsigned short value;
 				std::stringstream ss( (current + 1)->getValue() );
 				ss >> value;
 
@@ -513,11 +524,19 @@ void		Parser::createAllObjects( Webserv& webserv )
 			}
 
 			case K_CGI : {
-				std::pair<std::string, std::string>	cgi_bin;
-
-				cgi_bin = std::make_pair( (current + 1)->getValue(), (current + 2)->getValue() );
-				current_location.getCgiBin().push_back( cgi_bin );
-				current += 4;
+				++current;
+				
+				std::vector<std::string>	cgi_extension;
+				while(current->getType() != S_SEMICOLON)
+				{
+					cgi_extension.push_back( current->getValue() );
+					++current;
+				}
+				if (getCurrentContext() == SERVER_BLOCK)
+					current_server.setCgiExtension(cgi_extension);
+				else
+					current_location.setCgiExtension(cgi_extension);
+				++current;
 				break ;
 			}
 

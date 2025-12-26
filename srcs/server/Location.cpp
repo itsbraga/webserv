@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 18:57:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/25 01:03:07 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Location&		Location::operator=( const Location& toCopy )
 		_index = toCopy._index;
 		_err_page = toCopy._err_page;
 		_allowed_methods = toCopy._allowed_methods;
-		_cgi_bin = toCopy._cgi_bin;
+		_cgi_extension = toCopy._cgi_extension;
 		_client_max_body_size = toCopy._client_max_body_size;
 		_auto_index = toCopy._auto_index;
 		_upload_allowed = toCopy._upload_allowed; 
@@ -72,6 +72,14 @@ void	Location::setAllowedMethods( const std::vector<std::string>& allowed_method
 		return ;
 
 	_allowed_methods = allowed_methods;
+}
+
+void	Location::setCgiExtension( const std::vector<std::string>& cgi_extension)
+{
+	if (cgi_extension.empty())
+		return ;
+
+	_cgi_extension = cgi_extension;
 }
 
 void	Location::setClientMaxSizeBody( const std::string& max_size )

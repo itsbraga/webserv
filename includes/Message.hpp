@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/22 22:06:14 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 18:45:00 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@ class Message
 {		 
 	protected:
 		const std::string									_http_version;
-		std::vector< std::pair<std::string, std::string> >	_headers;
+		std::multimap<std::string, std::string>				_headers;
 		std::string											_body;
 
 		Message() : _http_version( "HTTP/1.1" ) {}
 
 		std::pair<std::string, std::string>		_parseHeaderLine( const std::string& line ) const;
-		bool									_hasHeader( const std::string& key ) const;
+		bool									_checkProhibitedDuplicate( const std::string& name );
 
 		void				_unchunkBody( const std::string& chunked_data );
 	
@@ -35,13 +35,18 @@ class Message
 
 		virtual void		process() = 0;
 
-		void				addHeader( const std::string& key, const std::string& value );
-		void				setHeaderValue( const std::string& key, const std::string& value );
 		void				setBody( const std::string& body );
 
-		const std::string&	getHttpVersion() const		{ return (_http_version); }
-		const std::string&	getBody() const				{ return (_body); }
-		const std::string	getHeaderMap() const;
-		const std::string	getHeaderValue( const std::string& key ) const;
+		std::multimap<std::string, std::string>&		getHeaderMap()				{ return (_headers); }
 
+		const std::string&								getHttpVersion() const		{ return (_http_version); }
+		const std::string&								getBody() const				{ return (_body); }
+		const std::multimap<std::string, std::string>&	getHeaderMap() const		{ return (_headers); }
+		const std::string								getHeaderValue( const std::string& key ) const;
+
+		void				addHeader( const std::string& key, const std::string& value );
+		void				addHeader( std::pair<std::string, std::string> header );
+		bool				hasHeader( const std::string& key ) const;
+
+		const std::string	printHeaderMap() const;
 };

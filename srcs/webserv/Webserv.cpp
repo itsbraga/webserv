@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/26 16:19:07 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 18:50:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void		__requestReceived( Request& request )
 	std::cout << P_YELLOW "\n--- Request received ---" NC << std::endl;
 	std::cout << BOLD PINK "Method: " NC << request.getMethod() << std::endl;
 	std::cout << BOLD PINK "URI: " NC << request.getUri() << std::endl;
-	std::cout << BOLD PINK "Headers:\n" NC << request.getHeaderMap() << std::endl;
+	std::cout << BOLD PINK "Headers:\n" NC << request.printHeaderMap() << std::endl;
 	std::cout << P_YELLOW "------------------------\n" NC << std::endl;
 }
 
@@ -207,8 +207,8 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 		std::string hostname = request.getHeaderValue( "Host" );
 		ServerConfig server = listener.resolveVirtualHosting( hostname );
 
-		// if (isCgiRequest(request, server) == true)
-		// 	return (handleCgi());
+		if (isCgiRequest( request, server ) == true)
+			return (cgiHandler( request, server ));
 
 		return (handleMethod( server, request ));
 	}

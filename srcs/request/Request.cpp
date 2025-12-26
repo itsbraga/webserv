@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 20:09:50 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 18:20:23 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,11 @@ void	Request::_parseAllHeaders( const std::string& serialized, size_t header_sta
 		{
 			std::pair<std::string, std::string> header = _parseHeaderLine( line );
 
-			if (!isValidHeaderName( header.first ))
+			if (isValidHeaderName( header.first ) == false)
 				throw BadRequestException( "Invalid header name" );
-			addHeader( header.first, header.second );
+			if (_checkProhibitedDuplicate( header.first ) == true)
+				throw BadRequestException( "Prohibited duplicated header: " + header.first );
+			addHeader( header );
 		}
 		pos = line_end + 2;
 	}
@@ -70,21 +72,21 @@ void	Request::_parseAllHeaders( const std::string& serialized, size_t header_sta
 
 void	Request::_validateRequiredHeaders()
 {
-	if (!_hasHeader( "Host" ))
-		throw BadRequestException( "Missing 'Host' header" );
-	if (_method == "POST")
+	if (!hasHeader( "host" ))
+		throw BadRequestException( "Missing 'host' header" );
+	if (_method == "post")
 	{
-		if (!_hasHeader( "Content-Length") && !_hasHeader( "Transfer-Encoding" ))
+		if (!hasHeader( "content-length") && !hasHeader( "transfer-encoding" ))
 			throw LengthRequiredException();
 	}
 }
 
 void	Request::_validateContentLength()
 {
-	if (!_hasHeader( "Content-Length" ))
+	if (!hasHeader( "content-length" ))
 		return ;
 
-	std::string cl_value = getHeaderValue( "Content-Length" );
+	std::string cl_value = getHeaderValue( "content-length" );
 
 	for (size_t i = 0; i < cl_value.size(); ++i)
 	{
@@ -108,7 +110,7 @@ void	Request::_headerCheck( const std::string& serialized )
 */
 void	Request::_handleChunkedBody( const std::string& serialized, size_t body_start )
 {
-	std::string te_value = getHeaderValue( "Transfer-Encoding" );
+	std::string te_value = getHeaderValue( "transfer-encoding" );
 
 	if (te_value.find( "chunked" ) != std::string::npos)
 	{
@@ -121,7 +123,7 @@ void	Request::_handleChunkedBody( const std::string& serialized, size_t body_sta
 
 void	Request::_handleBody( const std::string& serialized, size_t body_start )
 {
-	std::string cl_value = getHeaderValue( "Content-Length" );
+	std::string cl_value = getHeaderValue( "content-length" );
 
 	int content_length = std::atoi( cl_value.c_str() );
 	if (content_length > 0)
@@ -141,9 +143,9 @@ void	Request::_bodyCheck( const std::string& serialized )
 
 	size_t body_start = header_end + 4;
 
-	if (_hasHeader( "Content-Length" ))
+	if (hasHeader( "content-length" ))
 		_handleBody( serialized, body_start );
-	else if (_hasHeader( "Transfer-Encoding" ))
+	else if (hasHeader( "transfer-encoding" ))
 		_handleChunkedBody( serialized, body_start );
 }
 
@@ -158,6 +160,6 @@ void	Request::process()
 	_requestLineCheck( _raw_request );
 	_headerCheck( _raw_request );
 
-	if (_method == "POST")
+	if (_method == "post")
 		_bodyCheck( _raw_request );
 }
