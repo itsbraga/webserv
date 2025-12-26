@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 17:44:07 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 16:42:57 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class Response : public Message
 		static void			initContentTypes();
 
 		void				defineContentType();
-		void				loadContent( const std::string& body, const std::string& path );
+		void				setFileContent( const std::string& body, const std::string& file_path );
 		void				loadHeaders( const std::string& body, const std::string& path );
 
 		/********************************************\

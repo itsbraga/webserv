@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Listener.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:44:33 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:29:21 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 16:20:12 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ bool	Listener::setNonBlocking( int fd )
 	return (true);
 }
 
-void	Listener::closeFd()
+void	Listener::closeSocketFd()
 {
 	if (socket_fd != -1)
 	{
@@ -83,7 +83,7 @@ bool	Listener::init()
 		return (false);
 	if (!configureSocket() || !bindAndListen() || !setNonBlocking( socket_fd ))
 	{
-		closeFd();
+		closeSocketFd();
 		return (false);
 	}
 	return (true);
@@ -131,7 +131,7 @@ void	Listener::printInfo() const
 	{
 		if (i > 0)
 			std::cout << ", ";
-		std::cout << servers[i]->getServerName();
+		std::cout << "[" << servers[i]->getServerName() << "]";
 	}
 	std::cout << NC "\n";
 }

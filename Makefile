@@ -56,10 +56,12 @@ BAR_FILL		:=	█
 BAR_EMPTY		:=	░
 
 define show_progress
-	@CURRENT=$$(cat $(PROGRESS_FILE) 2>/dev/null || echo 0); \
+	@bash -c '\
+	CURRENT=$$(cat $(PROGRESS_FILE) 2>/dev/null || echo 0); \
 	CURRENT=$$((CURRENT + 1)); \
 	echo $$CURRENT > $(PROGRESS_FILE); \
 	TOTAL=$(TOTAL_FILES); \
+	TERM_WIDTH=$$(tput cols 2>/dev/null || echo 80); \
 	if [ $$TOTAL -gt 0 ]; then \
 		PERCENT=$$((CURRENT * 100 / TOTAL)); \
 		FILLED=$$((CURRENT * $(BAR_WIDTH) / TOTAL)); \
@@ -67,10 +69,12 @@ define show_progress
 		printf "\r\033[K$(BOLD)$(WHITE)["; \
 		for i in $$(seq 1 $$FILLED); do printf "$(P_GREEN)$(BAR_FILL)"; done; \
 		for i in $$(seq 1 $$EMPTY); do printf "$(WHITE)$(BAR_EMPTY)"; done; \
-		printf "$(WHITE)] $(P_GREEN)%3d%%\t$(P_PURPLE)(%d/%d)$(NC) " $$PERCENT $$CURRENT $$TOTAL; \
-		printf "$(P_PURPLE)$(1)$(NC)"; \
+		printf "$(WHITE)] $(P_GREEN)%3d%%$(NC) " $$PERCENT; \
+		if [ $$TERM_WIDTH -ge 100 ]; then \
+			printf "$(P_PURPLE)(%d/%d) $(1)$(NC)"; \
+		fi; \
 		if [ $$CURRENT -eq $$TOTAL ]; then printf "\n"; fi; \
-	fi
+	fi'
 endef
 
 #————————————————————————————————————————————————————————
@@ -96,6 +100,7 @@ $(NAME): $(OBJS)
 		@c++ $(CPPFLAGS) $(INC) $(OBJS) -o $(NAME)
 		@rm -f $(PROGRESS_FILE)
 		@printf "\033[5A\033[J"
+		@sleep 1
 		@echo "\n$(BOLD)======================================================\n"
 		@$(call display_ascii_art,$(P_GREEN))
 		@echo "\n$(NC)$(BOLD)"

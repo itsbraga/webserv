@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:28:25 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 15:30:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	main( int argc, char **argv )
 		parser.bufferTokenize();
 		std::cout << parser << std::endl;
 		parser.parse();
-		std::cout << BOLD P_GREEN "PARSING OK\n" << std::endl;
+		std::cout << BOLD P_GREEN "PARSING OK\n" NC << std::endl;
 		parser.createAllObjects( webserv );
 	}
 	catch (const std::exception& e) {
