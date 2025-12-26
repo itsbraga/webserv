@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleHEAD.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 21:22:23 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 17:30:51 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Response*	handleHEAD( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
-	if (!server.isMethodAllowed( route, "HEAD" ))
+	if (!server.isMethodAllowed( route, "head" ))
 		throw MethodNotAllowedException();
 
 	std::string	uri = request.getUri();

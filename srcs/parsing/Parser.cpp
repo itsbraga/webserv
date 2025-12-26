@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 21:24:58 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 17:30:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -504,9 +504,6 @@ void		Parser::createAllObjects( Webserv& webserv )
 				while (current->getType() != S_SEMICOLON)
 				{
 					std::string method = current->getValue();
-
-					for (size_t i = 0; i < method.length(); ++i)
-						method[i] = std::toupper( method[i] );
 					methods.push_back( method );
 					++current;
 				}

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 17:23:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 17:30:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Response*	handleGET( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
-	if (!server.isMethodAllowed( route, "GET" ))
+	if (!server.isMethodAllowed( route, "get" ))
 		throw MethodNotAllowedException();
 
 	std::string	uri = request.getUri();

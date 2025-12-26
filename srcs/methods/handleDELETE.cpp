@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 17:23:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/26 17:30:09 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 	Location route = server.resolveRoute( request );
 	std::string root = route.getRoot();
 
-	if (!server.isMethodAllowed( route, "DELETE" ))
+	if (!server.isMethodAllowed( route, "delete" ))
 		throw MethodNotAllowedException();
 
 	std::string	uri = request.getUri();

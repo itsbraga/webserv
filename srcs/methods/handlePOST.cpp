@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:23:14 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/26 17:30:56 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ Response*	handlePOST( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
-	if (!server.isMethodAllowed( route, "POST" ))
+	if (!server.isMethodAllowed( route, "post" ))
 		throw MethodNotAllowedException();
 
 	std::string uri = request.getUri();
