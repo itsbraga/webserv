@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 18:51:25 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 19:07:58 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ Response*	handleMethod( const ServerConfig& server, const Request& request )
 		response = (*it->second)( server, request );
 	else
 		response = new Response( 501, "Not Implemented" );
+	// ErrorPageHandler(*response, request, server);
+	return (response);
 }
 
 Response*	handleHttpException( const std::exception& e )

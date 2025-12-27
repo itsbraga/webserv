@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:46:39 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/27 18:58:30 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 19:04:32 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ bool	ErrorPage::findStatus( int target ) const
 	------------------------- [ Handler ] --------------------------
 */
 
-// void	ErrorPageHandler(const Response& response)
+// void	ErrorPageHandler(const Response& response, const Request& request, const ServerConfig& server)
 // {
+// 	std::map<std::string, Location>::const_iterator it;
+// 	it = server.findMatchingLocation(request);
 	
 // }

@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/26 23:44:52 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 19:07:18 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,10 @@ std::string		toString( const T& value )
 /**************************\
  *	Request class utils
 \**************************/
+
+class Request;
+class Response;
+class ServerConfig;
 
 // request/Request_utils.cpp
 std::string		extractRequestLine( const std::string& serialized );
