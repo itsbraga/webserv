@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/26 23:43:50 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 19:09:21 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ bool	isReturn(const Request& request, const ServerConfig& server)
 	{
 		if (server.getReturnCode() != 0)
 			return (true);
-		else
-			return (false);
 	}
+	return (false);
 }

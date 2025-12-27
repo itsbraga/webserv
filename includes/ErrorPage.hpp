@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:43:25 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/27 18:50:02 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 19:06:38 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 /**************************\
  *	Class
 \**************************/
+
+class Request;
+class Response;
+class ServerConfig;
+
 
 class ErrorPage
 {
@@ -35,4 +40,4 @@ class ErrorPage
 		bool		findStatus( int target ) const;
 };
 
-void	ErrorPageHandler(const Response& response);
+void	ErrorPageHandler(const Response& response, const Request& request, const ServerConfig& server);
