@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>429 - Too Many Requests</title>
+	<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #0f0f23;
+			--limit-red: #ef4444;
+			--meter-orange: #f97316;
+			--gauge-yellow: #fbbf24;
+			--meter-green: #22c55e;
+			--text-light: #f8fafc;
+			--text-dim: #475569;
+		}
+
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
+		body {
+			min-height: 100%;
+			background: var(--bg-dark);
+			font-family: 'Share Tech Mono', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
+		}
+
+		.speed-lines {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: repeating-linear-gradient(
+				90deg,
+				transparent,
+				transparent 100px,
+				rgba(239, 68, 68, 0.03) 100px,
+				rgba(239, 68, 68, 0.03) 102px
+			);
+			animation: speed-move 1s linear infinite;
+			z-index: 1;
+		}
+
+		@keyframes speed-move {
+			0% { transform: translateX(0); }
+			100% { transform: translateX(-102px); }
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: clamp(0.5rem, 3vw, 1rem);
+			width: 100%;
+			max-width: 600px;
+		}
+
+		.speedometer {
+			width: clamp(180px, 45vw, 260px);
+			height: clamp(90px, 22.5vw, 130px);
+			margin: clamp(2rem, 6vw, 4rem) auto 2rem;
+			position: relative;
+		}
+
+		.gauge-bg {
+			width: 100%;
+			height: 100%;
+			position: relative;
+		}
+
+		.gauge-arc {
+			width: 100%;
+			height: 200%;
+			border: clamp(12px, 3vw, 18px) solid transparent;
+			border-top-left-radius: 100%;
+			border-top-right-radius: 100%;
+			border-bottom: 0;
+			position: relative;
+		}
+
+		.gauge-arc::before {
+			content: '';
+			position: absolute;
+			top: -18px;
+			left: -18px;
+			right: -18px;
+			bottom: 0;
+			border: clamp(12px, 3vw, 18px) solid;
+			border-image: linear-gradient(90deg, 
+				var(--meter-green) 0%, 
+				var(--gauge-yellow) 50%, 
+				var(--limit-red) 100%) 1;
+			border-top-left-radius: 100%;
+			border-top-right-radius: 100%;
+			border-bottom: 0;
+			clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+		}
+
+		.gauge-needle {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			width: 4px;
+			height: 80%;
+			background: linear-gradient(180deg, var(--limit-red), transparent);
+			transform-origin: bottom center;
+			transform: translateX(-50%) rotate(75deg);
+			animation: needle-shake 0.3s ease-in-out infinite;
+		}
+
+		@keyframes needle-shake {
+			0%, 100% { transform: translateX(-50%) rotate(73deg); }
+			50% { transform: translateX(-50%) rotate(77deg); }
+		}
+
+		.gauge-needle::after {
+			content: '';
+			position: absolute;
+			bottom: -6px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 12px;
+			height: 12px;
+			background: var(--limit-red);
+			border-radius: 50%;
+			box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+		}
+
+		.gauge-limit {
+			position: absolute;
+			top: -2rem;
+			right: 0;
+			color: var(--limit-red);
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+			font-weight: 900;
+			animation: blink-limit 1s infinite;
+		}
+
+		@keyframes blink-limit {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0.3; }
+		}
+
+		.error-code {
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(4rem, 15vw, 9rem);
+			font-weight: 900;
+			color: transparent;
+			background: linear-gradient(135deg, var(--limit-red), var(--meter-orange));
+			-webkit-background-clip: text;
+			background-clip: text;
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			text-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
+		}
+
+		.error-title {
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
+			font-weight: 700;
+			color: var(--text-light);
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+			margin-bottom: 1.5rem;
+		}
+
+		.rate-limit-card {
+			background: rgba(239, 68, 68, 0.05);
+			border: 2px solid rgba(239, 68, 68, 0.2);
+			border-radius: 12px;
+			padding: clamp(1.25rem, 4vw, 2rem);
+			width: 100%;
+			backdrop-filter: blur(10px);
+		}
+
+		.alert-banner {
+			background: linear-gradient(90deg, var(--limit-red), var(--meter-orange));
+			color: white;
+			padding: 0.75rem 1rem;
+			border-radius: 8px;
+			margin-bottom: 1rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
+			animation: pulse-banner 2s ease-in-out infinite;
+		}
+
+		@keyframes pulse-banner {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.02); }
+		}
+
+		.error-message {
+			color: #94a3b8;
+			font-size: clamp(0.85rem, 2.5vw, 1rem);
+			line-height: 1.6;
+			margin-bottom: 1.5rem;
+		}
+
+		.rate-stats {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.rate-stat {
+			background: rgba(0, 0, 0, 0.3);
+			border-left: 4px solid var(--limit-red);
+			border-radius: 6px;
+			padding: clamp(0.75rem, 2vw, 1rem);
+			text-align: left;
+		}
+
+		.stat-label {
+			color: var(--text-dim);
+			font-size: clamp(0.7rem, 2vw, 0.8rem);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-bottom: 0.4rem;
+		}
+
+		.stat-value {
+			color: var(--limit-red);
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(1rem, 3vw, 1.5rem);
+			font-weight: 900;
+		}
+
+		.error-meme {
+			display: block;
+			width: 100%;
+			max-width: min(250px, 65vw);
+			margin: 1rem auto;
+			border-radius: 12px;
+			box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+		}
+
+		.cooldown-timer {
+			background: rgba(0, 0, 0, 0.4);
+			border: 1px solid rgba(239, 68, 68, 0.3);
+			border-radius: 8px;
+			padding: 1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.timer-label {
+			color: var(--text-dim);
+			font-size: clamp(0.75rem, 2vw, 0.85rem);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			margin-bottom: 0.5rem;
+		}
+
+		.timer-value {
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(1.5rem, 5vw, 2.5rem);
+			font-weight: 900;
+			color: var(--meter-orange);
+		}
+
+		.progress-ring {
+			width: 60px;
+			height: 60px;
+			margin: 1rem auto;
+		}
+
+		.progress-ring-circle {
+			stroke: var(--limit-red);
+			stroke-width: 4;
+			fill: none;
+			stroke-dasharray: 157;
+			stroke-dashoffset: 39.25;
+			transform: rotate(-90deg);
+			transform-origin: 50% 50%;
+			animation: progress-rotate 60s linear infinite;
+		}
+
+		@keyframes progress-rotate {
+			0% { stroke-dashoffset: 157; }
+			100% { stroke-dashoffset: 0; }
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 0.75rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.7rem 1.4rem;
+			font-family: 'Orbitron', sans-serif;
+			font-size: clamp(0.7rem, 2vw, 0.85rem);
+			font-weight: 700;
+			text-decoration: none;
+			border-radius: 8px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+		}
+
+		.btn-home {
+			background: linear-gradient(135deg, var(--limit-red), var(--meter-orange));
+			color: white;
+		}
+
+		.btn-home:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+		}
+
+		.btn-back {
+			background: transparent;
+			border: 1px solid var(--text-dim);
+			color: var(--text-dim);
+		}
+
+		.btn-back:hover {
+			border-color: var(--text-light);
+			color: var(--text-light);
+		}
+	</style>
+</head>
+<body>
+	<div class="speed-lines"></div>
+
+	<div class="container">
+		<div class="speedometer">
+			<div class="gauge-limit">LIMIT EXCEEDED</div>
+			<div class="gauge-bg">
+				<div class="gauge-arc"></div>
+				<div class="gauge-needle"></div>
+			</div>
+		</div>
+
+		<div class="error-code">429</div>
+		<div class="error-title">Too Many Requests</div>
+
+		<div class="rate-limit-card">
+			<div class="alert-banner">
+				RATE LIMIT EXCEEDED
+			</div>
+
+			<p class="error-message">
+				You have sent too many requests in a given amount of time. Please slow down and try again later.
+			</p>
+
+			<div class="rate-stats">
+				<div class="rate-stat">
+					<div class="stat-label">Requests Sent</div>
+					<div class="stat-value">TOO MANY</div>
+				</div>
+				<div class="rate-stat">
+					<div class="stat-label">Rate Limit</div>
+					<div class="stat-value">EXCEEDED</div>
+				</div>
+			</div>
+
+			<div class="cooldown-timer">
+				<div class="timer-label">Cooldown Period</div>
+				<div class="timer-value">60s</div>
+				<svg class="progress-ring" viewBox="0 0 60 60">
+					<circle class="progress-ring-circle" cx="30" cy="30" r="25" />
+				</svg>
+			</div>
+
+			<img src="memes/429_cat_speeding.jpg" alt="Cat speeding" class="error-meme" />
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home"><span>←</span> Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>502 - Bad Gateway</title>
+	<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inconsolata:wght@500;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #0d0d12;
+			--gate-steel: #71717a;
+			--gate-dark: #27272a;
+			--error-red: #f43f5e;
+			--warning-amber: #fb923c;
+			--text-light: #fafafa;
+			--text-dim: #52525b;
+		}
+
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
+		body {
+			min-height: 100%;
+			background: var(--bg-dark);
+			font-family: 'Inconsolata', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
+		}
+
+		.metal-texture {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+			opacity: 0.03;
+			pointer-events: none;
+			z-index: 1;
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: clamp(0.5rem, 3vw, 1rem);
+			width: 100%;
+			max-width: 600px;
+		}
+
+		.gateway-container {
+			width: clamp(200px, 50vw, 280px);
+			height: clamp(200px, 50vw, 280px);
+			margin: clamp(2rem, 6vw, 4rem) auto 2rem;
+			position: relative;
+		}
+
+		.gate-frame {
+			position: absolute;
+			top: 10%;
+			left: 15%;
+			width: 70%;
+			height: 80%;
+			border: clamp(4px, 1vw, 6px) solid var(--gate-steel);
+			border-radius: 8px 8px 0 0;
+			background: linear-gradient(135deg, var(--gate-dark), #18181b);
+			box-shadow: 
+				inset 0 2px 10px rgba(0, 0, 0, 0.5),
+				0 10px 40px rgba(0, 0, 0, 0.6);
+		}
+
+		.gate-bar {
+			position: absolute;
+			width: 8px;
+			height: 100%;
+			background: linear-gradient(180deg, var(--gate-steel), var(--gate-dark));
+			border-radius: 4px;
+		}
+
+		.gate-bar:nth-child(1) { left: 20%; }
+		.gate-bar:nth-child(2) { left: 40%; }
+		.gate-bar:nth-child(3) { left: 60%; }
+		.gate-bar:nth-child(4) { left: 80%; }
+
+		.gate-lock {
+			position: absolute;
+			bottom: 30%;
+			left: 50%;
+			transform: translateX(-50%);
+			width: clamp(40px, 10vw, 60px);
+			height: clamp(40px, 10vw, 60px);
+			background: linear-gradient(135deg, var(--error-red), var(--warning-amber));
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: 0 0 30px rgba(244, 63, 94, 0.6);
+			animation: pulse-lock 2s ease-in-out infinite;
+		}
+
+		@keyframes pulse-lock {
+			0%, 100% { box-shadow: 0 0 30px rgba(244, 63, 94, 0.6); }
+			50% { box-shadow: 0 0 50px rgba(244, 63, 94, 0.9); }
+		}
+
+		.lock-icon {
+			font-size: clamp(1.2rem, 4vw, 2rem);
+			color: white;
+			font-weight: 700;
+		}
+
+		.chain-left,
+		.chain-right {
+			position: absolute;
+			top: 40%;
+			width: 15%;
+			height: 3px;
+			background: repeating-linear-gradient(
+				90deg,
+				var(--gate-steel) 0px,
+				var(--gate-steel) 10px,
+				transparent 10px,
+				transparent 12px
+			);
+		}
+
+		.chain-left {
+			left: -15%;
+			transform: rotate(-10deg);
+		}
+
+		.chain-right {
+			right: -15%;
+			transform: rotate(10deg);
+		}
+
+		.warning-light {
+			position: absolute;
+			top: -1rem;
+			right: 10%;
+			width: 12px;
+			height: 12px;
+			background: var(--error-red);
+			border-radius: 50%;
+			animation: blink-warning 1.5s infinite;
+			box-shadow: 0 0 20px rgba(244, 63, 94, 0.8);
+		}
+
+		@keyframes blink-warning {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0.2; }
+		}
+
+		.error-code {
+			font-family: 'Russo One', sans-serif;
+			font-size: clamp(4rem, 15vw, 9rem);
+			font-weight: 400;
+			color: transparent;
+			background: linear-gradient(135deg, var(--error-red), var(--warning-amber));
+			-webkit-background-clip: text;
+			background-clip: text;
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			text-shadow: 0 0 40px rgba(244, 63, 94, 0.4);
+		}
+
+		.error-title {
+			font-family: 'Russo One', sans-serif;
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
+			font-weight: 400;
+			color: var(--text-light);
+			text-transform: uppercase;
+			letter-spacing: 0.2em;
+			margin-bottom: 1.5rem;
+		}
+
+		.gateway-card {
+			background: rgba(244, 63, 94, 0.05);
+			border: 2px solid rgba(244, 63, 94, 0.2);
+			border-radius: 12px;
+			padding: clamp(1.25rem, 4vw, 2rem);
+			width: 100%;
+			backdrop-filter: blur(10px);
+		}
+
+		.status-bar {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.75rem;
+			padding: 0.75rem 1rem;
+			background: linear-gradient(90deg, rgba(244, 63, 94, 0.2), rgba(251, 146, 60, 0.2));
+			border-radius: 8px;
+			margin-bottom: 1rem;
+		}
+
+		.status-icon {
+			width: 10px;
+			height: 10px;
+			background: var(--error-red);
+			border-radius: 50%;
+			animation: pulse-status 2s ease-in-out infinite;
+		}
+
+		@keyframes pulse-status {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.5); }
+		}
+
+		.status-text {
+			color: var(--error-red);
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.15em;
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
+		}
+
+		.error-message {
+			color: #a1a1aa;
+			font-size: clamp(0.85rem, 2.5vw, 1rem);
+			line-height: 1.6;
+			margin-bottom: 1.5rem;
+		}
+
+		.connection-info {
+			background: rgba(0, 0, 0, 0.3);
+			border-left: 4px solid var(--error-red);
+			border-radius: 6px;
+			padding: clamp(1rem, 3vw, 1.5rem);
+			margin-bottom: 1.5rem;
+			text-align: left;
+		}
+
+		.info-row {
+			display: flex;
+			justify-content: space-between;
+			padding: 0.5rem 0;
+			border-bottom: 1px solid rgba(82, 82, 91, 0.3);
+			font-size: clamp(0.75rem, 2vw, 0.85rem);
+		}
+
+		.info-row:last-child {
+			border-bottom: none;
+		}
+
+		.info-label {
+			color: var(--text-dim);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		.info-value {
+			color: var(--error-red);
+			font-weight: 700;
+		}
+
+		.error-meme {
+			display: block;
+			width: 100%;
+			max-width: min(250px, 65vw);
+			margin: 1rem auto;
+			border-radius: 12px;
+			box-shadow: 0 0 30px rgba(244, 63, 94, 0.2);
+		}
+
+		.help-text {
+			color: var(--text-dim);
+			font-size: clamp(0.75rem, 2vw, 0.85rem);
+			line-height: 1.5;
+			margin-bottom: 1.5rem;
+			font-style: italic;
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 0.75rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.7rem 1.4rem;
+			font-family: 'Russo One', sans-serif;
+			font-size: clamp(0.7rem, 2vw, 0.85rem);
+			text-decoration: none;
+			border-radius: 8px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+		}
+
+		.btn-home {
+			background: linear-gradient(135deg, var(--error-red), var(--warning-amber));
+			color: white;
+		}
+
+		.btn-home:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(244, 63, 94, 0.4);
+		}
+
+		.btn-back {
+			background: transparent;
+			border: 1px solid var(--gate-steel);
+			color: var(--gate-steel);
+		}
+
+		.btn-back:hover {
+			border-color: var(--text-light);
+			color: var(--text-light);
+		}
+	</style>
+</head>
+<body>
+	<div class="metal-texture"></div>
+
+	<div class="container">
+		<div class="gateway-container">
+			<div class="warning-light"></div>
+			<div class="chain-left"></div>
+			<div class="gate-frame">
+				<div class="gate-bar"></div>
+				<div class="gate-bar"></div>
+				<div class="gate-bar"></div>
+				<div class="gate-bar"></div>
+			</div>
+			<div class="gate-lock">
+				<div class="lock-icon">X</div>
+			</div>
+			<div class="chain-right"></div>
+		</div>
+
+		<div class="error-code">502</div>
+		<div class="error-title">Bad Gateway</div>
+
+		<div class="gateway-card">
+			<div class="status-bar">
+				<div class="status-icon"></div>
+				<span class="status-text">Gateway Blocked</span>
+			</div>
+
+			<p class="error-message">
+				The server received an invalid response from an upstream server while attempting to fulfill the request.
+			</p>
+
+			<div class="connection-info">
+				<div class="info-row">
+					<span class="info-label">Gateway Status</span>
+					<span class="info-value">FAILED</span>
+				</div>
+				<div class="info-row">
+					<span class="info-label">Upstream</span>
+					<span class="info-value">UNREACHABLE</span>
+				</div>
+				<div class="info-row">
+					<span class="info-label">Error Code</span>
+					<span class="info-value">502</span>
+				</div>
+			</div>
+
+			<img src="memes/502_cat_gateway.jpg" alt="Cat at gateway" class="error-meme" />
+
+			<p class="help-text">
+				The connection between servers has been interrupted. Please try again in a few moments.
+			</p>
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home"><span>←</span> Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
