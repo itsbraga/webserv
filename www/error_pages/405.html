@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>405 - Method Not Allowed</title>
+	<link href="https://fonts.googleapis.com/css2?family=Saira:wght@600;700;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #1a1a1a;
+			--signal-red: #dc2626;
+			--signal-white: #f8fafc;
+			--road-gray: #404040;
+			--text-dim: #6b7280;
+		}
+
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
+		body {
+			min-height: 100%;
+			background: var(--bg-dark);
+			font-family: 'Roboto Mono', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
+		}
+
+		.road-lines {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: repeating-linear-gradient(
+				0deg,
+				transparent,
+				transparent 50px,
+				rgba(248, 250, 252, 0.05) 50px,
+				rgba(248, 250, 252, 0.05) 55px
+			);
+			z-index: 1;
+			animation: road-move 2s linear infinite;
+		}
+
+		@keyframes road-move {
+			0% { transform: translateY(0); }
+			100% { transform: translateY(55px); }
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: clamp(0.5rem, 3vw, 1rem);
+			width: 100%;
+			max-width: 550px;
+		}
+
+		.sign-container {
+			width: clamp(140px, 35vw, 200px);
+			height: clamp(140px, 35vw, 200px);
+			margin: clamp(2rem, 6vw, 4rem) auto 2rem;
+			position: relative;
+		}
+
+		.sign-circle {
+			width: 100%;
+			height: 100%;
+			background: var(--signal-white);
+			border-radius: 50%;
+			border: clamp(8px, 2vw, 12px) solid var(--signal-red);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			box-shadow: 
+				0 0 40px rgba(220, 38, 38, 0.3),
+				inset 0 0 20px rgba(0, 0, 0, 0.1);
+			animation: pulse-sign 2s ease-in-out infinite;
+		}
+
+		@keyframes pulse-sign {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.05); }
+		}
+
+		.sign-bar {
+			width: 70%;
+			height: clamp(12px, 3vw, 18px);
+			background: var(--signal-red);
+			border-radius: 10px;
+			transform: rotate(-45deg);
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+		}
+
+		.error-code {
+			font-family: 'Saira', sans-serif;
+			font-size: clamp(4rem, 15vw, 9rem);
+			font-weight: 800;
+			color: var(--signal-red);
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			text-shadow: 
+				0 0 20px rgba(220, 38, 38, 0.4),
+				2px 2px 0 rgba(0, 0, 0, 0.1);
+		}
+
+		.error-title {
+			font-family: 'Saira', sans-serif;
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
+			font-weight: 700;
+			color: var(--signal-white);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			margin-bottom: 1.5rem;
+		}
+
+		.warning-card {
+			background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(64, 64, 64, 0.1));
+			border: 2px solid var(--signal-red);
+			border-radius: 12px;
+			padding: clamp(1.25rem, 4vw, 2rem);
+			width: 100%;
+			backdrop-filter: blur(10px);
+			position: relative;
+			overflow: hidden;
+		}
+
+		.warning-card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			background: repeating-linear-gradient(
+				90deg,
+				var(--signal-red),
+				var(--signal-red) 20px,
+				transparent 20px,
+				transparent 40px
+			);
+		}
+
+		.warning-header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.75rem;
+			margin-bottom: 1rem;
+			color: var(--signal-red);
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.15em;
+		}
+
+		.warning-icon {
+			width: 24px;
+			height: 24px;
+			border: 2px solid var(--signal-red);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			animation: blink-warning 1.5s infinite;
+		}
+
+		@keyframes blink-warning {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0.3; }
+		}
+
+		.error-message {
+			color: #cbd5e1;
+			font-size: clamp(0.85rem, 2.5vw, 1rem);
+			line-height: 1.6;
+			margin-bottom: 1.5rem;
+		}
+
+		.method-box {
+			background: rgba(0, 0, 0, 0.3);
+			border-left: 4px solid var(--signal-red);
+			border-radius: 6px;
+			padding: clamp(0.75rem, 2vw, 1rem);
+			margin-bottom: 1.5rem;
+			text-align: left;
+		}
+
+		.method-label {
+			color: var(--text-dim);
+			font-size: clamp(0.7rem, 2vw, 0.8rem);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			margin-bottom: 0.4rem;
+		}
+
+		.method-value {
+			color: var(--signal-red);
+			font-family: 'Saira', sans-serif;
+			font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+			font-weight: 700;
+		}
+
+		.error-meme {
+			display: block;
+			width: 100%;
+			max-width: min(250px, 65vw);
+			margin: 1rem auto;
+			border-radius: 12px;
+			box-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
+		}
+
+		.allowed-methods {
+			text-align: left;
+			margin-bottom: 1.5rem;
+		}
+
+		.allowed-title {
+			color: var(--signal-white);
+			font-size: clamp(0.8rem, 2vw, 0.95rem);
+			font-weight: 600;
+			margin-bottom: 0.75rem;
+		}
+
+		.methods-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.method-tag {
+			background: rgba(220, 38, 38, 0.15);
+			border: 1px solid rgba(220, 38, 38, 0.3);
+			color: #fca5a5;
+			padding: 0.4rem 0.8rem;
+			border-radius: 6px;
+			font-size: clamp(0.7rem, 2vw, 0.85rem);
+			font-weight: 500;
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 0.75rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.7rem 1.4rem;
+			font-family: 'Saira', sans-serif;
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
+			font-weight: 600;
+			text-decoration: none;
+			border-radius: 8px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		.btn-home {
+			background: var(--signal-red);
+			color: white;
+		}
+
+		.btn-home:hover {
+			background: #b91c1c;
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+		}
+
+		.btn-back {
+			background: transparent;
+			border: 1px solid var(--road-gray);
+			color: #94a3b8;
+		}
+
+		.btn-back:hover {
+			border-color: var(--signal-white);
+			color: var(--signal-white);
+		}
+
+		.traffic-lights {
+			position: fixed;
+			top: 20%;
+			right: 5%;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			z-index: 5;
+		}
+
+		.traffic-light {
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background: rgba(220, 38, 38, 0.2);
+		}
+
+		.traffic-light.active {
+			background: var(--signal-red);
+			box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+			animation: light-blink 2s infinite;
+		}
+
+		@keyframes light-blink {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0.3; }
+		}
+	</style>
+</head>
+<body>
+	<div class="road-lines"></div>
+	
+	<div class="traffic-lights">
+		<div class="traffic-light active"></div>
+		<div class="traffic-light"></div>
+		<div class="traffic-light"></div>
+	</div>
+
+	<div class="container">
+		<div class="sign-container">
+			<div class="sign-circle">
+				<div class="sign-bar"></div>
+			</div>
+		</div>
+
+		<div class="error-code">405</div>
+		<div class="error-title">Method Not Allowed</div>
+
+		<div class="warning-card">
+			<div class="warning-header">
+				<div class="warning-icon">!</div>
+				<span>Access Restricted</span>
+			</div>
+
+			<p class="error-message">
+				The HTTP method used for this request is not allowed on this resource.
+			</p>
+
+			<div class="method-box">
+				<div class="method-label">Method Used</div>
+				<div class="method-value">NOT PERMITTED</div>
+			</div>
+
+			<img src="memes/405_cat_stop.jpg" alt="Cat stop sign" class="error-meme" />
+
+			<div class="allowed-methods">
+				<div class="allowed-title">Allowed Methods:</div>
+				<div class="methods-list">
+					<span class="method-tag">GET</span>
+					<span class="method-tag">POST</span>
+					<span class="method-tag">HEAD</span>
+				</div>
+			</div>
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home"><span>←</span> Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

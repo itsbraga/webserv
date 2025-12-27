@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>413 - Payload Too Large</title>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-dark: #111827;
+			--weight-red: #dc2626;
+			--weight-orange: #ea580c;
+			--scale-gray: #4b5563;
+			--text-light: #f3f4f6;
+			--text-dim: #6b7280;
+		}
+
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
+		body {
+			min-height: 100%;
+			background: var(--bg-dark);
+			font-family: 'Source Code Pro', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
+		}
+
+		.weight-lines {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: repeating-linear-gradient(
+				90deg,
+				transparent,
+				transparent 80px,
+				rgba(75, 85, 99, 0.1) 80px,
+				rgba(75, 85, 99, 0.1) 81px
+			);
+			z-index: 1;
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: clamp(0.5rem, 3vw, 1rem);
+			width: 100%;
+			max-width: 600px;
+		}
+
+		.scale-container {
+			width: clamp(180px, 45vw, 250px);
+			height: clamp(140px, 35vw, 200px);
+			margin: clamp(2rem, 6vw, 4rem) auto 2rem;
+			position: relative;
+		}
+
+		.scale-base {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 80%;
+			height: 25%;
+			background: linear-gradient(135deg, var(--scale-gray), #374151);
+			border-radius: 8px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+		}
+
+		.scale-pole {
+			position: absolute;
+			bottom: 25%;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 4px;
+			height: 40%;
+			background: linear-gradient(180deg, #6b7280, var(--scale-gray));
+		}
+
+		.scale-arm {
+			position: absolute;
+			bottom: 60%;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 100%;
+			height: 6px;
+			background: linear-gradient(90deg, var(--scale-gray), #6b7280, var(--scale-gray));
+			border-radius: 3px;
+			animation: tilt-overload 2s ease-in-out infinite;
+		}
+
+		@keyframes tilt-overload {
+			0%, 100% { transform: translateX(-50%) rotate(-8deg); }
+			50% { transform: translateX(-50%) rotate(-12deg); }
+		}
+
+		.scale-pan {
+			position: absolute;
+			bottom: 45%;
+			width: 50%;
+			height: 8px;
+			background: linear-gradient(135deg, var(--weight-orange), var(--weight-red));
+			border-radius: 4px 4px 0 0;
+			box-shadow: 0 -4px 20px rgba(220, 38, 38, 0.4);
+		}
+
+		.scale-pan.left {
+			left: 0;
+		}
+
+		.scale-pan.right {
+			right: 0;
+			animation: shake-pan 0.5s ease-in-out infinite;
+		}
+
+		@keyframes shake-pan {
+			0%, 100% { transform: translateY(0); }
+			25% { transform: translateY(-3px); }
+			75% { transform: translateY(-1px); }
+		}
+
+		.weight-indicator {
+			position: absolute;
+			top: -2rem;
+			right: -1rem;
+			background: var(--weight-red);
+			color: white;
+			padding: 0.4rem 0.8rem;
+			border-radius: 6px;
+			font-size: clamp(0.7rem, 2vw, 0.85rem);
+			font-weight: 700;
+			animation: pulse-warning 1.5s ease-in-out infinite;
+		}
+
+		@keyframes pulse-warning {
+			0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(220, 38, 38, 0.4); }
+			50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(220, 38, 38, 0.6); }
+		}
+
+		.error-code {
+			font-family: 'Montserrat', sans-serif;
+			font-size: clamp(4rem, 15vw, 9rem);
+			font-weight: 800;
+			color: transparent;
+			background: linear-gradient(135deg, var(--weight-red), var(--weight-orange));
+			-webkit-background-clip: text;
+			background-clip: text;
+			line-height: 1;
+			margin-bottom: 0.5rem;
+			text-shadow: 0 0 40px rgba(220, 38, 38, 0.3);
+		}
+
+		.error-title {
+			font-family: 'Montserrat', sans-serif;
+			font-size: clamp(1.2rem, 4vw, 1.8rem);
+			font-weight: 700;
+			color: var(--text-light);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			margin-bottom: 1.5rem;
+		}
+
+		.overload-card {
+			background: rgba(220, 38, 38, 0.05);
+			border: 2px solid rgba(220, 38, 38, 0.2);
+			border-radius: 12px;
+			padding: clamp(1.25rem, 4vw, 2rem);
+			width: 100%;
+			backdrop-filter: blur(10px);
+		}
+
+		.alert-header {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.75rem;
+			margin-bottom: 1rem;
+			color: var(--weight-red);
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.15em;
+		}
+
+		.alert-icon {
+			width: 24px;
+			height: 24px;
+			border: 2px solid var(--weight-red);
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			animation: rotate-alert 3s linear infinite;
+		}
+
+		@keyframes rotate-alert {
+			0%, 100% { transform: rotate(0deg); }
+			25% { transform: rotate(-10deg); }
+			75% { transform: rotate(10deg); }
+		}
+
+		.error-message {
+			color: #9ca3af;
+			font-size: clamp(0.85rem, 2.5vw, 1rem);
+			line-height: 1.6;
+			margin-bottom: 1.5rem;
+		}
+
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.stat-box {
+			background: rgba(0, 0, 0, 0.3);
+			border-left: 4px solid var(--weight-red);
+			border-radius: 8px;
+			padding: clamp(0.75rem, 2vw, 1rem);
+			text-align: left;
+		}
+
+		.stat-label {
+			color: var(--text-dim);
+			font-size: clamp(0.7rem, 2vw, 0.8rem);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-bottom: 0.4rem;
+		}
+
+		.stat-value {
+			color: var(--weight-red);
+			font-family: 'Montserrat', sans-serif;
+			font-size: clamp(1rem, 3vw, 1.5rem);
+			font-weight: 800;
+		}
+
+		.stat-unit {
+			font-size: clamp(0.7rem, 2vw, 0.9rem);
+			margin-left: 0.3rem;
+		}
+
+		.error-meme {
+			display: block;
+			width: 100%;
+			max-width: min(250px, 65vw);
+			margin: 1rem auto;
+			border-radius: 12px;
+			box-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
+		}
+
+		.progress-bar-container {
+			margin-bottom: 1.5rem;
+		}
+
+		.progress-label {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 0.5rem;
+			font-size: clamp(0.75rem, 2vw, 0.85rem);
+		}
+
+		.progress-title {
+			color: var(--text-light);
+		}
+
+		.progress-percentage {
+			color: var(--weight-red);
+			font-weight: 700;
+		}
+
+		.progress-bar {
+			height: 12px;
+			background: rgba(75, 85, 99, 0.3);
+			border-radius: 6px;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.progress-fill {
+			height: 100%;
+			width: 145%;
+			background: linear-gradient(90deg, var(--weight-red), var(--weight-orange));
+			border-radius: 6px;
+			position: relative;
+			animation: overflow-pulse 2s ease-in-out infinite;
+		}
+
+		@keyframes overflow-pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.8; }
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 0.75rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.7rem 1.4rem;
+			font-family: 'Montserrat', sans-serif;
+			font-size: clamp(0.75rem, 2vw, 0.9rem);
+			font-weight: 600;
+			text-decoration: none;
+			border-radius: 8px;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+		}
+
+		.btn-home {
+			background: linear-gradient(135deg, var(--weight-red), var(--weight-orange));
+			color: white;
+		}
+
+		.btn-home:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+		}
+
+		.btn-back {
+			background: transparent;
+			border: 1px solid var(--scale-gray);
+			color: var(--text-dim);
+		}
+
+		.btn-back:hover {
+			border-color: var(--text-light);
+			color: var(--text-light);
+		}
+	</style>
+</head>
+<body>
+	<div class="weight-lines"></div>
+
+	<div class="container">
+		<div class="scale-container">
+			<div class="weight-indicator">OVERLOAD</div>
+			<div class="scale-base"></div>
+			<div class="scale-pole"></div>
+			<div class="scale-arm"></div>
+			<div class="scale-pan left"></div>
+			<div class="scale-pan right"></div>
+		</div>
+
+		<div class="error-code">413</div>
+		<div class="error-title">Payload Too Large</div>
+
+		<div class="overload-card">
+			<div class="alert-header">
+				<div class="alert-icon">!</div>
+				<span>Size Limit Exceeded</span>
+			</div>
+
+			<p class="error-message">
+				The request entity is larger than the server is willing or able to process.
+			</p>
+
+			<div class="stats-grid">
+				<div class="stat-box">
+					<div class="stat-label">Your Request</div>
+					<div class="stat-value">TOO LARGE</div>
+				</div>
+				<div class="stat-box">
+					<div class="stat-label">Max Allowed</div>
+					<div class="stat-value">EXCEEDED</div>
+				</div>
+			</div>
+
+			<div class="progress-bar-container">
+				<div class="progress-label">
+					<span class="progress-title">Capacity Usage</span>
+					<span class="progress-percentage">145%</span>
+				</div>
+				<div class="progress-bar">
+					<div class="progress-fill"></div>
+				</div>
+			</div>
+
+			<img src="memes/413_cat_heavy.jpg" alt="Cat carrying heavy load" class="error-meme" />
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home"><span>←</span> Home</a>
+				<a href="javascript:history.back()" class="btn btn-back">Go Back</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

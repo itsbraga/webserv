@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>505 - HTTP Version Not Supported</title>
+	<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bg-retro: #0f0f0f;
+			--screen-green: #33ff33;
+			--screen-amber: #ffaa00;
+			--obsolete-red: #ff3333;
+			--pixel-gray: #444444;
+			--text-dim: #666666;
+		}
+
+		html, body {
+			height: 100%;
+			overflow-x: hidden;
+		}
+
+		body {
+			min-height: 100%;
+			background: var(--bg-retro);
+			font-family: 'VT323', monospace;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			padding: clamp(1rem, 4vw, 2rem);
+			min-height: 100vh;
+		}
+
+		.scanlines {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: repeating-linear-gradient(
+				0deg,
+				rgba(0, 0, 0, 0.15),
+				rgba(0, 0, 0, 0.15) 1px,
+				transparent 1px,
+				transparent 2px
+			);
+			pointer-events: none;
+			z-index: 100;
+		}
+
+		.crt-flicker {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: var(--screen-green);
+			opacity: 0.02;
+			animation: flicker 0.15s infinite;
+			pointer-events: none;
+			z-index: 99;
+		}
+
+		@keyframes flicker {
+			0% { opacity: 0.02; }
+			50% { opacity: 0.04; }
+			100% { opacity: 0.02; }
+		}
+
+		.container {
+			position: relative;
+			z-index: 10;
+			text-align: center;
+			padding: clamp(0.5rem, 3vw, 1rem);
+			width: 100%;
+			max-width: 650px;
+		}
+
+		.terminal-screen {
+			background: rgba(0, 0, 0, 0.8);
+			border: clamp(4px, 1vw, 6px) solid var(--pixel-gray);
+			border-radius: 12px;
+			padding: clamp(1.5rem, 4vw, 2.5rem);
+			box-shadow: 
+				inset 0 0 50px rgba(51, 255, 51, 0.1),
+				0 0 50px rgba(0, 0, 0, 0.8);
+			position: relative;
+		}
+
+		.terminal-screen::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+			border-radius: 8px;
+			pointer-events: none;
+		}
+
+		.screen-top {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2rem;
+			padding-bottom: 0.75rem;
+			border-bottom: 2px solid var(--pixel-gray);
+		}
+
+		.screen-indicator {
+			display: flex;
+			gap: 8px;
+		}
+
+		.led {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: var(--obsolete-red);
+			box-shadow: 0 0 10px var(--obsolete-red);
+			animation: blink-led 2s infinite;
+		}
+
+		@keyframes blink-led {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0.3; }
+		}
+
+		.version-tag {
+			font-family: 'Press Start 2P', cursive;
+			font-size: clamp(0.4rem, 1.5vw, 0.6rem);
+			color: var(--screen-green);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		.version-display {
+			width: clamp(180px, 45vw, 240px);
+			margin: clamp(2rem, 6vw, 3rem) auto;
+			position: relative;
+		}
+
+		.version-box {
+			background: rgba(51, 255, 51, 0.1);
+			border: 3px solid var(--screen-green);
+			padding: 1rem;
+			position: relative;
+			font-family: 'Press Start 2P', cursive;
+		}
+
+		.version-label {
+			font-size: clamp(0.4rem, 1.5vw, 0.6rem);
+			color: var(--screen-amber);
+			margin-bottom: 0.75rem;
+		}
+
+		.version-number {
+			font-size: clamp(0.9rem, 3vw, 1.5rem);
+			color: var(--screen-green);
+			margin-bottom: 0.5rem;
+		}
+
+		.version-status {
+			font-size: clamp(0.35rem, 1.2vw, 0.5rem);
+			color: var(--obsolete-red);
+			animation: blink-text 1.5s infinite;
+		}
+
+		@keyframes blink-text {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0; }
+		}
+
+		.incompatible-icon {
+			position: absolute;
+			top: -1.5rem;
+			right: -1rem;
+			width: clamp(40px, 10vw, 60px);
+			height: clamp(40px, 10vw, 60px);
+			background: var(--obsolete-red);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-family: 'Press Start 2P', cursive;
+			font-size: clamp(0.8rem, 2.5vw, 1.5rem);
+			color: var(--bg-retro);
+			box-shadow: 0 0 20px var(--obsolete-red);
+		}
+
+		.error-code {
+			font-family: 'Press Start 2P', cursive;
+			font-size: clamp(2.5rem, 10vw, 5rem);
+			color: var(--screen-green);
+			line-height: 1.4;
+			margin-bottom: 1rem;
+			text-shadow: 
+				0 0 10px var(--screen-green),
+				0 0 20px var(--screen-green);
+			animation: glitch-code 5s infinite;
+		}
+
+		@keyframes glitch-code {
+			0%, 90%, 100% { transform: translateX(0); }
+			91% { transform: translateX(-2px); }
+			92% { transform: translateX(2px); }
+			93% { transform: translateX(-2px); }
+			94% { transform: translateX(2px); }
+			95% { transform: translateX(0); }
+		}
+
+		.error-title {
+			font-family: 'VT323', monospace;
+			font-size: clamp(1.2rem, 4vw, 2rem);
+			color: var(--screen-amber);
+			text-transform: uppercase;
+			letter-spacing: 0.15em;
+			margin-bottom: 1.5rem;
+		}
+
+		.error-message {
+			color: var(--screen-green);
+			font-size: clamp(1rem, 3vw, 1.5rem);
+			line-height: 1.6;
+			margin-bottom: 1.5rem;
+			text-shadow: 0 0 5px var(--screen-green);
+		}
+
+		.error-meme {
+			display: block;
+			width: 100%;
+			max-width: min(250px, 65vw);
+			margin: 1.5rem auto;
+			border-radius: 8px;
+			border: 3px solid var(--pixel-gray);
+			box-shadow: 0 0 20px rgba(51, 255, 51, 0.2);
+			filter: contrast(1.2) brightness(0.9);
+		}
+
+		.protocol-info {
+			background: rgba(0, 0, 0, 0.5);
+			border: 2px dashed var(--screen-amber);
+			padding: 1rem;
+			margin-bottom: 1.5rem;
+			text-align: left;
+		}
+
+		.protocol-line {
+			color: var(--screen-green);
+			font-size: clamp(0.85rem, 2.5vw, 1.2rem);
+			margin-bottom: 0.5rem;
+			font-family: 'VT323', monospace;
+		}
+
+		.protocol-line:last-child {
+			margin-bottom: 0;
+		}
+
+		.protocol-line .label {
+			color: var(--screen-amber);
+		}
+
+		.protocol-line .value {
+			color: var(--obsolete-red);
+		}
+
+		.btn-container {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			flex-wrap: wrap;
+			margin-top: 2rem;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: clamp(0.7rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+			font-family: 'Press Start 2P', cursive;
+			font-size: clamp(0.4rem, 1.5vw, 0.65rem);
+			text-decoration: none;
+			border-radius: 0;
+			border: 3px solid;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			background: var(--bg-retro);
+			position: relative;
+		}
+
+		.btn-home {
+			border-color: var(--screen-green);
+			color: var(--screen-green);
+		}
+
+		.btn-home:hover {
+			background: var(--screen-green);
+			color: var(--bg-retro);
+			box-shadow: 0 0 20px var(--screen-green);
+		}
+
+		.btn-back {
+			border-color: var(--screen-amber);
+			color: var(--screen-amber);
+		}
+
+		.btn-back:hover {
+			background: var(--screen-amber);
+			color: var(--bg-retro);
+			box-shadow: 0 0 20px var(--screen-amber);
+		}
+
+		.cursor {
+			display: inline-block;
+			width: 10px;
+			height: clamp(1rem, 3vw, 1.5rem);
+			background: var(--screen-green);
+			margin-left: 4px;
+			animation: blink-cursor 1s step-end infinite;
+		}
+
+		@keyframes blink-cursor {
+			0%, 50% { opacity: 1; }
+			51%, 100% { opacity: 0; }
+		}
+	</style>
+</head>
+<body>
+	<div class="scanlines"></div>
+	<div class="crt-flicker"></div>
+
+	<div class="container">
+		<div class="terminal-screen">
+			<div class="screen-top">
+				<div class="screen-indicator">
+					<div class="led"></div>
+					<div class="led"></div>
+				</div>
+				<div class="version-tag">SYSTEM ERROR</div>
+			</div>
+
+			<div class="version-display">
+				<div class="incompatible-icon">X</div>
+				<div class="version-box">
+					<div class="version-label">&gt; HTTP VERSION</div>
+					<div class="version-number">INCOMPATIBLE</div>
+					<div class="version-status">NOT SUPPORTED</div>
+				</div>
+			</div>
+
+			<div class="error-code">505</div>
+			<div class="error-title">HTTP Version Not Supported</div>
+
+			<p class="error-message">
+				&gt; ERROR: The HTTP protocol version used in the request is not supported by this server<span class="cursor"></span>
+			</p>
+
+			<div class="protocol-info">
+				<div class="protocol-line">
+					<span class="label">&gt; YOUR VERSION:</span> <span class="value">UNSUPPORTED</span>
+				</div>
+				<div class="protocol-line">
+					<span class="label">&gt; REQUIRED:</span> <span>HTTP/1.1 or HTTP/2</span>
+				</div>
+				<div class="protocol-line">
+					<span class="label">&gt; STATUS:</span> <span class="value">REJECTED</span>
+				</div>
+			</div>
+
+			<img src="memes/505_cat_old_computer.jpg" alt="Cat with old computer" class="error-meme" />
+
+			<div class="btn-container">
+				<a href="/" class="btn btn-home">&lt; HOME</a>
+				<a href="javascript:history.back()" class="btn btn-back">BACK &gt;</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

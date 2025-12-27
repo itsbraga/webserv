@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 21:03:07 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 18:32:03 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,16 +248,26 @@ Response*	handleOutput( const std::string& output )
 		body_str = output.substr(end_headers + 2);
 	}
 	if (end_headers == std::string::npos)
-		return (new Response(500, "Internal ServerConfig Error"));
+		return (new Response(502, "Bad Gateway"));
 	
 	std::multimap<std::string, std::string> headers = handleOutputHeaders(headers_str);
+	if (headers.empty() == true)
+		return (new Response(502, "Bad Gateway"));
 
 	Response* response = new Response(200, "OK");
 	response->setBody(body_str);
 
 	std::multimap<std::string, std::string>::iterator it = headers.find("status");
 	if (it != headers.end())
+	{
+		int			status_code = std::atoi(it->second.c_str());
+		std::string status_name = Response::getStatusNameFromStatusCode(status_code);
+		if (status_code < 200 || status_code > 505)
+			return (new Response(502, "Bad Gateway"));
+		else if (status_name == "Unknown")
+			return (new Response(502, "Bad Gateway"));
 		response->setStatusCode(std::atoi(it->second.c_str()));
+	}
 	
 	it = headers.find("location");
 	if (it != headers.end() && response->getStatusCode() == 200)

@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 23:38:00 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 18:07:07 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,22 @@ void	Response::Found()
 	addHeader( "content-length", "0");
 }
 
+void	Response::TemporaryRedirect()
+{
+	_status_code = 307;
+	_status_name = "Temporary Redirect";
+	_setCommonHeaders( true );
+	addHeader("content-length", 0);
+}
+
+void	Response::PermanentRedirect()
+{
+	_status_code = 308;
+	_status_name = "Permanent Redirect";
+	_setCommonHeaders( true );
+	addHeader("content-length", 0);
+}
+
 /*
 	-------------------------- [ Client error ] --------------------------
 */
@@ -89,7 +105,7 @@ void	Response::Forbidden()
 {
 	_status_code = 403;
 	_status_name = "Forbidden";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	_setErrorPage( "403 Forbidden" );
 }
 
@@ -97,7 +113,7 @@ void	Response::NotFound()
 {
 	_status_code = 404;
 	_status_name = "Not Found";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	_setErrorPage( "404 Not Found" );
 }
 
@@ -106,16 +122,24 @@ void	Response::MethodNotAllowed()
 {
 	_status_code = 405;
 	_status_name = "Method Not Allowed";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	addHeader( "allow", "GET, POST, HEAD, DELETE" );
 	_setErrorPage( "405 Method Not Allowed" );
+}
+
+void 	Response::Gone()
+{
+	_status_code = 410;
+	_status_name = "Gone";
+	_setCommonHeaders( true );
+	_setErrorPage( "410 Gone" );
 }
 
 void	Response::LengthRequired()
 {
 	_status_code = 411;
 	_status_name = "Length Required";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	_setErrorPage( "411 Length Required" );
 }
 
@@ -131,7 +155,7 @@ void	Response::URITooLong()
 {
 	_status_code = 414;
 	_status_name = "URI Too Long";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	_setErrorPage( "414 URI Too Long" );
 }
 
@@ -139,7 +163,7 @@ void	Response::ImATeapot()
 {
 	_status_code = 418;
 	_status_name = "I'm a teapot";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	_setErrorPage( "418 I'm a teapot" );
 }
 
@@ -168,7 +192,7 @@ void	Response::NotImplemented()
 {
 	_status_code = 501;
 	_status_name = "Not Implemented";
-	_setCommonHeaders( false );
+	_setCommonHeaders( true );
 	_setErrorPage( "501 Not Implemented" );
 }
 

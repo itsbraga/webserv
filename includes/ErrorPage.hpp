@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorPage.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:43:25 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 15:18:37 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/27 18:50:02 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,3 +34,5 @@ class ErrorPage
 
 		bool		findStatus( int target ) const;
 };
+
+void	ErrorPageHandler(const Response& response);

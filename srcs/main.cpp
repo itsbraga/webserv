@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 15:30:02 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:49:57 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,21 @@ static bool	__initUtilities( Webserv& webserv )
 	return (true);
 }
 
+static std::string	__loadConfigPath(int argc, char **argv)
+{
+	if (argc == 2)
+		return (argv[1]);
+	else
+		return ("./file_conf/default.conf");
+}
+
 int	main( int argc, char **argv )
 {
-	// (void)argc;
-	if (argc != 2)
-		return (err_msg( NULL, "Configuration file missing" ), FAILURE);
-
-	Webserv	webserv;
+	if (argc > 2)
+		return (err_msg( NULL, "Too many arguments" ), FAILURE);
 	
+	Webserv		webserv;
+	std::string config_path = __loadConfigPath( argc, argv );
 	try {
 		Parser parser( argv[1] );
 		parser.bufferTokenize();
