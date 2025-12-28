@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 15:44:27 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 16:40:23 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,19 @@ static bool	__parseMultipart( const std::string& body, const std::string& bounda
 
 	size_t boundary_pos = body.find( boundary );
 	if (boundary_pos == std::string::npos)
-		return (false);
+		return (err_msg( "parseMultipart()", "boundary not found" ), false);
 
 	// The final boundary is the marker that indicates the end of all parts of the multipart
 	if (body.find( boundary + "--" ) == std::string::npos)
-		return (false);
+		return (err_msg( "parseMultipart()", "final boundary not found" ), false);
 
 	size_t header_end = body.find( "\r\n\r\n" );
 	if (header_end == std::string::npos)
-		return (false);
+		return (err_msg( "parseMultipart()", "header_end not found" ), false);
 
 	size_t fn_pos = body.find( "filename=\"" );
 	if (fn_pos == std::string::npos)
-		return (false);
+		return (err_msg( "parseMultipart()", "filename not found" ), false);
 
 	size_t fn_start = fn_pos + 10;
 	size_t fn_end = body.find( "\"", fn_start );

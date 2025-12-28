@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/27 20:32:15 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 16:37:16 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,7 @@ bool	Webserv::_addServerToEpoll( int server_fd )
 	ev.data.fd = server_fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, ev.data.fd, &ev ) == -1)
-	{
-		err_msg( "epoll_ctl(ADD server)", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "epoll_ctl(ADD server)", strerror( errno ) ), false);
 	return (true);
 }
 
@@ -71,10 +68,7 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 	ev.data.fd = client_fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, client_fd, &ev ) == -1)
-	{
-		err_msg( "epoll_ctl(ADD client)", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "epoll_ctl(ADD client)", strerror( errno ) ), false);
 	return (true);
 }
 
@@ -96,10 +90,7 @@ bool	Webserv::_modifyEpollEvents( int fd, unsigned int events )
 	ev.data.fd = fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_MOD, fd, &ev ) == -1)
-	{
-		err_msg( "epoll_ctl(MODIFY)", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "epoll_ctl(MODIFY)", strerror( errno ) ), false);
 	return (true);
 }
 
@@ -207,12 +198,10 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 		std::string hostname = request.getHeaderValue( "Host" );
 		ServerConfig server = listener.resolveVirtualHosting( hostname );
 
-		if (isReturn( request, server ) == true)
+		if (isReturn( request, server ))
 			return (returnHandler( request, server ));
-
-		if (isCgiRequest( request, server ) == true)
+		if (isCgiRequest( request, server ))
 			return (cgiHandler( request, server ));
-
 		return (handleMethod( server, request ));
 	}
 	catch (const BadRequestException& e) {
@@ -306,10 +295,7 @@ bool	Webserv::initListeners()
 		listener.servers = it->second;
 
 		if (!listener.init())
-		{
-			std::cerr << ERR_PREFIX << "listener.init(): Failed to init listener on port " << it->first << std::endl;
 			return (false);
-		}
 
 		std::cout << "Listener created with fd=" << listener.socket_fd << std::endl;
 
@@ -325,10 +311,7 @@ bool	Webserv::init()
 {
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
-	{
-		err_msg( "epoll_create()", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "epoll_create()", strerror( errno ) ), false);
 
 	for (size_t i = 0; i < _listeners.size(); ++i)
 	{

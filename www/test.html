@@ -485,7 +485,7 @@
 				const opts = { method };
 				if (body && method === 'POST')
 				{
-					opts.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+					opts.headers = { 'content-type': 'application/x-www-form-urlencoded' };
 					opts.body = body;
 				}
 				const res = await fetch(url, opts);
