@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorPage.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:43:25 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/27 19:06:38 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 15:41:50 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,4 @@ class ErrorPage
 		bool		findStatus( int target ) const;
 };
 
-void	ErrorPageHandler(const Response& response, const Request& request, const ServerConfig& server);
+void	ErrorPageHandler( const Response& response, const Request& request, const ServerConfig& server );

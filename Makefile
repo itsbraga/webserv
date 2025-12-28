@@ -69,9 +69,9 @@ define show_progress
 		printf "\r\033[K$(BOLD)$(WHITE)["; \
 		for i in $$(seq 1 $$FILLED); do printf "$(P_GREEN)$(BAR_FILL)"; done; \
 		for i in $$(seq 1 $$EMPTY); do printf "$(WHITE)$(BAR_EMPTY)"; done; \
-		printf "$(WHITE)] $(P_GREEN)%3d%%$(NC) " $$PERCENT; \
+		printf "$(WHITE)] $(P_GREEN)%3d%%\t$(P_PURPLE)(%d/%d)$(NC) " $$PERCENT $$CURRENT $$TOTAL; \
 		if [ $$TERM_WIDTH -ge 100 ]; then \
-			printf "$(P_PURPLE)(%d/%d) $(1)$(NC)"; \
+			printf "$(P_PURPLE)$(1)$(NC)"; \
 		fi; \
 		if [ $$CURRENT -eq $$TOTAL ]; then printf "\n"; fi; \
 	fi'

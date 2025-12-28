@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST_utils.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 21:23:31 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/28 15:44:27 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static std::string	__extractBoundary( const std::string& content_type )
 	return ("--" + content_type.substr( pos + 9 ));
 }
 
-static bool		__parseMultipart( const std::string& body, const std::string& boundary, std::string& filename, std::string& file_content )
+static bool	__parseMultipart( const std::string& body, const std::string& boundary, \
+								std::string& filename, std::string& file_content )
 {
 	if (body.empty())
 		return (false);

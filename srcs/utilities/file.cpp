@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/27 22:35:34 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 15:58:52 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,15 @@ bool	pathExists( const std::string& path )
 
 std::string		resolvePath( Location& route, const std::string& uri )
 {
-	if (uri == "/")
-		return (route.getRoot() + "/" + route.getIndex());
+	std::string root = route.getRoot();
 
-	std::string path = route.getRoot()  + uri.substr(route.getUri().length());
-	return (path);
+	if (uri == "/")
+		return (root + "/" + route.getIndex());
+
+	if (!root.empty() && root[root.size() - 1] == '/' && uri[0] == '/')
+		return (root + uri.substr( 1 ));
+
+	return (root + uri);
 }
 
 bool	isRegularFile( const std::string& path )

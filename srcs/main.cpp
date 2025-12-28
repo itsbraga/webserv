@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 01:41:25 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 15:38:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static bool	__initUtilities( Webserv& webserv )
 	return (true);
 }
 
-static std::string	__loadConfigPath(int argc, char **argv)
+static std::string	__loadConfigPath( int argc, char **argv )
 {
 	if (argc == 2)
 		return (argv[1]);
@@ -38,6 +38,7 @@ int	main( int argc, char **argv )
 	
 	Webserv		webserv;
 	std::string config_path = __loadConfigPath( argc, argv );
+
 	try {
 		Parser parser( config_path );
 		parser.bufferTokenize();
@@ -47,13 +48,11 @@ int	main( int argc, char **argv )
 		parser.createAllObjects( webserv );
 	}
 	catch (const std::exception& e) {
-		err_msg( "Parser", e.what() );
-		return (FAILURE);
+		return (err_msg( "Parser", e.what() ), FAILURE);
 	}
 
 	if (!__initUtilities( webserv ))
 		return (FAILURE);
-
 	if (!webserv.init())
 		return (FAILURE);
 	webserv.run();
