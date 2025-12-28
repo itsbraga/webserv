@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 15:58:52 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 17:04:06 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,17 @@ std::string		resolvePath( Location& route, const std::string& uri )
 
 	return (root + uri);
 }
+
+// std::string		resolvePath( Location& route, const std::string& uri )
+// {
+// 	std::string root = route.getRoot();
+
+// 	if (uri == "/")
+// 		return (root + "/" + route.getIndex());
+
+// 	std::string path = route.getRoot() + "/" + uri.substr(route.getUri().length());
+// 	return (path);
+// }
 
 bool	isRegularFile( const std::string& path )
 {
