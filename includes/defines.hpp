@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:43 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 22:36:43 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 23:59:59 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 
 # define SERVERNAME_UNDEFINED ""
 # define ANY_INTERFACE 0
+# define DEFAULT_MAX_BODY_SIZE 1024 * 1024
 
 /**************************\
  *	Client

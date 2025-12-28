@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   autoindex.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 23:12:32 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:26:20 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/28 19:36:51 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,7 @@ static std::string	__buildAutoIndexHeader( const std::string& uri )
 
 static std::string	__buildEntryLink( const std::string& uri, const std::string& name, bool isDir )
 {
-	std::string link = uri;
-
-	if (uri[uri.size() - 1] != '/')
-		link += "/";
-	link += name;
+	std::string link = ensureTrailingSlash( uri ) + name;
 
 	if (isDir)
 		link += "/";
@@ -37,20 +33,22 @@ static std::string	__buildEntryLink( const std::string& uri, const std::string& 
 
 std::string		generateAutoIndex( const std::string& path, const std::string& uri )
 {
-	DIR*			dir = opendir( path.c_str() );
-	struct dirent*	entry;
+	DIR* dir = opendir( path.c_str() );
+	struct dirent* entry;
 
 	if (!dir)
 		throw std::runtime_error( "Cannot open directory" );
 
 	std::string html = __buildAutoIndexHeader( uri );
+	std::string safePath = ensureTrailingSlash( path );
+
 	while ((entry = readdir( dir )) != NULL)
 	{
 		std::string name = entry->d_name;
 		if (name == "." || name == "..")
-			continue ;
+			continue;
 
-		html += __buildEntryLink( uri, name, isDirectory( path + "/" + name ));
+		html += __buildEntryLink( uri, name, isDirectory( safePath + name ));
 	}
 	html += "</ul></body></html>";
 	closedir( dir );

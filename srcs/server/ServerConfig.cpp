@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 20:43:27 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 00:01:01 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,9 @@ std::map<std::string, Location>::const_iterator		ServerConfig::findMatchingLocat
 {
 	std::string uri = request.getUri();
 
-	size_t pos = uri.find('?');
+	size_t pos = uri.find( '?' );
 	if (pos != std::string::npos)
-		uri = uri.substr(0, pos);
+		uri = uri.substr( 0, pos );
 
 	std::map<std::string, Location>::const_iterator it = _locations.begin();
 	std::map<std::string, Location>::const_iterator current_match = _locations.end();
@@ -130,9 +130,9 @@ std::map<std::string, Location>::const_iterator		ServerConfig::findMatchingLocat
 				current_match = it;
 				current_match_length = path_length;
 			}
-			continue ;
+			continue;
 		}
-		if (uri.find(path) == 0)
+		if (uri.find( path ) == 0)
 		{
 			if (uri.length() == path_length || uri[path_length] == '/')
 			{

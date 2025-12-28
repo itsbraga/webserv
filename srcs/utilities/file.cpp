@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 20:47:37 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 00:03:17 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,15 @@
 bool	pathExists( const std::string& path )
 {
 	struct stat buffer;
-
 	return (stat( path.c_str(), &buffer ) == 0);
+}
+
+std::string		ensureTrailingSlash( const std::string& path )
+{
+	if (path.empty() || path[path.size() - 1] == '/')
+		return (path);
+	else
+		return (path + "/");
 }
 
 // std::string		resolvePath( Location& route, const std::string& uri )
@@ -110,8 +117,8 @@ std::string		extractBasename( const std::string& filename )
 	size_t pos = filename.find_last_of( "/\\");
 	if (pos == std::string::npos)
 		return (filename);
-
-	return (filename.substr( pos + 1));
+	else
+		return (filename.substr( pos + 1));
 }
 
 bool	isValidFilename( const std::string& filename )

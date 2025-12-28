@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 12:57:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 00:40:28 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 21:27:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,18 +100,12 @@ bool	Parser::isString( const std::string& to_compare ) const
 
 bool	Parser::isPath( const std::string& to_compare ) const
 {
-	if (to_compare.find( '/' ) == std::string::npos)
-		return (false);
-	
-	return (true);
+	return (to_compare.find( '/' ) != std::string::npos);
 }
 
 bool	Parser::isExtension( const std::string& to_compare ) const
 {
-	if (to_compare[0] != '.')
-		return (false);
-
-	return (true);
+	return (!to_compare.empty() && to_compare[0] == '.');
 }
 
 bool	Parser::isStatusCode( const std::string& to_compare ) const
@@ -137,43 +131,33 @@ bool 	Parser::isErrorStatusCode( const std::string& to_compare ) const
 {
 	unsigned int code;
 	std::stringstream ss( to_compare );
-	ss >> code;
+	if (!(ss >> code))
+		return (false);
 
-	if (code >= 400 && code <= 599)
-		return (true);
-	
-	return (false);
+	return (code >= 400 && code <= 599);
 }
 
 bool	Parser::isReturnStatusCode( const std::string& to_compare ) const
 {
-	if (to_compare == "200" || to_compare == "301" || to_compare == "302" \
+	return (to_compare == "200" || to_compare == "301" || to_compare == "302" \
 		|| to_compare == "307" || to_compare == "308" \
 		|| to_compare == "403" || to_compare == "404" || to_compare == "410" \
-		|| to_compare == "418" || to_compare == "503" )
-		return (true);
-	
-	return (false);
+		|| to_compare == "418" || to_compare == "503" );
 }
 
 bool	Parser::isValidPort( const std::string& to_check ) const
 {
 	unsigned int port;
 	std::stringstream ss( to_check );
-	ss >> port;
-
-	if (port == 0 || port > 65536)
+	if (!(ss >> port))
 		return (false);
-	
-	return (true);
+
+	return (port > 0 && port <= 65535);
 }
 
 bool	Parser::isValidMethod( const std::string& to_check ) const
 {
-	if (to_check == "get" || to_check == "head" || to_check == "post" || to_check == "delete" )
-		return (true);
-
-	return (false);
+	return (to_check == "get" || to_check == "head" || to_check == "post" || to_check == "delete" );
 }
 
 bool	Parser::isValidBodySize( const std::string& value ) const
@@ -193,23 +177,19 @@ bool	Parser::isValidBodySize( const std::string& value ) const
 		return (false);
 
 	char unit = value[i];
-	return (unit == 'k' || unit == 'K' || unit == 'm' || unit == 'M' || unit == 'g' || unit == 'G');
+	return (unit == 'k' || unit == 'K' ||
+			unit == 'm' || unit == 'M' ||
+			unit == 'g' || unit == 'G');
 }
 
 bool	Parser::isValidExtension( const std::string& to_compare ) const
 {
-	if (to_compare == ".py" || to_compare == ".sh" || to_compare == ".php")
-		return (true);
-
-	return (false);
+	return (to_compare == ".py" || to_compare == ".sh" || to_compare == ".php");
 }
 
 bool	Parser::isValidPath( const std::string& to_check) const
 {
-	if (to_check.find("//") != std::string::npos)
-		return (false);
-	else
-		return (true);
+	return (to_check.find("//") == std::string::npos);
 }
 
 bool	Parser::isServer( const std::string& to_compare ) const
