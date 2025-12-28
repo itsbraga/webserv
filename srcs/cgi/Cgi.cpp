@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 18:32:03 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 22:52:30 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,14 @@ Response*	doCgi( const Request& request, const ServerConfig& server, const std::
 	int	pipe_children[2];
 
 	if (pipe(pipe_parent) == -1 || pipe(pipe_children) == -1)
-		return (new Response(500, "Internal ServerConfig Error"));
+		return (new Response(500, "Internal Server Error"));
 	
 	pid_t pid = fork();
 	if (pid == -1)
 	{
 		close(pipe_parent[0]), close (pipe_parent[1]);
 		close(pipe_children[0]), close (pipe_children[1]);
-		return (new Response(500, "Internal ServerConfig Error"));
+		return (new Response(500, "Internal Server Error"));
 	}
 
 	if (pid == 0)
@@ -82,16 +82,38 @@ Response*	doCgi( const Request& request, const ServerConfig& server, const std::
 		if (request.getBody().empty() == false)
 			write(pipe_parent[1], request.getBody().c_str(), request.getBody().size());
 		close(pipe_parent[1]);
+
+		time_t start = time(NULL);
+		time_t last_read = time(NULL);
 		char buffer[4096];
 		ssize_t bytes;
+		
 		while ((bytes = read(pipe_children[0], buffer, sizeof(buffer))) > 0)
+		{
+			time_t tmp = time(NULL);
+			if (tmp - last_read > CGI_TIMEOUT)
+			{
+				kill(pid, SIGKILL);
+				waitpid(pid, NULL, 0);
+				close(pipe_children[0]);
+				return (new Response(504, "Gateway Timeout"));
+			}
+			if (tmp - start > SLOWLORIS_TIMEOUT)
+			{
+				kill(pid, SIGKILL);
+				waitpid(pid, NULL, 0);
+				close(pipe_children[0]);
+				return (new Response(504, "Gateway Timeout"));
+			}
 			output.append(buffer, bytes);
+			last_read = tmp;
+		}
 		close(pipe_children[0]);
 
 		int status;
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status) == false || WEXITSTATUS(status) != 0)
-			return (new Response(500, "Internal ServerConfig Error"));
+			return (new Response(500, "Internal Server Error"));
 	}
 	return (handleOutput(output));
 }

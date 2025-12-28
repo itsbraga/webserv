@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 01:03:07 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 20:07:14 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,12 @@ void	Location::setUri( const std::string& uri )
 
 	_uri = uri;
 }
+
+void		Location::setServerRoot( const std::string& server_root )
+{
+	_server_root = server_root;
+}
+
 
 void	Location::setRoot( const std::string& root )
 {

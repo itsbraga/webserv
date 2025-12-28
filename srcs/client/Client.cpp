@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 16:32:13 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 23:47:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,12 @@ void	Client::updateLastActivity()
 	_last_activity = time( NULL );
 }
 
+void	Client::setRequestStartTime()
+{
+	_request_start = time(NULL);
+}
+
+
 bool	Client::hasCompleteRequest() const
 {
 	size_t header_end = _read_buffer.find( "\r\n\r\n" );
@@ -115,4 +121,9 @@ void	Client::clearWriteBuffer()
 bool	Client::isTimedOut( int timeout ) const
 {
 	return ((time( NULL ) - _last_activity) > timeout);
+}
+
+bool	Client::isRequestTimedOut( int timeout ) const
+{
+	return ((time(NULL) - _request_start) > timeout);
 }

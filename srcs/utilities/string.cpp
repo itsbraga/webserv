@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 13:08:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 21:35:39 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 18:51:22 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,5 +78,6 @@ std::string	decodeUri( const std::string& uri )
 			i++;
 		}
 	}
-	return result;
+	return (result);
 }
+

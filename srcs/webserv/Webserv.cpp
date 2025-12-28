@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 16:37:16 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 23:48:55 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ void	Webserv::_handleClientWrite( int client_fd )
 		if (!_modifyEpollEvents( client_fd, EPOLLIN ))
 			return ;
 		client.clearReadBuffer();
+		client.setRequestStartTime();
 	}
 }
 
@@ -245,12 +246,20 @@ void	Webserv::_checkClientTimeout()
 
 	while (it != _clients.end())
 	{
-		if (it->second.isTimedOut( TIMEOUT ))
+		int client_fd = it->first;
+		if (it->second.isTimedOut( CLIENT_TIMEOUT ))
 		{
-			int client_fd = it->first;
 			++it;
-			std::cout << P_BLUE "[INFO] " NC "Client timeout (fd=" << client_fd << ")" << std::endl;
+			std::cout << P_BLUE "[INFO] " NC "Client inactive timeout (fd=" << client_fd << ")" << std::endl;
 			_removeClient( client_fd );
+			continue;
+		}
+		else if (it->second.isRequestTimedOut( SLOWLORIS_TIMEOUT ))
+		{
+			++it;
+			std::cout << P_BLUE "[INFO] " NC "Client request timeout (fd=" << client_fd << ")" << std::endl;
+			_removeClient( client_fd );
+			continue;
 		}
 		else
 			++it;

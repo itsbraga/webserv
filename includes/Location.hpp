@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 17:38:34 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:04:32 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class Location
 {
 	private:
 		std::string					_uri;
+		std::string					_server_root;
 		std::string					_root;
 		std::string 				_index;
 		std::vector<ErrorPage>		_err_page;
@@ -38,6 +39,7 @@ class Location
 		Location&	operator=( const Location& toCopy );
 
 		void		setUri( const std::string& uri );
+		void		setServerRoot( const std::string& server_root );
 		void		setRoot( const std::string& root );
 		void		setIndex( const std::string& index );
 		void		setAllowedMethods( const std::vector<std::string>& allowed_methods );
@@ -50,6 +52,7 @@ class Location
 		void		setReturnUri( const std::string& return_uri );
 		
 		std::string&												getUri()						{ return (_uri); }
+		std::string&												getServerRoot()					{ return (_server_root); }
 		std::string&												getRoot()						{ return (_root); }
 		std::string& 												getIndex()						{ return (_index); }
 		std::vector<ErrorPage>&										getErrorPage()					{ return (_err_page); }
@@ -63,6 +66,7 @@ class Location
 		std::string&												getReturnUri()					{ return (_return_uri); }
 
 		const std::string&											getUri() const					{ return (_uri); }
+		const std::string&											getServerRoot() const			{ return (_server_root); }
 		const std::string&											getRoot() const					{ return (_root); }
 		const std::string& 											getIndex() const				{ return (_index); }
 		const std::vector<ErrorPage>&								getErrorPage() const			{ return (_err_page); }
