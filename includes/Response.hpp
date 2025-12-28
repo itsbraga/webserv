@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 20:38:32 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 15:42:41 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,22 @@ class Response : public Message
 		Response( const int status_code, const std::string& status_name );
 		~Response();
 
-		void				process();
+		void			process();
 		
-		void				setStatusCode( const int status_code );
-		void				setStatusName( const std::string& status_name );
-		void				setResourcePath( const std::string& requested_resource_path );
-		void				setContentLength( const std::string& length );
-		void				setContentType( const std::string& type );
-		void				setDate();
-		void				setLocation( const std::string& location );
-		
+		void			setStatusCode( const int status_code );
+		void			setStatusName( const std::string& status_name );
+		void			setResourcePath( const std::string& requested_resource_path );
+		void			setContentLength( const std::string& length );
+		void			setContentType( const std::string& type );
+		void			setDate();
+		void			setLocation( const std::string& location );
+
+		void			setGeneratedContent( const std::string& body, const std::string& mime_type );
+		void			setGeneratedHeaders( const std::string& body, const std::string& mime_type );
+		void			defineContentType();
+		void			setFileContent( const std::string& body, const std::string& file_path );
+		void			setFileHeaders( const std::string& body, const std::string& file_path );		
+
 		int					getStatusCode() const		{ return (_status_code); }
 		const std::string&	getStatusName() const		{ return (_status_name); }
 		const std::string&	getResourcePath() const		{ return (_resource_path); }
@@ -53,15 +59,10 @@ class Response : public Message
 		const std::string	getSerializedHeaders() const;
 		const std::string	getSerializedResponse();
 		
-		static void			initBuilders();
-		static void			initContentTypes();
-
 		static std::string	getStatusNameFromStatusCode( int status_code );
 
-
-		void				defineContentType();
-		void				setFileContent( const std::string& body, const std::string& file_path );
-		void				loadHeaders( const std::string& body, const std::string& path );
+		static void		initBuilders();
+		static void		initContentTypes();
 
 		/********************************************\
 		 *	Builders Status Functions

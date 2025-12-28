@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 18:40:13 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 15:04:55 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,54 @@ void	Response::setLocation( const std::string& location )
 }
 
 /*
+	--------- [ Generated content (autoindex, errors, cgi...) ] ----------
+*/
+void	Response::setGeneratedContent( const std::string& body, const std::string& mime_type )
+{
+	setBody( body );
+	setContentLength( toString( body.size() ) );
+	addHeader( "content-type", mime_type );
+}
+
+void	Response::setGeneratedHeaders( const std::string& body, const std::string& mime_type )
+{
+	setContentLength( toString( body.size() ) );
+	addHeader( "content-type", mime_type );
+}
+
+/*
+	-------------------------- [ Static file ] ---------------------------
+*/
+void	Response::defineContentType()
+{
+	std::string extension = getExtension( getResourcePath() );
+	if (extension.empty())
+		throw InternalServerErrorException();
+
+	std::map<std::string, std::string>::const_iterator it = _content_types.find( extension );
+
+	if (it != _content_types.end())
+		addHeader( "content-type", it->second );
+	else
+		addHeader( "content-type", "application/octet-stream" );
+}
+
+void	Response::setFileContent( const std::string& body, const std::string& file_path )
+{
+	setResourcePath( file_path );
+	setBody( body );
+	setContentLength( toString( body.size() ) );
+	defineContentType();
+}
+
+void	Response::setFileHeaders( const std::string& body, const std::string& file_path )
+{
+	setResourcePath( file_path );
+	setContentLength( toString( body.size() ) );
+	defineContentType();
+}
+
+/*
 	----------------------------- [ Getters ] ----------------------------
 */
 const std::string	Response::getExtension( const std::string& uri ) const
@@ -125,35 +173,6 @@ const std::string	Response::getSerializedResponse()
 	response += toString( _status_code ) + " " + _status_name + "\r\n";
 	response += getSerializedHeaders() + "\r\n" + getBody() + "\n";
 	return (response);
-}
-
-void	Response::defineContentType()
-{
-	std::string extension = getExtension( getResourcePath() );
-	if (extension.empty())
-		throw InternalServerErrorException();
-
-	std::map<std::string, std::string>::const_iterator it = _content_types.find( extension );
-
-	if (it != _content_types.end())
-		addHeader( "content-type", it->second );
-	else
-		addHeader( "content-type", "application/octet-stream" );
-}
-
-void	Response::setFileContent( const std::string& body, const std::string& file_path )
-{
-	setResourcePath( file_path );
-	setBody( body );
-	setContentLength( toString( body.size() ) );
-	defineContentType();
-}
-
-void	Response::loadHeaders( const std::string& body, const std::string& path )
-{
-	setResourcePath( path );
-	setContentLength( toString( body.size() ) );
-	defineContentType();
 }
 
 /*

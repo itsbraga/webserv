@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 17:30:09 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 15:03:33 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,10 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 	std::string	uri = request.getUri();
 	if (uri == "/")
 		throw ForbiddenException();
-
 	if (!isSafePath( root, uri ))
 		throw ForbiddenException();
 
 	std::string	path = root + uri;
-
 	if (!pathExists( path ))
 		throw NotFoundException();
 	if (isDirectory( path ))
@@ -39,6 +37,6 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 		throw InternalServerErrorException();
 
 	Response* response = new Response( 200, "OK" ); // 204 ou 200
-	response->setFileContent( "File " + uri + " deleted", path ); // setBody --> Fichier "blabla" supprimé.
+	response->setGeneratedContent( "File " + uri + " deleted\n", "text/plain" );
 	return (response);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseStatus.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 20:42:53 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 15:07:03 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	Response::Found()
 	_status_code = 302;
 	_status_name = "Found";
 	_setCommonHeaders( true );
-	addHeader( "content-length", "0");
+	addHeader( "content-length", "0" );
 }
 
 void	Response::TemporaryRedirect()
@@ -79,7 +79,7 @@ void	Response::TemporaryRedirect()
 	_status_code = 307;
 	_status_name = "Temporary Redirect";
 	_setCommonHeaders( true );
-	addHeader("content-length", 0);
+	addHeader( "content-length", 0 );
 }
 
 void	Response::PermanentRedirect()
@@ -87,7 +87,7 @@ void	Response::PermanentRedirect()
 	_status_code = 308;
 	_status_name = "Permanent Redirect";
 	_setCommonHeaders( true );
-	addHeader("content-length", 0);
+	addHeader( "content-length", 0 );
 }
 
 /*
@@ -227,33 +227,33 @@ void	Response::HttpVersionNotSupported()
 	_setErrorPage( "505 HTTP Version Not Supported" );
 }
 
-std::string	Response::getStatusNameFromStatusCode(int status_code)
+std::string		Response::getStatusNameFromStatusCode( int status_code )
 {
 	switch (status_code)
 	{
-	case 200: return("OK");
-	case 201: return("Created");
-	case 204: return("No Content");
-	case 301: return("Moved Permanently");
-	case 302: return("Found");
-	case 307: return("Temporary Redirect");
-	case 308: return("Permanent Redirect");
-	case 400: return("Bad Request");
-	case 403: return("Forbidden");
-	case 404: return("Not Found");
-	case 405: return("Method Not Allowed");
-	case 410: return("Gone");
-	case 411: return("Length Required");
-	case 413: return("Payload Too Large");
-	case 414: return("URI Too Long");
-	case 418: return("Im A Teapot");
-	case 429: return("TooManyRequest");
-	case 500: return("Internal Server Error");
-	case 501: return("Not Implemented");
-	case 502: return("Bad Gateway");
-	case 503: return("Service Unavailable");
-	case 504: return("GatewayTimeout");
-	case 505: return("Http Version Not Supported");
-	default: return("Unknown");
+		case 200: return("OK");
+		case 201: return("Created");
+		case 204: return("No Content");
+		case 301: return("Moved Permanently");
+		case 302: return("Found");
+		case 307: return("Temporary Redirect");
+		case 308: return("Permanent Redirect");
+		case 400: return("Bad Request");
+		case 403: return("Forbidden");
+		case 404: return("Not Found");
+		case 405: return("Method Not Allowed");
+		case 410: return("Gone");
+		case 411: return("Length Required");
+		case 413: return("Payload Too Large");
+		case 414: return("URI Too Long");
+		case 418: return("Im A Teapot");
+		case 429: return("TooManyRequest");
+		case 500: return("Internal Server Error");
+		case 501: return("Not Implemented");
+		case 502: return("Bad Gateway");
+		case 503: return("Service Unavailable");
+		case 504: return("GatewayTimeout");
+		case 505: return("Http Version Not Supported");
+		default: return("Unknown");
 	}
 }

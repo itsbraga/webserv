@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleGET.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/27 20:48:34 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 15:00:22 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,20 @@ static Response*	__handleDirectoryRequest( const Location& route, std::string& p
 	std::string idx = path + (path[path.size() - 1] == '/' ? "" : "/") + route.getIndex();
 	std::string	body;
 
+	Response* response = new Response( 200, "OK" );
+
 	if (pathExists( idx ) && isRegularFile( idx ) && isReadable( idx ))
 	{
 		body = readFileContent( idx );
-		path = idx;
+		response->setFileContent( body, idx );
 	}
 	else if (route.getAutoIndex())
+	{
 		body = generateAutoIndex( path, uri );
+		response->setGeneratedContent( body, "text/html; charset=utf-8" );
+	}
 	else
 		throw ForbiddenException();
-
-	Response* response = new Response( 200, "OK" );
-	response->setFileContent( body, path );
 	return (response);
 }
 
