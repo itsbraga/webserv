@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/25 13:24:46 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/28 01:43:23 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class SyntaxErrorException : public std::exception
 		std::string _detail;
 	
 	public:
-		SyntaxErrorException( const std::string& detail ) : _detail( "Syntax Error: " + detail ) {}
+		explicit SyntaxErrorException( const std::string& detail ) : _detail( "Syntax Error: " + detail ) {}
 		virtual ~SyntaxErrorException() throw() {}
 
 		virtual const char		*what() const throw()
@@ -53,7 +53,7 @@ class ConfigurationErrorException : public std::exception
 		std::string _detail;
 
 	public:
-		ConfigurationErrorException( const std::string& detail) : _detail( "Configuration Error: " + detail ) {}
+		explicit ConfigurationErrorException( const std::string& detail) : _detail( "Configuration Error: " + detail ) {}
 		virtual ~ConfigurationErrorException() throw() {}
 
 		virtual const char		*what() const throw()
@@ -76,7 +76,7 @@ class Parser
 		std::map<std::string, TokenType>	_keywords;
 		std::vector<unsigned int>			_status_codes;
 
-		std::string 		_checkPath( char *arg );
+		std::string			_checkPath( std::string path );
 		void				_fillBuffer( const std::ifstream& infile );
 		void				_initKeywordMap();
 		void				_initStatusCodesVector();
@@ -84,7 +84,7 @@ class Parser
 		void				_createTokenDelimiter( std::string::const_iterator it );
 
 	public:
-		Parser( char* arg );
+		Parser( std::string arg );
 		~Parser();
 
 		std::string&					getConfPath()		{ return (_conf_path); }
@@ -96,6 +96,8 @@ class Parser
 		void				bufferTokenize();
 		void				parse();
 		void				createAllObjects( Webserv& webserv );
+
+		std::string			normalizePath(const std::string& path) const;
 
 		TokenType			identifyKeyword( const std::string& to_identify ) const;
 		TokenType			identifySymbol( const std::string& to_identify ) const;
@@ -122,6 +124,7 @@ class Parser
 		bool				isValidMethod( const std::string& to_check ) const;
 		bool 				isValidBodySize( const std::string& value ) const;
 		bool				isValidExtension( const std::string& to_compare ) const;
+		bool				isValidPath( const std::string& to_check) const;
 
 		TokenType			peekType( std::vector<Token>::const_iterator it, size_t offset ) const;
 		std::string			peekValue( std::vector<Token>::const_iterator it, size_t offset ) const;

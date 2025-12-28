@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 18:07:07 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 20:42:53 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ void	Response::Created()
 	_setCommonHeaders( true );
 }
 
-void	Response::Accepted()
+void	Response::NoContent()
 {
-	_status_code = 202;
-	_status_name = "Accepted";
+	_status_code = 204;
+	_status_name = "No Content";
 	_setCommonHeaders( true );
 }
 
@@ -167,7 +167,6 @@ void	Response::ImATeapot()
 	_setErrorPage( "418 I'm a teapot" );
 }
 
-// Need a "Retry-After" header 
 void	Response::TooManyRequest()
 {
 	_status_code = 429;
@@ -234,7 +233,7 @@ std::string	Response::getStatusNameFromStatusCode(int status_code)
 	{
 	case 200: return("OK");
 	case 201: return("Created");
-	case 202: return("Accepted");
+	case 204: return("No Content");
 	case 301: return("Moved Permanently");
 	case 302: return("Found");
 	case 307: return("Temporary Redirect");

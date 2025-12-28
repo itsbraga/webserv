@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 23:12:54 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 03:13:43 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 /*
 	---------------------- [ Object manipulation ] -----------------------
 */
-Parser::Parser( char *arg )
+Parser::Parser( std::string arg )
 {
 	try {
 		_checkPath(arg);
 
 		std::ifstream infile;
 		infile.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-		infile.open(arg);
+		infile.open(arg.c_str());
 		if (infile.peek() == EOF)
 			throw std::invalid_argument( "Configuration file is empty !" );
 
@@ -30,6 +30,9 @@ Parser::Parser( char *arg )
 		infile.close();
 		_initKeywordMap();
 		_initStatusCodesVector();
+	}
+	catch (const std::ios_base::failure& e) {
+    	throw std::runtime_error("Cannot open config file, please check permissions ! ");
 	}
 	catch (const std::exception& e) {
 		throw ;
@@ -41,14 +44,13 @@ Parser::~Parser() {}
 /*
 	-------------------------- [ P: Utilities ] --------------------------
 */
-std::string		Parser::_checkPath( char *arg )
+std::string		Parser::_checkPath( std::string path )
 {
-	std::string path = arg;
 	if (path.empty())
 		throw std::invalid_argument( "Empty path" );
 	
 	struct stat buff;
-	if (stat( arg, &buff ) == -1)
+	if (stat( path.c_str(), &buff ) == -1)
 		throw std::invalid_argument( strerror( errno ) );
 
 	if (S_ISDIR( buff.st_mode ))
@@ -75,7 +77,7 @@ void	Parser::_initStatusCodesVector()
 {
 	_status_codes.push_back( 200 );
 	_status_codes.push_back( 201 );
-	_status_codes.push_back( 202 );
+	_status_codes.push_back( 204 );
 	_status_codes.push_back( 301 );
 	_status_codes.push_back( 302 );
 	_status_codes.push_back( 307 );
@@ -180,6 +182,8 @@ void	Parser::bufferTokenize()
 */
 void	Parser::parse()
 {
+	std::set<std::string>	locations_uri;
+	std::set<std::string>	server_names;
 	std::vector<Token>::const_iterator current = _tokens.begin();
 	std::vector<Token>::const_iterator end = _tokens.end();
 
@@ -205,8 +209,14 @@ void	Parser::parse()
 					throw SyntaxErrorException( "A LOCATION_BLOCK can't be inside another LOCATION_BLOCK (i wish that were the case)" );
 				else if (peekType( current, 1 ) != V_PATH)
 					throw SyntaxErrorException( "The keyword LOCATION need to be followed by a PATH token" );
+				else if (!isValidPath((current + 1)->getValue()))
+					throw ConfigurationErrorException( "The PATH after LOCATION keyword is not a valid path" );
+				else if ((current + 1)->getValue()[0] != '/')
+					throw ConfigurationErrorException( "The PATH after LOCATION must start with /" );
 				else if (peekType( current, 2 ) != S_LBRACE)
 					throw SyntaxErrorException( "A LOCATION_BLOCK can't be opened without a LBRACE token after PATH" );
+				if (locations_uri.insert((current + 1)->getValue()).second == false)
+					throw ConfigurationErrorException( "A LOCATION has been duplicated [" + (current + 1)->getValue() + "]");
 				enterContext( LOCATION_BLOCK );
 				current += 3;
 				break ;
@@ -228,6 +238,8 @@ void	Parser::parse()
 					throw SyntaxErrorException( "The keyword ROOT is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_PATH)
 					throw SyntaxErrorException( "The keyword ROOT need to be followed by a PATH token" );
+				else if (!isValidPath((current + 1)->getValue()))
+					throw ConfigurationErrorException( "The PATH after ROOT keyword is not a valid path" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after ROOT keyword" );
 				current += 3;
@@ -250,6 +262,8 @@ void	Parser::parse()
 					throw SyntaxErrorException( "The keyword SERVER_NAME need to be followed by a STR token" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after SERVER_NAME keyword" );
+				if (server_names.insert((current + 1)->getValue()).second == false)
+					throw ConfigurationErrorException( "A SERVER_NAME has been set twice [" + ((current + 1)->getValue() + "]" ));
 				current += 3;
 				break ;
 
@@ -283,6 +297,8 @@ void	Parser::parse()
 					throw SyntaxErrorException( "The keyword UPLOAD_ALLOWED is only expected in a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_PATH)
 					throw SyntaxErrorException( "The keyword UPLOAD_ALLOWED need to be followed by a PATH token" );
+				else if (!isValidPath((current + 1)->getValue()))
+					throw ConfigurationErrorException( "The PATH after UPLOAD_ALLOWED keyword is not a valid path" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after UPLOAD_ALLOWED keyword" );
 				current += 3;
@@ -372,6 +388,8 @@ void	Parser::parse()
 				{
 					if (peekType( current, 2 ) != V_PATH)
 						throw ConfigurationErrorException( "A PATH is needed between 301 STATUS_CODE and SEMICOLON for a RETURN" );
+					else if (!isValidPath((current + 2)->getValue()))
+						throw ConfigurationErrorException( "A PATH after RETURN keyword is not a valid path" );
 					if (peekType( current, 3 ) != S_SEMICOLON)
 						throw SyntaxErrorException( "A SEMICOLON is missing after RETURN keyword" );
 					current += 4;
@@ -390,13 +408,15 @@ void	Parser::parse()
 					throw SyntaxErrorException( "Trying to close a BLOCK when no-one is open" );
 				else
 				{
+					if (getCurrentContext() == SERVER_BLOCK)
+						locations_uri.clear();
 					exitContext();
 					++current;
 				}
 				break ;
 			
 			default :
-				throw SyntaxErrorException( "An unknown syntax error has occured" );	
+				throw SyntaxErrorException( "An unknown syntax error has occured [" + current->getValue() + "]");	
 					
 		}
 	}
@@ -428,13 +448,15 @@ void		Parser::createAllObjects( Webserv& webserv )
 				current += 2;
 				break ;
 
-			case K_LOCATION :
+			case K_LOCATION : {
 				current_location = Location();
+				std::string path = normalizePath((current + 1)->getValue());
 
 				enterContext( LOCATION_BLOCK );
-				current_location.setUri( (current + 1)->getValue() );
+				current_location.setUri( path );
 				current += 3;
 				break ;
+			}
 			
 			case K_LISTEN : {
 				unsigned short value;
@@ -446,13 +468,16 @@ void		Parser::createAllObjects( Webserv& webserv )
 				break ;
 			}
 
-			case K_ROOT :
+			case K_ROOT : {
+				std::string path = normalizePath((current + 1)->getValue());
+
 				if (getCurrentContext() == SERVER_BLOCK)
-					current_server.setRoot( (current + 1)->getValue() );
+					current_server.setRoot( path );
 				else
-					current_location.setRoot( (current + 1)->getValue() );
+					current_location.setRoot( path );
 				current += 3;
 				break ;
+			}
 			
 			case K_INDEX :
 				if (getCurrentContext() == SERVER_BLOCK)
@@ -492,11 +517,14 @@ void		Parser::createAllObjects( Webserv& webserv )
 				break ;
 			}
 
-			case K_UPLOADALLOWED :
+			case K_UPLOADALLOWED : {
+				std::string path = normalizePath((current + 1)->getValue());
+
 				current_location.setUploadAllowed( true );
-				current_location.setUploadPath( (current + 1)->getValue() );
+				current_location.setUploadPath( path ); 
 				current += 3;
 				break ;
+			}
 			
 			case K_CLIENTMAXSIZEBODY :
 				if (getCurrentContext() == SERVER_BLOCK)
@@ -548,6 +576,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 			case K_RETURN : {
 				unsigned int return_code;
+				std::string path;
 				std::stringstream ss( (current + 1)->getValue() );
 				ss >> return_code;
 
@@ -556,7 +585,8 @@ void		Parser::createAllObjects( Webserv& webserv )
 					current_server.setReturnCode( return_code );
 					if (return_code == 301 || return_code == 302 || return_code == 307 || return_code == 308)
 					{
-						current_server.setReturnUri( (current + 2)->getValue() );
+						path = normalizePath((current + 2)->getValue());
+						current_server.setReturnUri( path );
 						current += 4;
 					}
 					else
@@ -567,7 +597,8 @@ void		Parser::createAllObjects( Webserv& webserv )
 					current_location.setReturnCode( return_code );
 					if (return_code == 301 || return_code == 302 || return_code == 307 || return_code == 308)
 					{
-						current_location.setReturnUri( (current + 2)->getValue() );
+						path = normalizePath((current + 2)->getValue());
+						current_location.setReturnUri( path );
 						current += 4;
 					}
 					else
@@ -579,6 +610,8 @@ void		Parser::createAllObjects( Webserv& webserv )
 			case S_RBRACE :
 				if (getCurrentContext() == SERVER_BLOCK)
 				{
+					if (current_server.getPort() == 0 || current_server.getRoot().empty() == true)
+						throw ConfigurationErrorException("A SERVER_BLOCK must have listen and root directives");
 					webserv.addServerConfig( current_server );
 					exitContext();
 				}

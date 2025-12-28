@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseInit.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:51:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/24 18:38:26 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/27 20:42:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	Response::initBuilders()
 {
 	Response::_builders[200] = &Response::OK;
 	Response::_builders[201] = &Response::Created;
-	Response::_builders[202] = &Response::Accepted;
+	Response::_builders[204] = &Response::NoContent;
 	Response::_builders[301] = &Response::MovedPermanently;
 	Response::_builders[400] = &Response::BadRequest;
 	Response::_builders[403] = &Response::Forbidden;

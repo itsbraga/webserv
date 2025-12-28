@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:39:18 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 18:45:00 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/27 20:24:11 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Message
 		std::multimap<std::string, std::string>				_headers;
 		std::string											_body;
 
-		Message() : _http_version( "HTTP/1.1" ) {}
+		explicit Message() : _http_version( "HTTP/1.1" ) {}
 
 		std::pair<std::string, std::string>		_parseHeaderLine( const std::string& line ) const;
 		bool									_checkProhibitedDuplicate( const std::string& name );

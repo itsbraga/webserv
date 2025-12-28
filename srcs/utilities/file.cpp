@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/25 21:27:16 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/27 22:35:34 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ std::string		resolvePath( Location& route, const std::string& uri )
 	if (uri == "/")
 		return (route.getRoot() + "/" + route.getIndex());
 
-	return (route.getRoot() + uri);
+	std::string path = route.getRoot()  + uri.substr(route.getUri().length());
+	return (path);
 }
 
 bool	isRegularFile( const std::string& path )
