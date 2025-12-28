@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 16:01:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 16:31:41 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	Request::_parseAllHeaders( const std::string& serialized, size_t header_sta
 void	Request::_validateRequiredHeaders()
 {
 	if (!hasHeader( "host" ))
-		throw BadRequestException( "Missing 'host' header" );
+		throw BadRequestException( "Missing 'Host' header" );
 	if (_method == "post")
 	{
 		if (!hasHeader( "content-length") && !hasHeader( "transfer-encoding" ))
@@ -160,6 +160,6 @@ void	Request::process()
 	_requestLineCheck( _raw_request );
 	_headerCheck( _raw_request );
 
-	if (_method == "post")
+	if (_method == "POST")
 		_bodyCheck( _raw_request );
 }

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 15:59:59 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 16:07:04 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Request : public Message
 		void				_bodyCheck( const std::string& serialized );
 
 	public:
-		Request( const std::string& serialized );
+		explicit Request( const std::string& serialized );
 		~Request();
 
 		void				process();

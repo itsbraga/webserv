@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:44:33 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 16:20:12 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 16:36:50 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,7 @@ bool	Listener::createSocketFd()
 {
 	socket_fd = ::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if (socket_fd == -1)
-	{
-		err_msg( "socket()", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "socket()", strerror( errno ) ), false);
 	return (true);
 }
 
@@ -28,10 +25,7 @@ bool	Listener::configureSocket()
 	int opt = 1;
 
 	if (setsockopt( socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof( opt ) ) == -1)
-	{
-		err_msg( "setsockopt()", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "setsockopt()", strerror( errno ) ), false);
 	return (true);
 }
 
@@ -44,27 +38,18 @@ bool	Listener::bindAndListen()
 
 	// Associates the socket with a specific IP address and port
 	if (bind( socket_fd, reinterpret_cast<sockaddr*>( &addr ), sizeof( addr ) ) == -1)
-	{
-		err_msg( "bind()", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "bind()", strerror( errno ) ), false);
 
 	// Marks the socket as a passive socket for incoming connection requests (telephone switchboard)
 	if (listen( socket_fd, SOMAXCONN ) == -1)
-	{
-		err_msg( "listen()", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "listen()", strerror( errno ) ), false);
 	return (true);
 }
 
 bool	Listener::setNonBlocking( int fd )
 {
 	if (fcntl( fd, F_SETFL, O_NONBLOCK ) == -1)
-	{
-		err_msg( "fcntl(F_SETFL | O_NONBLOCK)", strerror( errno ) );
-		return (false);
-	}
+		return (err_msg( "fcntl(F_SETFL | O_NONBLOCK)", strerror( errno ) ), false);
 	return (true);
 }
 
