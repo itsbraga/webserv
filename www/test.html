@@ -323,7 +323,8 @@
 						<span class="test-name">POST</span>
 						<span class="test-method method-post">POST</span>
 					</div>
-					<button class="test-btn" onclick="runTest('POST', '/uploads/test_upload', 'salut toi')">Test</button>
+					<!-- <button class="test-btn" onclick="runTest('POST', '/uploads/test_upload', 'salut toi')">Test</button> -->
+					<button class="test-btn" onclick="runTest('POST', '/tests/post.txt', 'request=POST /tests/post.txt HTTP/1.1\nHost: exemple.fr\nContent-Type: application/x-www-form-urlencoded\nContent-Length: 10\nMiaou')">Test</button>
 				</div>
 
 				<div class="test-card">
@@ -331,7 +332,7 @@
 						<span class="test-name">DELETE</span>
 						<span class="test-method method-delete">DELETE</span>
 					</div>
-					<button class="test-btn" onclick="runTest('DELETE', '/uploads/test.txt')">Test</button>
+					<button class="test-btn" onclick="runTest('DELETE', '/tests/test.txt')">Test</button>
 				</div>
 
 				<div class="test-card">

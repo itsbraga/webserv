@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 16:31:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:30:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	Request::_parseAllHeaders( const std::string& serialized, size_t header_sta
 	{
 		size_t line_end = serialized.find( "\r\n", pos );
 		if (line_end == std::string::npos || line_end > header_end)
-			break ;
+			break;
 		
 		std::string line = serialized.substr( pos, line_end - pos );
 		if (!line.empty())

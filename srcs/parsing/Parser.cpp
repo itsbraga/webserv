@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 03:13:43 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 20:33:25 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,10 @@ std::string		Parser::_checkPath( std::string path )
 	struct stat buff;
 	if (stat( path.c_str(), &buff ) == -1)
 		throw std::invalid_argument( strerror( errno ) );
-
 	if (S_ISDIR( buff.st_mode ))
 		throw std::invalid_argument( "Is a directory" );
-
 	if (path.substr( path.find_last_of( '.' ) ) != ".conf" )
 		throw std::invalid_argument( "Invalid file extension" );
-
 	return (path);
 }
 
@@ -200,7 +197,7 @@ void	Parser::parse()
 					throw SyntaxErrorException( "The keyword SERVER need to be followed by a LBRACE token" );
 				enterContext( SERVER_BLOCK );
 				current += 2;
-				break ;
+				break;
 			
 			case K_LOCATION :
 				if (!isInContext( SERVER_BLOCK ))
@@ -219,7 +216,7 @@ void	Parser::parse()
 					throw ConfigurationErrorException( "A LOCATION has been duplicated [" + (current + 1)->getValue() + "]");
 				enterContext( LOCATION_BLOCK );
 				current += 3;
-				break ;
+				break;
 			
 			case K_LISTEN :
 				if (getCurrentContext() != SERVER_BLOCK)
@@ -231,7 +228,7 @@ void	Parser::parse()
 				else if (!isValidPort( (current + 1)->getValue() ))
 					throw ConfigurationErrorException( "The port given after LISTEN keyword is not a valid port" );
 				current += 3;
-				break ;
+				break;
 			
 			case K_ROOT :
 				if (!isInContext( SERVER_BLOCK ))
@@ -243,7 +240,7 @@ void	Parser::parse()
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after ROOT keyword" );
 				current += 3;
-				break ;
+				break;
 
 			case K_INDEX :
 				if (!isInContext( SERVER_BLOCK ))
@@ -253,7 +250,7 @@ void	Parser::parse()
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after INDEX keyword" );
 				current += 3;
-				break ;
+				break;
 			
 			case K_SERVERNAME :
 				if (getCurrentContext() != SERVER_BLOCK)
@@ -265,7 +262,7 @@ void	Parser::parse()
 				if (server_names.insert((current + 1)->getValue()).second == false)
 					throw ConfigurationErrorException( "A SERVER_NAME has been set twice [" + ((current + 1)->getValue() + "]" ));
 				current += 3;
-				break ;
+				break;
 
 			case K_ERRORPAGE : {
 				if (!isInContext( SERVER_BLOCK ))
@@ -289,7 +286,7 @@ void	Parser::parse()
 				if (peekType( current, 1 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after ERROR_PAGE keyword" );
 				current += 2;
-				break ;
+				break;
 			}
 				
 			case K_UPLOADALLOWED :
@@ -302,7 +299,7 @@ void	Parser::parse()
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after UPLOAD_ALLOWED keyword" );
 				current += 3;
-				break ;
+				break;
 
 			case K_CLIENTMAXSIZEBODY :
 				if (!isInContext( SERVER_BLOCK ))
@@ -314,7 +311,7 @@ void	Parser::parse()
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after client_max_body_size keyword" );
 				current += 3;
-				break ;
+				break;
 			
 			case K_AUTOINDEX :
 				if (!isInContext( SERVER_BLOCK ))
@@ -324,7 +321,7 @@ void	Parser::parse()
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON is missing after AUTO_INDEX keyword" );
 				current += 3;
-				break ;
+				break;
 
 			case K_ALLOWEDMETHODS : {
 				if (getCurrentContext() != LOCATION_BLOCK)
@@ -348,7 +345,7 @@ void	Parser::parse()
 				if (current->getType() != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON is missing after ALLOWED_METHODS keyword" );
 				++current;
-				break ;
+				break;
 			}
 
 			case K_CGI : {
@@ -373,7 +370,7 @@ void	Parser::parse()
 				else if (current->getType() != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON is missing after CGI keyword" );
 				++current;
-				break ;
+				break;
 			}
 
 			case K_RETURN : {
@@ -400,7 +397,7 @@ void	Parser::parse()
 						throw SyntaxErrorException( "A SEMICOLON is missing after RETURN keyword" );
 					current += 3;
 				}
-				break ;
+				break;
 			}
 
 			case S_RBRACE : 
@@ -413,7 +410,7 @@ void	Parser::parse()
 					exitContext();
 					++current;
 				}
-				break ;
+				break;
 			
 			default :
 				throw SyntaxErrorException( "An unknown syntax error has occured [" + current->getValue() + "]");	
@@ -446,7 +443,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 				enterContext( SERVER_BLOCK );
 				current += 2;
-				break ;
+				break;
 
 			case K_LOCATION : {
 				current_location = Location();
@@ -455,7 +452,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				enterContext( LOCATION_BLOCK );
 				current_location.setUri( path );
 				current += 3;
-				break ;
+				break;
 			}
 			
 			case K_LISTEN : {
@@ -465,7 +462,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 				current_server.setPort( value );
 				current += 3;
-				break ;
+				break;
 			}
 
 			case K_ROOT : {
@@ -476,7 +473,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 					current_location.setRoot( path );
 				current += 3;
-				break ;
+				break;
 			}
 			
 			case K_INDEX :
@@ -485,12 +482,12 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 					current_location.setIndex( (current + 1)->getValue() );
 				current += 3;
-				break ;
+				break;
 			
 			case K_SERVERNAME :
 				current_server.setServerName( (current + 1)->getValue() );
 				current += 3;
-				break ;
+				break;
 
 			case K_ERRORPAGE : {
 				++current;
@@ -514,7 +511,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 					current_location.getErrorPage().push_back( err_page );
 				current += 2;
-				break ;
+				break;
 			}
 
 			case K_UPLOADALLOWED : {
@@ -523,7 +520,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				current_location.setUploadAllowed( true );
 				current_location.setUploadPath( path ); 
 				current += 3;
-				break ;
+				break;
 			}
 			
 			case K_CLIENTMAXSIZEBODY :
@@ -532,7 +529,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 					current_location.setClientMaxSizeBody( (current + 1)->getValue() );
 				current += 3;
-				break ;
+				break;
 
 			case K_AUTOINDEX :
 				if (getCurrentContext() == SERVER_BLOCK)
@@ -540,7 +537,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 					current_location.setAutoIndex( true );
 				current += 3;
-				break ;
+				break;
 			
 			case K_ALLOWEDMETHODS : {
 				++current;
@@ -554,7 +551,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				}
 				current_location.setAllowedMethods( methods );
 				++current;
-				break ;
+				break;
 			}
 
 			case K_CGI : {
@@ -571,7 +568,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 				else
 					current_location.setCgiExtension(cgi_extension);
 				++current;
-				break ;
+				break;
 			}
 
 			case K_RETURN : {
@@ -604,7 +601,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 					else
 						current += 3;
 				}
-				break ;
+				break;
 			}
 
 			case S_RBRACE :
@@ -621,7 +618,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 					exitContext();
 				}
 				++current;
-				break ;
+				break;
 			
 			default :
 				throw ConfigurationErrorException( "An unknown and unexpected configuration error has occured" );
@@ -638,8 +635,8 @@ TokenType	Parser::identifyKeyword( const std::string& to_identify ) const
 
 	if (it == _keywords.end())
 		return (UNKNOWN);
-	
-	return (it->second);
+	else
+		return (it->second);
 }
 
 TokenType	Parser::identifySymbol( const std::string& to_identify ) const
@@ -673,16 +670,16 @@ TokenType	Parser::peekType( std::vector<Token>::const_iterator it, size_t offset
 {
 	if (it + offset >= _tokens.end())
 		throw SyntaxErrorException( "Unexpected end of file" );
-
-	return ((it + offset)->getType());
+	else
+		return ((it + offset)->getType());
 }
 
 std::string		Parser::peekValue( std::vector<Token>::const_iterator it, size_t offset ) const
 {
 	if (it + offset >= _tokens.end())
 		throw SyntaxErrorException( "Unexpected end of file" );
-
-	return ((it + offset)->getValue());
+	else
+		return ((it + offset)->getValue());
 }
 
 /*
@@ -695,8 +692,10 @@ void	Parser::enterContext( Context context )
 
 void	Parser::exitContext()
 {
-	if (!_context_stack.empty())
-		_context_stack.pop_back();
+	if (_context_stack.empty())
+		return ;
+
+	_context_stack.pop_back();
 }
 
 bool	Parser::isInContext( const Context& ctx ) const
@@ -713,10 +712,10 @@ bool	Parser::isInContext( const Context& ctx ) const
 
 Context		Parser::getCurrentContext() const
  {
-	if (!_context_stack.empty())
+	if (_context_stack.empty())
+		return (EMPTY);
+	else
 		return (_context_stack.back());
-
-	return (EMPTY);
 }
 
 /*
@@ -728,7 +727,6 @@ std::ostream&	operator<<( std::ostream &os, const Parser& parser )
 
 	for (; it != parser.getTokens().end(); ++it)
 		os << "[" RED << it->getTypeStr() << NC "[" YELLOW << it->getValue() << NC "]" "]" " - ";
-
 	os << std::endl;
 	return (os);
 }

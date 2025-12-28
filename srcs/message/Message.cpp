@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/26 18:58:52 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:01:42 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ bool	Message::_checkProhibitedDuplicate( const std::string& name )
 		uniqueHeaders.insert("if-range");
 		uniqueHeaders.insert("range");
 	}
-
 	if (uniqueHeaders.count( name ) == 1)
 	{
 		if (_headers.count( name ) == 1)
@@ -138,7 +137,7 @@ void	Message::_unchunkBody( const std::string& chunked_data )
 		if (chunk_size < 0)
 			throw BadRequestException( "Invalid chunk size" );
 		if (chunk_size == 0) // end chunk
-			break ;
+			break;
 
 		size_t data_start = line_end + 2;
 		if (data_start + chunk_size > chunked_data.size())
