@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/26 19:48:02 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 20:43:27 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,8 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 	if (it == _locations.end())
 	{
 		Location defaultLoc;
-		defaultLoc.setRoot( _root );
+		defaultLoc.setUri( "/" );
+		defaultLoc.setServerRoot( _root );
 		defaultLoc.setIndex( _index );
 		defaultLoc.setAutoIndex( _auto_index );
 		defaultLoc.setClientMaxSizeBody( _client_max_body_size );
@@ -164,7 +165,7 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 
 	Location resolved = it->second;
 	if (resolved.getRoot().empty())
-		resolved.setRoot( _root );
+		resolved.setServerRoot( _root );
 	if (resolved.getIndex().empty())
 		resolved.setIndex( _index );
 	if (resolved.getClientMaxSizeBody().empty())

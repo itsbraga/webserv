@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   defines.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:43 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/16 01:23:22 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/28 22:36:43 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,9 @@
  *	Client
 \**************************/
 
-# define TIMEOUT 75
+# define CLIENT_TIMEOUT 75
+# define CGI_TIMEOUT 30
+# define SLOWLORIS_TIMEOUT 300
 # define MAX_CONNECTIONS 1000
 
 /**************************\

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 17:04:06 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:47:37 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@ bool	pathExists( const std::string& path )
 	return (stat( path.c_str(), &buffer ) == 0);
 }
 
-std::string		resolvePath( Location& route, const std::string& uri )
-{
-	std::string root = route.getRoot();
-
-	if (uri == "/")
-		return (root + "/" + route.getIndex());
-
-	if (!root.empty() && root[root.size() - 1] == '/' && uri[0] == '/')
-		return (root + uri.substr( 1 ));
-
-	return (root + uri);
-}
-
 // std::string		resolvePath( Location& route, const std::string& uri )
 // {
 // 	std::string root = route.getRoot();
@@ -39,9 +26,33 @@ std::string		resolvePath( Location& route, const std::string& uri )
 // 	if (uri == "/")
 // 		return (root + "/" + route.getIndex());
 
-// 	std::string path = route.getRoot() + "/" + uri.substr(route.getUri().length());
-// 	return (path);
+// 	if (!root.empty() && root[root.size() - 1] == '/' && uri[0] == '/')
+// 		return (root + uri.substr( 1 ));
+
+// 	return (root + uri);
 // }
+
+std::string		resolvePath( Location& route, const std::string& uri )
+{
+	std::string root = route.getRoot();
+	std::string server_root;
+	if (route.getServerRoot().empty() == false)
+		server_root = route.getServerRoot();
+	if (uri == "/")
+		return (server_root + "/" + route.getIndex());
+
+	std::string path;
+	if (route.getUri() != "/")
+	{
+		if (route.getRoot().empty() == true)
+			path = server_root + uri;
+		else
+			path = root + uri.substr(route.getUri().length()); // alias behaviour
+	}
+	else
+		path = server_root + uri;
+	return (path);
+}
 
 bool	isRegularFile( const std::string& path )
 {
