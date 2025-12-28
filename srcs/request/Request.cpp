@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 18:20:23 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/27 19:47:29 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Request::~Request() {}
 */
 void	Request::_requestLineCheck( const std::string& serialized )
 {
+	std::cerr << RED << "requestLineCheck called" << NC << std::endl;
 	std::string request_line = extractRequestLine( serialized );
 	std::string method, uri, protocol_version;
 
@@ -157,6 +158,7 @@ void	Request::process()
 	if (_raw_request.empty())
 		return ;
 
+	std::cerr << RED << "Request constructor called" << NC << std::endl;
 	_requestLineCheck( _raw_request );
 	_headerCheck( _raw_request );
 

@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/27 19:09:21 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/27 20:33:37 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ Response*	returnHandler(const Request& request, const ServerConfig& server)
 	int status_code;
 	std::string status_name;
 	std::map<std::string, Location>::const_iterator it;
-	it = server.findMatchingLocation(request.getUri());
+	it = server.findMatchingLocation(request);
 	if (it != server.getLocations().end())
 		status_code = it->second.getReturnCode();
 	else
@@ -124,7 +124,7 @@ Response*	returnHandler(const Request& request, const ServerConfig& server)
 bool	isReturn(const Request& request, const ServerConfig& server)
 {
 	std::map<std::string, Location>::const_iterator it;
-	it = server.findMatchingLocation(request.getUri());
+	it = server.findMatchingLocation(request);
 	if (it != server.getLocations().end())
 	{
 		if (it->second.getReturnCode() != 0)

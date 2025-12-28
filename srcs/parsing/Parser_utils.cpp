@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 12:57:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 23:09:00 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 00:40:28 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,19 @@
 /*
 	--------------------------- [ Utilities ] ----------------------------
 */
+
+std::string	Parser::normalizePath(const std::string& path) const
+{
+	std::string normalized_path = path;
+	
+	if (path.length() > 1)
+	{
+		if (path[path.length() - 1] == '/')
+			normalized_path = path.substr(0, path.length() - 1);
+	}
+	return (normalized_path);
+}
+
 bool	Parser::isLeftBrace( const char c ) const
 {
 	return (c == '{');
@@ -71,7 +84,7 @@ bool	Parser::isNumber( const std::string& to_compare ) const
 
 bool	Parser::isString( const std::string& to_compare ) const
 {
-	if (to_compare[0] == '.')
+	if (to_compare[0] == '.' || to_compare[0] == '-' || to_compare[0] == '_')
 		return (false);
 
 	std::string::const_iterator it = to_compare.begin();
@@ -189,6 +202,14 @@ bool	Parser::isValidExtension( const std::string& to_compare ) const
 		return (true);
 
 	return (false);
+}
+
+bool	Parser::isValidPath( const std::string& to_check) const
+{
+	if (to_check.find("//") != std::string::npos)
+		return (false);
+	else
+		return (true);
 }
 
 bool	Parser::isServer( const std::string& to_compare ) const

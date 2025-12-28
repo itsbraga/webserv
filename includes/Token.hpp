@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Token.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 16:22:58 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/23 19:33:40 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/27 23:55:05 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ class Token
 		void			setType( TokenType type );
 		void			setValue( std::string value );
 
-		std::string		getTypeStr() const;
-		TokenType		getType() const			{ return (_type); }
-		std::string		getValue() const		{ return (_value); }
-
+		std::string			getTypeStr() const;
+		TokenType			getType() const			{ return (_type); }
+		std::string&		getValue() 				{ return (_value); }
+		const std::string&	getValue() const		{ return (_value); }
 };

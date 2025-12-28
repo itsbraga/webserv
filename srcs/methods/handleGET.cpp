@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleGET.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 17:30:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/27 20:48:34 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ Response*	handleGET( const ServerConfig& server, const Request& request )
 	std::string	uri = request.getUri();
 	std::string	path = resolvePath( route, uri );
 
+	std::cerr << RED << "PATH = " << NC << path << std::endl;
 	if (!pathExists( path ))
 		throw NotFoundException();
 	if (!isReadable( path ))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/26 18:31:20 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 03:12:03 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Request;
 class ServerConfig
 {
 	private:
-		unsigned short 				_port;
+		unsigned short 					_port;
 		std::string 					_server_name;
 		std::string						_root;
 		std::string						_index;
