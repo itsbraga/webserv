@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   directory.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 23:10:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/25 21:26:30 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/28 20:23:27 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ std::string		getParentDir( const std::string& path )
 	size_t pos = path.find_last_of( '/' );
 	if (pos == std::string::npos)
 		return (".");
-
-	return (path.substr( 0, pos ));
+	else
+		return (path.substr( 0, pos ));
 }
 
 static std::vector<std::string>		__removeEmptySegments( const std::vector<std::string>& root_vec )
@@ -55,7 +55,7 @@ bool	isSafePath( const std::string& root, const std::string& requested_path )
 	{
 		const std::string& segment = requested_path_vec[i];
 		if (segment.empty() || segment == ".")
-			continue ;
+			continue;
 		if (segment == "..")
 		{
 			if (real_path.size() <= root_depth)

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/28 17:17:42 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:30:35 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	validateMethod( const std::string& method )
 	}
 
 	if (method != "GET" && method != "POST" && method != "DELETE" && method != "HEAD")
-		throw NotImplementedException(); // Peut-être ailleurs
+		throw NotImplementedException();
 }
 
 void	validateUri( const std::string& uri )
@@ -64,7 +64,7 @@ void	validateUri( const std::string& uri )
 void	validateProtocolVersion( const std::string& protocol_version )
 {
 	if (protocol_version != "HTTP/1.1")
-		throw HTTPVersionNotSupportedException(); // Peut-être ailleurs
+		throw HTTPVersionNotSupportedException();
 }
 
 bool	isValidHeaderName( const std::string& name )

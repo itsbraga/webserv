@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 14:59:14 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 21:33:44 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static Response*	__handleDirectoryRequest( const Location& route, std::string& path, const std::string& uri )
 {
-	std::string idx = path + (path[path.size() - 1] == '/' ? "" : "/") + route.getIndex();
+	std::string idx = ensureTrailingSlash( path ) + route.getIndex();
 	std::string body;
 
 	Response* response = new Response( 200, "OK" );
@@ -30,7 +30,10 @@ static Response*	__handleDirectoryRequest( const Location& route, std::string& p
 		response->setGeneratedHeaders( body, "text/html; charset=utf-8" );
 	}
 	else
-		throw ForbiddenException();
+	{
+		delete response;
+		return (new Response( 403, "Forbidden" ));
+	}
 	return (response);
 }
 
@@ -48,16 +51,17 @@ Response*	handleHEAD( const ServerConfig& server, const Request& request )
 	Location route = server.resolveRoute( request );
 
 	if (!server.isMethodAllowed( route, "head" ))
-		throw MethodNotAllowedException();
+		return (new Response( 405, "Method Not Allowed" ));
 
 	std::string	uri = request.getUri();
 	std::string	path = resolvePath( route, uri );
 
 	if (!pathExists( path ))
-		throw NotFoundException();
+		return (new Response( 404, "Not Found" ));
 	if (!isReadable( path ))
-		throw ForbiddenException();
+		return (new Response( 403, "Forbidden" ));
 	if (isDirectory( path ))
 		return (__handleDirectoryRequest( route, path, uri ));
-	return (__handleFileRequest( path ));
+	else
+		return (__handleFileRequest( path ));
 }
