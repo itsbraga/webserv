@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:34:05 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 16:40:23 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 19:37:00 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,18 +116,18 @@ size_t	convertBodySize( const std::string& value )
 		{
 			case 'k': case 'K':
 				size *= 1024ULL;
-				break ;
+				break;
 
 			case 'm': case 'M':
 				size *= 1024ULL * 1024ULL;
-				break ;
+				break;
 
 			case 'g': case 'G':
 				size *= 1024ULL * 1024ULL * 1024ULL;
-				break ;
+				break;
 
 			default:
-				break ;
+				break;
 		}
 	}
 	return (static_cast<size_t>( size ));

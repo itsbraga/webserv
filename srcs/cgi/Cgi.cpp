@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 18:32:03 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 21:10:06 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,22 +33,20 @@ Response*	cgiHandler( const Request& request, const ServerConfig& server )
 	struct stat st;
 	if (stat(path.c_str(), &st) != 0)
 	{
-		std::cerr << "cgi file not found !\n";
+		err_msg( "cgiHandler()", "CGI file not found" );
 		return (new Response(404, "Not Found"));
 	}
 	if (!S_ISREG(st.st_mode))
 	{
-		std::cerr << "cgi file not regular !\n";
+		err_msg( "cgiHandler()", "CGI file not regular" );
 		return (new Response(404, "Not Found"));
 	}
 	if (!(st.st_mode & S_IXUSR))
 	{
-		std::cerr << "script is found but not executable\n";
+		err_msg( "cgiHandler()", "Script exists but is not executable" );
 		return (new Response(403, "Forbidden"));
 	}
-	
-
-	return (doCgi(request, server, path));
+	return (doCgi( request, server, path ));
 	
 }
 
@@ -109,7 +107,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 		std::cerr << strerror(errno) << std::endl;
 		close(pipes[0][0]);
 		close(pipes[1][0]), close(pipes[1][1]);
-		exit(EXIT_FAILURE);
+		exit(FAILURE);
 	}
 	close(pipes[0][0]);
 	close(pipes[1][0]);
@@ -117,7 +115,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 	{
 		std::cerr << strerror(errno) << std::endl;
 		close(pipes[1][1]);
-		exit(EXIT_FAILURE);
+		exit(FAILURE);
 	}
 	close(pipes[1][1]);
 
@@ -132,7 +130,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 	if (chdir(path_dir.c_str()) == -1)
 	{
 		std::cerr << "chdir failed" << std::endl;
-		exit(EXIT_FAILURE);
+		exit(FAILURE);
 	}
 
 	std::string	file_name;
@@ -154,7 +152,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 	catch (std::bad_alloc& e)
 	{
 		std::cerr << "bad_alloc: " << e.what() << std::endl;
-		exit(EXIT_FAILURE);
+		exit(FAILURE);
 	}
 	catch (std::runtime_error& e)
 	{
@@ -166,7 +164,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 				delete [] envp[i];
 			delete [] envp;
 		}
-		exit(EXIT_FAILURE);
+		exit(FAILURE);
 	}
 }
 

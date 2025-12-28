@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/27 19:07:18 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/28 19:10:55 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ class Location;
 
 // file.cpp
 bool			pathExists( const std::string& path );
+std::string		ensureTrailingSlash( const std::string& path );
 std::string		resolvePath( Location& route, const std::string& uri );
 
 bool			isRegularFile( const std::string& path );

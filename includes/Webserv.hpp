@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/26 18:34:16 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 18:34:52 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ class Webserv
 		void		_handleClientWrite( int client_fd );
 
 		Response*	_buildResponse( Request& request, Listener& listener );
+		// void		_processRequest( int client_fd );
 		void		_processRequest( int client_fd );
 		void		_checkClientTimeout();
 

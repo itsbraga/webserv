@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 15:03:33 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 21:23:36 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,23 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 	std::string root = route.getRoot();
 
 	if (!server.isMethodAllowed( route, "delete" ))
-		throw MethodNotAllowedException();
+		return (new Response( 405, "Method Not Allowed" ));
 
 	std::string	uri = request.getUri();
 	if (uri == "/")
-		throw ForbiddenException();
+		return (new Response( 403, "Forbidden" ));
 	if (!isSafePath( root, uri ))
-		throw ForbiddenException();
+		return (new Response( 403, "Forbidden" ));
 
 	std::string	path = root + uri;
 	if (!pathExists( path ))
-		throw NotFoundException();
+		return (new Response( 404, "Not Found" ));
 	if (isDirectory( path ))
-		throw ForbiddenException();
+		return (new Response( 403, "Forbidden" ));
 	if (!isWritable( getParentDir( path ) ))
-		throw ForbiddenException();
+		return (new Response( 403, "Forbidden" ));
 	if (!deleteFile( path ))
-		throw InternalServerErrorException();
+		return (new Response( 500, "Internal Server Error" ));
 
 	Response* response = new Response( 200, "OK" ); // 204 ou 200
 	response->setGeneratedContent( "File " + uri + " deleted\n", "text/plain" );

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 16:37:16 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:21:30 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ bool	Webserv::_addServerToEpoll( int server_fd )
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, ev.data.fd, &ev ) == -1)
 		return (err_msg( "epoll_ctl(ADD server)", strerror( errno ) ), false);
-	return (true);
+	else
+		return (true);
 }
 
 bool	Webserv::_addClientToEpoll( int client_fd )
@@ -69,7 +70,8 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, client_fd, &ev ) == -1)
 		return (err_msg( "epoll_ctl(ADD client)", strerror( errno ) ), false);
-	return (true);
+	else
+		return (true);
 }
 
 void	Webserv::_removeClient( int client_fd )
@@ -91,7 +93,8 @@ bool	Webserv::_modifyEpollEvents( int fd, unsigned int events )
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_MOD, fd, &ev ) == -1)
 		return (err_msg( "epoll_ctl(MODIFY)", strerror( errno ) ), false);
-	return (true);
+	else
+		return (true);
 }
 
 /*
@@ -103,12 +106,12 @@ void	Webserv::_handleListenerEvent( Listener& listener )
 	{
 		int client_fd = listener.acceptClient();
 		if (client_fd == -1)
-			break ;
+			break;
 
 		if (!_addClientToEpoll( client_fd ))
 		{
 			::close( client_fd );
-			continue ;
+			continue;
 		}
 
 		Client new_client( client_fd, listener.socket_fd );
@@ -144,14 +147,12 @@ void	Webserv::_handleClientRead( int client_fd )
 	while (true)
 	{
 		ssize_t nBytes = ::recv( client_fd, buffer, sizeof(buffer), 0 );
-		if (nBytes < 0)
+		if (nBytes <= 0)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				break ;
-			return (err_msg( "recv()", strerror( errno ) ));
+				break;
+			return (err_msg( "recv()", strerror( errno ) ), _removeClient( client_fd ));
 		}
-		if (nBytes == 0)
-			return (_removeClient( client_fd ));
 
 		client.appendToReadBuffer( buffer, nBytes );
 	}
@@ -200,9 +201,10 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 
 		if (isReturn( request, server ))
 			return (returnHandler( request, server ));
-		if (isCgiRequest( request, server ))
+		else if (isCgiRequest( request, server ))
 			return (cgiHandler( request, server ));
-		return (handleMethod( server, request ));
+		else
+			return (handleMethod( server, request ));
 	}
 	catch (const BadRequestException& e) {
 		std::cerr << P_YELLOW "[DEBUG] " NC << e.what() << std::endl;
@@ -334,9 +336,9 @@ void	Webserv::run()
 		if (nbFds == -1)
 		{
 			if (errno == EINTR)
-				continue ;
+				continue;
 			err_msg( "epoll_wait()", strerror( errno ) );
-			break ;
+			break;
 		}
 
 		_checkClientTimeout();
