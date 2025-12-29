@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 12:33:27 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 18:48:04 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ Response*	doCgi( const Request& request, const ServerConfig& server, const std::
 
 	if (pipe(pipe_parent) == -1 || pipe(pipe_children) == -1)
 		return (new Response(500, "Internal Server Error"));
+	// if (setCgiCloseOnExec(pipe_parent, pipe_children) == false)
+	// 	return (new Response(500, "Internal Server Error"));
 	
 	pid_t pid = fork();
 	if (pid == -1)
@@ -196,6 +198,8 @@ void	childExec( const Request& request, const ServerConfig& server, \
 		file_name = path;
 	else
 		file_name = path.substr(pos + 1);
+
+	file_name = "./" + file_name;
 	
 	argv[0] = const_cast<char*>(file_name.c_str());
 	argv[1] = NULL; 
@@ -215,7 +219,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 	catch (std::runtime_error& e)
 	{
 		std::string reason(strerror(errno));
-		std::cerr << "runtime_error: " << e.what() << " : "  << reason << std::endl;
+		std::cerr << "runtime_error: prout" << e.what() << " : "  << reason << std::endl;
 		if (envp != NULL)
 		{
 			for (size_t i = 0; envp[i] != NULL; ++i)
@@ -429,3 +433,18 @@ bool	isCgiRequest( const Request& request, const ServerConfig& server )
 	}
 	return (false);
 }
+
+// bool			setCgiCloseOnExec(int *pipe_parent, int *pipe_children)
+// {
+// 	if (fcntl(pipe_parent[0], F_SETFD, FD_CLOEXEC) == -1 
+// 		|| fcntl(pipe_parent[1], F_SETFD, FD_CLOEXEC) == -1
+// 		|| fcntl(pipe_children[0], F_SETFD, FD_CLOEXEC) == -1
+// 		|| fcntl(pipe_children[1], F_SETFD, FD_CLOEXEC) == -1)
+// 	{
+// 		close(pipe_parent[0]), close(pipe_parent[1]);
+// 		close(pipe_children[0]), close(pipe_children[1]);
+// 		return (err_msg( "fcntl(F_SETFD,  FD_CLOEXEC)", strerror( errno ) ), false);
+// 	}
+// 	else
+// 		return (true);
+// }

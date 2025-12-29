@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 12:49:14 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 15:32:26 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,8 @@ class Webserv
 
 		void		addCgiPid( pid_t pid ) 		{ _up_cgis.insert( pid ); }
 		void		removeCgiPid( pid_t pid ) 	{ _up_cgis.erase( pid ); };
+
+		static bool	setCloseOnExec( int fd );
 };
 
 /**************************\
