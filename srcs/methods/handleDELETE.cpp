@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleDELETE.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 21:23:36 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:54:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 	Location route = server.resolveRoute( request );
 	std::string root = route.getRoot();
 
-	if (!server.isMethodAllowed( route, "delete" ))
+	if (!server.isMethodAllowed( route, "DELETE" ))
 		return (new Response( 405, "Method Not Allowed" ));
 
-	std::string	uri = request.getUri();
+	std::string	uri = extractPathFromUri( request.getUri() );
 	if (uri == "/")
 		return (new Response( 403, "Forbidden" ));
 	if (!isSafePath( root, uri ))

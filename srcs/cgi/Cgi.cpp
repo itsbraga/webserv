@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 06:00:02 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 12:33:27 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,36 @@
 
 Response*	cgiHandler( const Request& request, const ServerConfig& server, Webserv& webserv )
 {
-	std::map<std::string, Location>::const_iterator it;
-	it = server.findMatchingLocation(request);
-
 	std::string root;
+	std::map<std::string, Location>::const_iterator it = server.findMatchingLocation( request );
+
 	if (it != server.getLocations().end() && it->second.getRoot().empty() == false)
 		root = it->second.getRoot();
 	else
 		root = server.getRoot();
 	
 	std::string clean_uri = request.getUri();
-	size_t pos = clean_uri.find('?');
+	size_t pos = clean_uri.find( '?' );
 	if (pos != std::string::npos)
-		clean_uri = clean_uri.substr(0, pos);
+		clean_uri = clean_uri.substr( 0, pos );
 
 	std::string path = root + clean_uri;
 
 	struct stat st;
-	if (stat(path.c_str(), &st) != 0)
+	if (stat( path.c_str(), &st ) != 0)
 	{
 		err_msg( "cgiHandler()", "CGI file not found" );
-		return (new Response(404, "Not Found"));
+		return (new Response( 404, "Not Found" ));
 	}
-	if (!S_ISREG(st.st_mode))
+	if (!S_ISREG( st.st_mode ))
 	{
 		err_msg( "cgiHandler()", "CGI file not regular" );
-		return (new Response(404, "Not Found"));
+		return (new Response( 404, "Not Found" ));
 	}
 	if (!(st.st_mode & S_IXUSR))
 	{
 		err_msg( "cgiHandler()", "Script exists but is not executable" );
-		return (new Response(403, "Forbidden"));
+		return (new Response( 403, "Forbidden" ));
 	}
 	return (doCgi( request, server, path, webserv ));
 	

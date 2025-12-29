@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 20:33:25 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:17:28 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ Parser::Parser( std::string arg )
 
 		std::ifstream infile;
 		infile.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-		infile.open(arg.c_str());
+		infile.open( arg.c_str() );
 		if (infile.peek() == EOF)
-			throw std::invalid_argument( "Configuration file is empty !" );
+			throw std::invalid_argument( "Configuration file is empty" );
 
 		_fillBuffer( infile );
 		infile.close();
@@ -32,7 +32,7 @@ Parser::Parser( std::string arg )
 		_initStatusCodesVector();
 	}
 	catch (const std::ios_base::failure& e) {
-    	throw std::runtime_error("Cannot open config file, please check permissions ! ");
+    	throw std::runtime_error( "Cannot open config file, please check permissions" );
 	}
 	catch (const std::exception& e) {
 		throw ;
@@ -59,7 +59,7 @@ std::string		Parser::_checkPath( std::string path )
 	return (path);
 }
 
-void	Parser::_fillBuffer(const std::ifstream& infile)
+void	Parser::_fillBuffer( const std::ifstream& infile )
 {
 	std::ostringstream	buffer;
 	buffer << infile.rdbuf();
@@ -294,7 +294,7 @@ void	Parser::parse()
 					throw SyntaxErrorException( "The keyword UPLOAD_ALLOWED is only expected in a LOCATION_BLOCK context" );
 				else if (peekType( current, 1 ) != V_PATH)
 					throw SyntaxErrorException( "The keyword UPLOAD_ALLOWED need to be followed by a PATH token" );
-				else if (!isValidPath((current + 1)->getValue()))
+				else if (!isValidPath( (current + 1)->getValue() ))
 					throw ConfigurationErrorException( "The PATH after UPLOAD_ALLOWED keyword is not a valid path" );
 				else if (peekType( current, 2 ) != S_SEMICOLON)
 					throw SyntaxErrorException( "A SEMICOLON token is missing after UPLOAD_ALLOWED keyword" );
@@ -447,7 +447,7 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 			case K_LOCATION : {
 				current_location = Location();
-				std::string path = normalizePath((current + 1)->getValue());
+				std::string path = normalizePath( (current + 1)->getValue() );
 
 				enterContext( LOCATION_BLOCK );
 				current_location.setUri( path );
@@ -494,11 +494,10 @@ void		Parser::createAllObjects( Webserv& webserv )
 				std::vector<int> status;
 				std::string	file;
 				int value;
-				std::stringstream ss;
 
 				while (current->getType() != V_PATH)
 				{
-					ss.str(current->getValue());
+					std::stringstream ss(current->getValue());
 					ss >> value;
 					status.push_back(value);
 					++current;

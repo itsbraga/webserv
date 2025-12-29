@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 19:10:55 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:51:05 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void						err_msg_quoted( const char *context, const std::string& reason );
 std::vector<std::string>	split( const std::string& str, char delimiter );
 void						lowerStr( std::string& str );
 std::string					toLower( const std::string& str );
+std::string					extractPathFromUri( const std::string& uri );
 std::string					extractQueryString( const std::string &uri );
 std::string					decodeUri( const std::string& uri );
 

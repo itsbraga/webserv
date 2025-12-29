@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 08:20:51 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 12:49:14 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <algorithm>
 # include <exception>
 # include <limits>
+# include <climits>
 # include <vector>
 # include <map>
 # include <set>
@@ -104,7 +105,7 @@ class Webserv
 		void		_handleClientRead( int client_fd );
 		void		_handleClientWrite( int client_fd );
 
-		Response*	_buildResponse( Request& request, Listener& listener );
+		Response*	_executeRequest( Request& request, Listener& listener );
 		void		_processRequest( int client_fd );
 
 		void		_checkClientTimeout();
@@ -132,8 +133,8 @@ class Webserv
 
 // method_map.cpp
 void			init_method_map();
-Response*		handleMethod( const ServerConfig& server, const Request& request );
-Response*		handleHttpException( const std::exception& e );
+Response*		methodHandler( const ServerConfig& server, const Request& request );
+Response*		httpExceptionHandler( const std::exception& e );
 
 // handleGET.cpp
 Response*		handleGET( const ServerConfig& server, const Request& request );

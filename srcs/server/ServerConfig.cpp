@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 00:01:01 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 12:24:36 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,11 +176,11 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 bool	ServerConfig::isMethodAllowed( const Location& location, const std::string& method ) const
 {
 	const std::vector<std::string>& allowed = location.getAllowedMethods();
-
 	if (allowed.empty())
 		return (true);
 
-	return (std::find( allowed.begin(), allowed.end(), method ) != allowed.end());
+	std::string lowerMethod = toLower( method );
+	return (std::find( allowed.begin(), allowed.end(), lowerMethod ) != allowed.end());
 }
 
 /*

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_map.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 20:19:01 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:47:16 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	init_method_map()
 	g_method_map["DELETE"] = &handleDELETE;
 }
 
-Response*	handleMethod( const ServerConfig& server, const Request& request )
+Response*	methodHandler( const ServerConfig& server, const Request& request )
 {
 	std::map<std::string, MethodHandler>::const_iterator it = g_method_map.find( request.getMethod() );
 	Response* response = NULL;
@@ -35,7 +35,7 @@ Response*	handleMethod( const ServerConfig& server, const Request& request )
 	return (response);
 }
 
-Response*	handleHttpException( const std::exception& e )
+Response*	httpExceptionHandler( const std::exception& e )
 {
 	const HttpException* http = dynamic_cast<const HttpException*>( &e );
 

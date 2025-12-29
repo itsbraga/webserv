@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/28 20:30:35 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:32:16 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ void	validateUri( const std::string& uri )
 {
 	if (uri.empty() || uri[0] != '/')
 		throw BadRequestException( "uri must start with '/'" );
+	if (uri.size() > 8192)
+		throw URITooLongException();
 }
 
 void	validateProtocolVersion( const std::string& protocol_version )
@@ -109,6 +111,7 @@ Response*	returnHandler( const Request& request, const ServerConfig& server )
 	status_name = Response::getStatusNameFromStatusCode( status_code );
 	
 	Response* response = new Response( status_code, status_name );
+
 	if (status_code == 301 || status_code == 302 || status_code == 307 || status_code == 308)
 	{
 		std::string return_uri;

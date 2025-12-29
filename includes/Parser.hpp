@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 01:43:23 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 12:17:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class ConfigurationErrorException : public std::exception
 		std::string _detail;
 
 	public:
-		explicit ConfigurationErrorException( const std::string& detail) : _detail( "Configuration Error: " + detail ) {}
+		explicit ConfigurationErrorException( const std::string& detail ) : _detail( "Configuration Error: " + detail ) {}
 		virtual ~ConfigurationErrorException() throw() {}
 
 		virtual const char		*what() const throw()
@@ -97,7 +97,7 @@ class Parser
 		void				parse();
 		void				createAllObjects( Webserv& webserv );
 
-		std::string			normalizePath(const std::string& path) const;
+		std::string			normalizePath( const std::string& path ) const;
 
 		TokenType			identifyKeyword( const std::string& to_identify ) const;
 		TokenType			identifySymbol( const std::string& to_identify ) const;

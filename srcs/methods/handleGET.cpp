@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleGET.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 19:31:31 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 21:21:19 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:53:31 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ Response*	handleGET( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
-	if (!server.isMethodAllowed( route, "get" ))
+	if (!server.isMethodAllowed( route, "GET" ))
 		return (new Response( 405, "Method Not Allowed" ));
 
-	std::string	uri = request.getUri();
+	std::string	uri = extractPathFromUri( request.getUri() );
 	std::string	path = resolvePath( route, uri );
 
 	std::cerr << RED << "PATH = " << NC << path << std::endl;

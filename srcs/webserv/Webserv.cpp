@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 09:24:29 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 13:42:33 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,20 +152,12 @@ void	Webserv::_handleClientRead( int client_fd )
 	Client& client = it->second;
 	char buffer[8192];
 
-	while (true)
-	{
-		ssize_t nBytes = ::recv( client_fd, buffer, sizeof(buffer), 0 );
-		if (nBytes > 0)
-		{
-			client.appendToReadBuffer( buffer, nBytes );
-			if (static_cast<size_t>( nBytes ) < sizeof( buffer ))
-				break;
-		}
-		else if (nBytes == 0)
-			return (_removeClient( client_fd ));
-		else
-			break;
-	}
+	ssize_t nBytes = ::recv( client_fd, buffer, sizeof(buffer), 0 );
+	if (nBytes > 0)
+		client.appendToReadBuffer( buffer, nBytes );
+	else if (nBytes == 0)
+		return (_removeClient( client_fd ));
+
 	client.updateLastActivity();
 	if (client.hasCompleteRequest())
 		_processRequest( client_fd );
@@ -183,8 +175,7 @@ void	Webserv::_handleClientWrite( int client_fd )
 	{
 		if (client.shouldClose())
 		{
-			std::cout << P_BLUE "[INFO] " NC "Closing connection as requested (fd=" << client_fd
-					  << ")" << std::endl;
+			std::cout << P_BLUE "[INFO] " NC "Closing connection as requested..." << std::endl;
 			return (_removeClient( client_fd ));
 		}
 		if (!_modifyEpollEvents( client_fd, EPOLLIN ))
@@ -211,28 +202,19 @@ void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 /*
 	---------------------- [ P: Request handling ] ----------------------
 */
-Response*	Webserv::_buildResponse( Request& request, Listener& listener )
+Response*	Webserv::_executeRequest( Request& request, Listener& listener )
 {
-	try {
-		__requestReceived( request );
+	__requestReceived( request );
 
-		std::string hostname = request.getHeaderValue( "host" );
-		ServerConfig server = listener.resolveVirtualHosting( hostname );
+	std::string hostname = request.getHeaderValue( "host" );
+	ServerConfig server = listener.resolveVirtualHosting( hostname );
 
-		if (isReturn( request, server ))
-			return (returnHandler( request, server ));
-		else if (isCgiRequest( request, server ))
-			return (cgiHandler( request, server, (*this) ));
-		else
-			return (handleMethod( server, request ));
-	}
-	catch (const BadRequestException& e) {
-		std::cerr << P_YELLOW "[DEBUG] " NC << e.what() << std::endl;
-		return (handleHttpException( e ));
-	}
-	catch (const std::exception& e) {
-		return (handleHttpException( e ));
-	}
+	if (isReturn( request, server ))
+		return (returnHandler( request, server ));
+	else if (isCgiRequest( request, server ))
+		return (cgiHandler( request, server, (*this) ));
+	else
+		return (methodHandler( server, request ));
 }
 
 void	Webserv::_processRequest( int client_fd )
@@ -245,16 +227,30 @@ void	Webserv::_processRequest( int client_fd )
 
 	Listener* listener = _getListenerByFd( client.getListenerFd() );
 	if (!listener)
-	{
-		err_msg( NULL, "Listener not found for client" );
-		return (_removeClient( client_fd ));
+		return (err_msg( NULL, "Listener not found" ), _removeClient( client_fd ));
+
+	Response* response = NULL;
+	bool close_client = false;
+
+	try {
+		Request request( client.getReadBuffer() );
+		close_client = request.clientWantsClose();
+		response = _executeRequest( request, *listener );
+	}
+	catch (const BadRequestException& e) {
+		close_client = true;
+		std::cerr << P_YELLOW "[DEBUG] " << e.what() << NC << std::endl;
+		response = httpExceptionHandler( e );
+	}
+	catch (const std::exception& e) {
+		close_client = true;
+		response = httpExceptionHandler( e );
 	}
 
-	Request request( client.getReadBuffer() );
-	Response* response = _buildResponse( request, *listener );
+	if (response->getHeaderValue( "connection" ) == "close")
+		close_client = true;
 
-	if (request.clientWantsClose() || response->getHeaderValue( "connection" ) == "close")
-		client.setShouldClose( true );
+	client.setShouldClose( close_client );
 
 	std::string serialized = response->getSerializedResponse();
 	delete response;
@@ -362,6 +358,7 @@ bool	Webserv::initEpoll()
 {
 	signal( SIGINT, signal_handler );
 	signal( SIGTERM, signal_handler );
+	signal( SIGPIPE, SIG_IGN );
 	
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)

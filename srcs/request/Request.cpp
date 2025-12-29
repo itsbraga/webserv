@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 09:23:41 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 11:51:57 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	Request::_validateRequiredHeaders()
 {
 	if (!hasHeader( "host" ))
 		throw BadRequestException( "Missing 'Host' header" );
-	if (_method == "post")
+	if (_method == "POST")
 	{
 		if (!hasHeader( "content-length") && !hasHeader( "transfer-encoding" ))
 			throw LengthRequiredException();
