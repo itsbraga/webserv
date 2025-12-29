@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:43 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 23:59:59 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 06:02:35 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@
  *	Client
 \**************************/
 
-# define CLIENT_TIMEOUT 75
-# define CGI_TIMEOUT 30
-# define SLOWLORIS_TIMEOUT 300
+# define CLIENT_INACTIVITY_TIMEOUT 75
+# define CGI_INACTIVITY_TIMEOUT 10
+# define CLIENT_SLOWLORIS_TIMEOUT 180
+# define CGI_SLOWLORIS_TIMEOUT 30
 # define MAX_CONNECTIONS 1000
 
 /**************************\

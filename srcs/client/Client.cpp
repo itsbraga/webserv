@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 23:47:35 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 08:24:33 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,8 @@ void	Client::updateLastActivity()
 
 void	Client::setRequestStartTime()
 {
-	_request_start = time(NULL);
+	_request_start = time( NULL );
 }
-
 
 bool	Client::hasCompleteRequest() const
 {

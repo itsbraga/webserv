@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 23:46:40 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 08:24:24 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class Client
 		int				_listener_fd;
 		time_t			_last_activity;
 		time_t			_request_start;
+		bool			_should_close;
 
 		bool			_isChunkedComplete( size_t body_start ) const;
 		bool			_isContentLengthComplete( size_t header_end, size_t body_start ) const;
@@ -34,7 +35,9 @@ class Client
 		Client();
 
 	public:
-		Client( int socket_fd, int listener_fd ) : _socket_fd( socket_fd ), _listener_fd( listener_fd ), _last_activity( time( NULL ) ), _request_start( time(NULL) ) {}
+		Client( int socket_fd, int listener_fd ) : _socket_fd( socket_fd ), _listener_fd( listener_fd ),
+												_last_activity( time( NULL ) ), _request_start( time(NULL) ),
+												_should_close( false ) {}
 		~Client() {}
 
 		int					getSocketFd() const			{ return (_socket_fd); }
@@ -42,6 +45,10 @@ class Client
 		const std::string&	getReadBuffer()	const		{ return (_read_buffer); }
 		const std::string&	getWriteBuffer() const		{ return (_write_buffer); }
 		time_t				getLastActivity() const		{ return (_last_activity); }
+		bool				shouldClose() const			{ return (_should_close); }
+
+		void			setShouldClose( bool value )	{ _should_close = value; }
+		void			resetForNextRequest()			{ _should_close = false; }
 
 		void			appendToReadBuffer( const char *data, size_t len );
 		void			appendToWriteBuffer( const std::string& data );
@@ -52,6 +59,7 @@ class Client
 		bool			hasCompleteRequest() const;
 		void			clearReadBuffer();
 		void			clearWriteBuffer();
+
 		bool			isTimedOut( int timeout ) const;
 		bool			isRequestTimedOut( int timeout ) const;
 };

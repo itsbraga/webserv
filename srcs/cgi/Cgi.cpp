@@ -6,13 +6,13 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 00:00:26 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 06:00:02 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-Response*	cgiHandler( const Request& request, const ServerConfig& server )
+Response*	cgiHandler( const Request& request, const ServerConfig& server, Webserv& webserv )
 {
 	std::map<std::string, Location>::const_iterator it;
 	it = server.findMatchingLocation(request);
@@ -46,11 +46,11 @@ Response*	cgiHandler( const Request& request, const ServerConfig& server )
 		err_msg( "cgiHandler()", "Script exists but is not executable" );
 		return (new Response(403, "Forbidden"));
 	}
-	return (doCgi( request, server, path ));
+	return (doCgi( request, server, path, webserv ));
 	
 }
 
-Response*	doCgi( const Request& request, const ServerConfig& server, const std::string& path )
+Response*	doCgi( const Request& request, const ServerConfig& server, const std::string& path, Webserv& webserv )
 {
 	std::string output;
 	int	pipe_parent[2];
@@ -76,6 +76,7 @@ Response*	doCgi( const Request& request, const ServerConfig& server, const std::
 	}
 	else
 	{
+		webserv.addCgiPid(pid);
 		close(pipe_parent[0]), close(pipe_children[1]);
 		if (request.getBody().empty() == false)
 			write(pipe_parent[1], request.getBody().c_str(), request.getBody().size());
@@ -86,32 +87,68 @@ Response*	doCgi( const Request& request, const ServerConfig& server, const std::
 		char buffer[4096];
 		ssize_t bytes;
 		
-		while ((bytes = read(pipe_children[0], buffer, sizeof(buffer))) > 0)
+		while (true)
 		{
+			fd_set	fds;
+			FD_ZERO(&fds);
+			FD_SET(pipe_children[0], &fds);
+			struct timeval timeout;
+			timeout.tv_sec = 1;
+			timeout.tv_usec = 0;
+
+			int select_ret = select(pipe_children[0] + 1, &fds, NULL, NULL, &timeout);
+			if (select_ret == -1)
+			{
+				kill(pid, SIGKILL);
+				waitpid(pid, NULL, 0);
+				close(pipe_children[0]);
+				webserv.removeCgiPid(pid);
+				return (new Response(500, "Internal Server Error"));
+			}
+			
 			time_t tmp = time(NULL);
-			if (tmp - last_read > CGI_TIMEOUT)
+			if (tmp - last_read > CGI_INACTIVITY_TIMEOUT)
 			{
 				kill(pid, SIGKILL);
 				waitpid(pid, NULL, 0);
 				close(pipe_children[0]);
+				webserv.removeCgiPid(pid);
 				return (new Response(504, "Gateway Timeout"));
 			}
-			if (tmp - start > SLOWLORIS_TIMEOUT)
+			if (tmp - start > CGI_SLOWLORIS_TIMEOUT)
 			{
 				kill(pid, SIGKILL);
 				waitpid(pid, NULL, 0);
 				close(pipe_children[0]);
+				webserv.removeCgiPid(pid);
 				return (new Response(504, "Gateway Timeout"));
 			}
+			
+			if (select_ret == 0)
+				continue;
+
+			bytes = read(pipe_children[0], buffer, sizeof(buffer));
+			if (bytes < 0)
+			{
+				kill(pid, SIGKILL);
+				waitpid(pid, NULL, 0);
+				close(pipe_children[0]);
+				webserv.removeCgiPid(pid);
+				return (new Response(500, "Internal Server Error"));
+			}
+			else if (bytes == 0)
+				break;
+			
 			output.append(buffer, bytes);
 			last_read = tmp;
 		}
+		
 		close(pipe_children[0]);
-
 		int status;
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status) == false || WEXITSTATUS(status) != 0)
 			return (new Response(500, "Internal Server Error"));
+		webserv.removeCgiPid(pid);
 	}
 	return (handleOutput(output));
 }
