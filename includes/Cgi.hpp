@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 17:55:12 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 04:51:34 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 15:46:40 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,6 @@ Response*		handleOutput( const std::string& output );
 std::multimap<std::string, std::string>		handleOutputHeaders( const std::string& headers_str );
 std::string		toUpperCgi( const std::string& name );
 bool			isCgiRequest(const Request& request, const ServerConfig& server);
+bool			setCgiCloseOnExec(int *pipe_parent, int *pipe_children);
 
 Response*		cgiHandler( const Request& request, const ServerConfig& server, Webserv& webserv );

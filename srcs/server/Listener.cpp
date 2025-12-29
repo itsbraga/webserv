@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Listener.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:44:33 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 09:30:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 18:24:18 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,15 @@ bool	Listener::createSocketFd()
 	if (socket_fd == -1)
 		return (err_msg( "socket()", strerror( errno ) ), false);
 	else
-		return (true);
+	{
+		if (Webserv::setCloseOnExec(socket_fd) == false)
+		{
+			::close(socket_fd);
+			return (false);
+		}
+		else
+			return (true);
+	}
 }
 
 bool	Listener::configureSocket()
@@ -85,6 +93,12 @@ int		Listener::acceptClient()
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return (-1);
 		err_msg( "accept()", strerror( errno ) );
+		return (-1);
+	}
+
+	if(!Webserv::setCloseOnExec(client_fd))
+	{
+		::close( client_fd );
 		return (-1);
 	}
 

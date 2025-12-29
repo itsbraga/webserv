@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 12:54:58 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 17:31:22 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,9 @@ Response*	handlePOST( const ServerConfig& server, const Request& request )
 		return (new Response( 405, "Method Not Allowed" ));
 
 	std::string	uri = extractPathFromUri( request.getUri() );
-	std::string path = route.getRoot() + uri;
+	std::string path = resolvePath( route, uri );
+
+	std::cerr << RED << "PATH = " << NC << path << std::endl;
 
 	if (!isSafePath( route.getRoot(), uri ))
 		return (new Response( 403, "Forbidden" ));
