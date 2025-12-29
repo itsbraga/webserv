@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 00:03:36 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 02:10:25 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 	if (it == _clients.end())
 		return ;
 
-	if (events & EPOLLERR)
+	if (events & (EPOLLERR | EPOLLHUP))
 		return (_removeClient( client_fd ));
 	if (events & EPOLLIN)
 		_handleClientRead( client_fd );
@@ -147,17 +147,18 @@ void	Webserv::_handleClientRead( int client_fd )
 	while (true)
 	{
 		ssize_t nBytes = ::recv( client_fd, buffer, sizeof(buffer), 0 );
-		if (nBytes <= 0)
+		if (nBytes > 0)
 		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
+			client.appendToReadBuffer( buffer, nBytes );
+			if (static_cast<size_t>( nBytes ) < sizeof( buffer ))
 				break;
-			return (err_msg( "recv()", strerror( errno ) ), _removeClient( client_fd ));
 		}
-
-		client.appendToReadBuffer( buffer, nBytes );
+		else if (nBytes == 0)
+			return (_removeClient( client_fd ));
+		else
+			break;
 	}
 	client.updateLastActivity();
-
 	if (client.hasCompleteRequest())
 		_processRequest( client_fd );
 }
@@ -172,6 +173,12 @@ void	Webserv::_handleClientWrite( int client_fd )
 
 	if (client.sendData())
 	{
+		if (client.shouldClose())
+		{
+			std::cout << P_BLUE "[INFO] " NC "Closing connection as requested (fd=" << client_fd
+					  << ")" << std::endl;
+			return (_removeClient( client_fd ));
+		}
 		if (!_modifyEpollEvents( client_fd, EPOLLIN ))
 			return ;
 		client.clearReadBuffer();
@@ -197,7 +204,7 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 	try {
 		__requestReceived( request );
 
-		std::string hostname = request.getHeaderValue( "Host" );
+		std::string hostname = request.getHeaderValue( "host" );
 		ServerConfig server = listener.resolveVirtualHosting( hostname );
 
 		if (isReturn( request, server ))
@@ -234,7 +241,11 @@ void	Webserv::_processRequest( int client_fd )
 	Request request( client.getReadBuffer() );
 	Response* response = _buildResponse( request, *listener );
 
-	// check de la valeur du header "connection" et si c'est a "closed", je dois fermer la connexion
+	bool should_close = false;
+	std::string connection_state = request.getHeaderValue( "connection" );
+	if (!connection_state.empty() && toLower( connection_state ) == "close")
+		should_close = true;
+
 	std::string serialized = response->getSerializedResponse();
 	delete response;
 
@@ -318,7 +329,7 @@ bool	Webserv::initListeners()
 	return (true);
 }
 
-bool	Webserv::init()
+bool	Webserv::initEpoll()
 {
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
@@ -338,7 +349,6 @@ void	Webserv::run()
 	epoll_event events[MAX_EVENTS];
 
 	std::cout << P_YELLOW "\nWaiting for new connections...\n" NC << std::endl;
-
 	while (true)
 	{
 		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
