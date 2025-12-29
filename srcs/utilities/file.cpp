@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 00:03:17 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 19:36:09 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ std::string		resolvePath( Location& route, const std::string& uri )
 {
 	std::string root = route.getRoot();
 	std::string server_root;
+
 	if (route.getServerRoot().empty() == false)
 		server_root = route.getServerRoot();
 	if (uri == "/")

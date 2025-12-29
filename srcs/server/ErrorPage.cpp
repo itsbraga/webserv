@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorPage.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:46:39 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/27 19:04:32 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 20:44:18 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,61 @@ bool	ErrorPage::findStatus( int target ) const
 }
 
 /*
+	---------------------------- [ Helpers ] -----------------------------
+*/
+static const ErrorPage*	__findErrorPage( const std::vector<ErrorPage>& pages, int status_code )
+{
+	std::vector<ErrorPage>::const_iterator it = pages.begin();
+
+	for (; it != pages.end(); ++it)
+	{
+		if (it->findStatus( status_code ))
+			return (&(*it));
+	}
+	return (NULL);
+} 
+
+static bool		__loadErrorPage( const std::string& root, const std::string& filename, std::string& content )
+{
+	std::string path = root + filename;
+
+	if (!pathExists( path ) || !isRegularFile( path ) || !isReadable( path ))
+		return (false);
+
+	try {
+		content = readFileContent( path );
+		return (true);
+	}
+	catch (const std::exception& e) {
+		return (false);
+	}
+}
+
+/*
 	------------------------- [ Handler ] --------------------------
 */
+void	ErrorPageHandler( Response& response, const Request& request, const ServerConfig& server )
+{
+	int status_code = response.getStatusCode();
+	if (status_code < 400)
+		return ;
 
-// void	ErrorPageHandler(const Response& response, const Request& request, const ServerConfig& server)
-// {
-// 	std::map<std::string, Location>::const_iterator it;
-// 	it = server.findMatchingLocation(request);
-	
-// }
+	std::cerr << "[DEBUG] ErrorPageHandler: status=" << status_code << std::endl;
+
+	Location route = server.resolveRoute( request );
+	std::cerr << "[DEBUG] route resolved, root=" << route.getRoot() << std::endl;
+
+	const std::vector<ErrorPage>& routeErrors = route.getErrorPage();
+	std::cerr << "[DEBUG] route error_pages count=" << routeErrors.size() << std::endl;
+
+	const ErrorPage* error_page = __findErrorPage( route.getErrorPage(), status_code );
+	if (!error_page)
+		error_page = __findErrorPage( server.getErrorPage(), status_code );
+
+	if (!error_page)
+		return ;
+
+	std::string body;
+	if (__loadErrorPage( route.getRoot(), error_page->getFile(), body ))
+		response.setGeneratedContent( body, "text/html; charset=utf-8" );
+}

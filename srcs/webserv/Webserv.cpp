@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 13:42:33 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 20:48:44 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,12 +202,9 @@ void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 /*
 	---------------------- [ P: Request handling ] ----------------------
 */
-Response*	Webserv::_executeRequest( Request& request, Listener& listener )
+Response*	Webserv::_executeRequest( Request& request, ServerConfig& server )
 {
 	__requestReceived( request );
-
-	std::string hostname = request.getHeaderValue( "host" );
-	ServerConfig server = listener.resolveVirtualHosting( hostname );
 
 	if (isReturn( request, server ))
 		return (returnHandler( request, server ));
@@ -235,7 +232,12 @@ void	Webserv::_processRequest( int client_fd )
 	try {
 		Request request( client.getReadBuffer() );
 		close_client = request.clientWantsClose();
-		response = _executeRequest( request, *listener );
+
+		std::string hostname = request.getHeaderValue( "host" );
+		ServerConfig server = listener->resolveVirtualHosting( hostname );
+
+		response = _executeRequest( request, server );
+		// ErrorPageHandler( *response, request, server );
 	}
 	catch (const BadRequestException& e) {
 		close_client = true;

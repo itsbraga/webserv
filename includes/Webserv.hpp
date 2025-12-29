@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 12:49:14 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 20:12:05 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ class Webserv
 		void		_handleClientRead( int client_fd );
 		void		_handleClientWrite( int client_fd );
 
-		Response*	_executeRequest( Request& request, Listener& listener );
+		Response*	_executeRequest( Request& request, ServerConfig& server );
 		void		_processRequest( int client_fd );
 
 		void		_checkClientTimeout();

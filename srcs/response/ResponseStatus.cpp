@@ -6,11 +6,21 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 15:07:03 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 19:31:58 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+/*
+	----------------------------- [ Helper ] -----------------------------
+*/
+static std::string	__buildBody( const std::string& title )
+{
+	std::string html = "<!DOCTYPE html><head><title>" + title + "</title></head>";
+	html += "<h1>" + title + "</h1><ul>";
+	return (html);
+}
 
 /*
 	--------------------- [ Private setter methods ] ---------------------
@@ -25,7 +35,7 @@ void	Response::_setErrorPage( const std::string& title )
 {
 	addHeader( "content-type", "text/html; charset=utf-8" );
 
-	std::string body = "<!DOCTYPE html><head><title>" + title + "</title></head>";
+	std::string body = __buildBody( title );
 	setBody( body );
 	addHeader( "content-length", toString( body.length() ) );
 }
