@@ -6,11 +6,39 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 00:03:36 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 05:59:40 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+/*
+	---------------------- [ Signal Handler ] -----------------------
+*/
+
+volatile sig_atomic_t g_stop = 0;
+
+void	signal_handler(int __attribute__((unused))signo)
+{
+	g_stop = 1;
+}
+
+/*
+	---------------------- [ Cgi process clean_up ] -----------------------
+*/
+
+void	Webserv::_killAllUpCgi()
+{
+	if (_up_cgis.empty() == true)
+		return ;
+	std::set<pid_t>::const_iterator it = _up_cgis.begin();
+	for (; it != _up_cgis.end(); ++it)
+	{
+		kill(*it, SIGKILL);
+		waitpid(*it, NULL, 0);
+	}
+	_up_cgis.clear();
+}
 
 /*
 	---------------------- [ Object manipulation ] -----------------------
@@ -203,7 +231,7 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 		if (isReturn( request, server ))
 			return (returnHandler( request, server ));
 		else if (isCgiRequest( request, server ))
-			return (cgiHandler( request, server ));
+			return (cgiHandler( request, server, (*this) ));
 		else
 			return (handleMethod( server, request ));
 	}
@@ -249,14 +277,14 @@ void	Webserv::_checkClientTimeout()
 	while (it != _clients.end())
 	{
 		int client_fd = it->first;
-		if (it->second.isTimedOut( CLIENT_TIMEOUT ))
+		if (it->second.isTimedOut( CLIENT_INACTIVITY_TIMEOUT ))
 		{
 			++it;
 			std::cout << P_BLUE "[INFO] " NC "Client inactive timeout (fd=" << client_fd << ")" << std::endl;
 			_removeClient( client_fd );
 			continue;
 		}
-		else if (it->second.isRequestTimedOut( SLOWLORIS_TIMEOUT ))
+		else if (it->second.isRequestTimedOut( CLIENT_SLOWLORIS_TIMEOUT ))
 		{
 			++it;
 			std::cout << P_BLUE "[INFO] " NC "Client request timeout (fd=" << client_fd << ")" << std::endl;
@@ -320,6 +348,9 @@ bool	Webserv::initListeners()
 
 bool	Webserv::init()
 {
+	signal(SIGINT, signal_handler);
+	signal(SIGTERM, signal_handler);
+	
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
 		return (err_msg( "epoll_create()", strerror( errno ) ), false);
@@ -339,20 +370,25 @@ void	Webserv::run()
 
 	std::cout << P_YELLOW "\nWaiting for new connections...\n" NC << std::endl;
 
-	while (true)
+	while (!g_stop)
 	{
 		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
 		if (nbFds == -1)
 		{
 			if (errno == EINTR)
+			{
+				if (g_stop == 1)
+					break;
 				continue;
+			}
 			err_msg( "epoll_wait()", strerror( errno ) );
 			break;
 		}
 
-		_checkClientTimeout();
 		for (int i = 0; i < nbFds; ++i)
 		{
+			if (g_stop == 1)
+				break;
 			int fd = events[i].data.fd;
 			Listener* listener = _getListenerByFd( fd );
 			if (listener)
@@ -360,5 +396,7 @@ void	Webserv::run()
 			else
 				_handleClientEvent( fd, events[i].events );
 		}
+		_checkClientTimeout();
 	}
+	_killAllUpCgi();
 }
