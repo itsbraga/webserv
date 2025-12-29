@@ -6,11 +6,21 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 02:10:25 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 08:47:46 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+/*
+	---------------------- [ Signal Handler ] -----------------------
+*/
+volatile sig_atomic_t g_stop = 0;
+
+void	signal_handler(int __attribute__((unused))signo )
+{
+	g_stop = 1;
+}
 
 /*
 	---------------------- [ Object manipulation ] -----------------------
@@ -43,6 +53,19 @@ static void		__requestReceived( Request& request )
 	std::cout << BOLD PINK "URI: " NC << request.getUri() << std::endl;
 	std::cout << BOLD PINK "Headers:\n" NC << request.printHeaderMap() << std::endl;
 	std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+}
+
+/*
+	--------------------------- [ P: Getter ] ----------------------------
+*/
+Listener*	Webserv::_getListenerByFd( int fd )
+{
+	for (size_t i = 0; i < _listeners.size(); ++i)
+	{
+		if (_listeners[i].socket_fd == fd)
+			return (&_listeners[i]);
+	}
+	return (NULL);
 }
 
 /*
@@ -98,7 +121,7 @@ bool	Webserv::_modifyEpollEvents( int fd, unsigned int events )
 }
 
 /*
-	--------------- [ P: Client & Server events handling ] ---------------
+	--------------- [ P: Client & Listener events handling ] ---------------
 */
 void	Webserv::_handleListenerEvent( Listener& listener )
 {
@@ -116,23 +139,8 @@ void	Webserv::_handleListenerEvent( Listener& listener )
 
 		Client new_client( client_fd, listener.socket_fd );
 		_clients.insert( std::make_pair( client_fd, new_client ) );
-
 		std::cout << P_BLUE "[INFO] " NC "Client accepted (fd=" << client_fd << ")" << std::endl; 
 	}
-}
-
-void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
-{
-	std::map<int, Client>::iterator it = _clients.find( client_fd );
-	if (it == _clients.end())
-		return ;
-
-	if (events & (EPOLLERR | EPOLLHUP))
-		return (_removeClient( client_fd ));
-	if (events & EPOLLIN)
-		_handleClientRead( client_fd );
-	if (events & EPOLLOUT)
-		_handleClientWrite( client_fd );
 }
 
 void	Webserv::_handleClientRead( int client_fd )
@@ -186,14 +194,18 @@ void	Webserv::_handleClientWrite( int client_fd )
 	}
 }
 
-Listener*	Webserv::_getListenerByFd( int fd )
+void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 {
-	for (size_t i = 0; i < _listeners.size(); ++i)
-	{
-		if (_listeners[i].socket_fd == fd)
-			return (&_listeners[i]);
-	}
-	return (NULL);
+	std::map<int, Client>::iterator it = _clients.find( client_fd );
+	if (it == _clients.end())
+		return ;
+
+	if (events & (EPOLLERR | EPOLLHUP))
+		return (_removeClient( client_fd ));
+	if (events & EPOLLIN)
+		_handleClientRead( client_fd );
+	if (events & EPOLLOUT)
+		_handleClientWrite( client_fd );
 }
 
 /*
@@ -210,7 +222,7 @@ Response*	Webserv::_buildResponse( Request& request, Listener& listener )
 		if (isReturn( request, server ))
 			return (returnHandler( request, server ));
 		else if (isCgiRequest( request, server ))
-			return (cgiHandler( request, server ));
+			return (cgiHandler( request, server, (*this) ));
 		else
 			return (handleMethod( server, request ));
 	}
@@ -241,10 +253,10 @@ void	Webserv::_processRequest( int client_fd )
 	Request request( client.getReadBuffer() );
 	Response* response = _buildResponse( request, *listener );
 
-	bool should_close = false;
-	std::string connection_state = request.getHeaderValue( "connection" );
-	if (!connection_state.empty() && toLower( connection_state ) == "close")
-		should_close = true;
+	std::string req_conn = request.getHeaderValue( "connection" );
+	std::string resp_conn = response->getHeaderValue( "connection" );
+	if (req_conn == "close" || resp_conn == "close")
+		client.setShouldClose( true );
 
 	std::string serialized = response->getSerializedResponse();
 	delete response;
@@ -253,6 +265,9 @@ void	Webserv::_processRequest( int client_fd )
 	_modifyEpollEvents( client_fd, EPOLLIN | EPOLLOUT );
 }
 
+/*
+	------------------- [ P: Client timeout cleanup ] --------------------
+*/
 void	Webserv::_checkClientTimeout()
 {
 	std::map<int, Client>::iterator it = _clients.begin();
@@ -260,14 +275,14 @@ void	Webserv::_checkClientTimeout()
 	while (it != _clients.end())
 	{
 		int client_fd = it->first;
-		if (it->second.isTimedOut( CLIENT_TIMEOUT ))
+		if (it->second.isTimedOut( CLIENT_INACTIVITY_TIMEOUT ))
 		{
 			++it;
 			std::cout << P_BLUE "[INFO] " NC "Client inactive timeout (fd=" << client_fd << ")" << std::endl;
 			_removeClient( client_fd );
 			continue;
 		}
-		else if (it->second.isRequestTimedOut( SLOWLORIS_TIMEOUT ))
+		else if (it->second.isRequestTimedOut( CLIENT_SLOWLORIS_TIMEOUT ))
 		{
 			++it;
 			std::cout << P_BLUE "[INFO] " NC "Client request timeout (fd=" << client_fd << ")" << std::endl;
@@ -277,6 +292,24 @@ void	Webserv::_checkClientTimeout()
 		else
 			++it;
 	}
+}
+
+/*
+	-------------------- [ P: CGI process clean_up ] ---------------------
+*/
+void	Webserv::_killAllUpCgi()
+{
+	if (_up_cgis.empty())
+		return ;
+
+	std::set<pid_t>::const_iterator it = _up_cgis.begin();
+
+	for (; it != _up_cgis.end(); ++it)
+	{
+		kill( *it, SIGKILL );
+		waitpid( *it, NULL, 0 );
+	}
+	_up_cgis.clear();
 }
 
 /*
@@ -301,7 +334,6 @@ bool	Webserv::initListeners()
 
 		serversByPort[port].push_back( server );
 	}
-
 	std::cout << "Unique ports: " << serversByPort.size() << std::endl;
 
 	std::map<unsigned short, std::vector<ServerConfig*> >::iterator it = serversByPort.begin();
@@ -318,7 +350,6 @@ bool	Webserv::initListeners()
 
 		if (!listener.init())
 			return (false);
-
 		std::cout << "Listener created with fd=" << listener.socket_fd << std::endl;
 
 		_listeners.push_back( listener );
@@ -331,6 +362,9 @@ bool	Webserv::initListeners()
 
 bool	Webserv::initEpoll()
 {
+	signal( SIGINT, signal_handler );
+	signal( SIGTERM, signal_handler );
+	
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
 		return (err_msg( "epoll_create()", strerror( errno ) ), false);
@@ -343,26 +377,32 @@ bool	Webserv::initEpoll()
 	return (true);
 }
 
-// handle signals & cleanup
+// handle cleanup
 void	Webserv::run()
 {
 	epoll_event events[MAX_EVENTS];
 
 	std::cout << P_YELLOW "\nWaiting for new connections...\n" NC << std::endl;
-	while (true)
+	while (!g_stop)
 	{
 		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
 		if (nbFds == -1)
 		{
 			if (errno == EINTR)
+			{
+				if (g_stop == 1)
+					break;
 				continue;
+			}
 			err_msg( "epoll_wait()", strerror( errno ) );
 			break;
 		}
 
-		_checkClientTimeout();
 		for (int i = 0; i < nbFds; ++i)
 		{
+			if (g_stop == 1)
+				break;
+
 			int fd = events[i].data.fd;
 			Listener* listener = _getListenerByFd( fd );
 			if (listener)
@@ -370,5 +410,7 @@ void	Webserv::run()
 			else
 				_handleClientEvent( fd, events[i].events );
 		}
+		_checkClientTimeout();
 	}
+	_killAllUpCgi();
 }

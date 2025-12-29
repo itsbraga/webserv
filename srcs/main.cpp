@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 15:38:02 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 01:03:04 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	main( int argc, char **argv )
 
 	if (!__initUtilities( webserv ))
 		return (FAILURE);
-	if (!webserv.init())
+	if (!webserv.initEpoll())
 		return (FAILURE);
 	webserv.run();
 	return (SUCCESS);

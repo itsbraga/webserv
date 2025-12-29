@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 01:02:54 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 08:20:51 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@
 # include <vector>
 # include <map>
 # include <set>
+# include <csignal>
 
 // External C
 # include <sys/epoll.h>
+# include <sys/select.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
@@ -61,6 +63,8 @@
 # include "Response.hpp"
 # include "Cgi.hpp"
 
+void	signal_handler( int __attribute__((unused))signo );
+
 /**************************\
  *	Method Handler
 \**************************/
@@ -86,6 +90,7 @@ class Webserv
 		std::vector<ServerConfig>	_servers;
 		std::vector<Listener>		_listeners;
 		std::map<int, Client>		_clients;
+		std::set<pid_t>				_up_cgis;
 
 		Listener*	_getListenerByFd( int fd );
 
@@ -100,9 +105,10 @@ class Webserv
 		void		_handleClientWrite( int client_fd );
 
 		Response*	_buildResponse( Request& request, Listener& listener );
-		// void		_processRequest( int client_fd );
 		void		_processRequest( int client_fd );
+
 		void		_checkClientTimeout();
+		void		_killAllUpCgi();
 
 		Webserv( const Webserv& toCopy );
 		Webserv&	operator=( const Webserv& toCopy );
@@ -115,6 +121,9 @@ class Webserv
 		bool		initListeners();
 		bool		initEpoll();
 		void		run();
+
+		void		addCgiPid( pid_t pid ) 		{ _up_cgis.insert( pid ); }
+		void		removeCgiPid( pid_t pid ) 	{ _up_cgis.erase( pid ); };
 };
 
 /**************************\
