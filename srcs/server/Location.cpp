@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 20:07:14 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 20:32:38 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,14 @@ void	Location::setIndex( const std::string& index )
 		return ;
 
 	_index = index;
+}
+
+void	Location::setErrorPage( const std::vector<ErrorPage>& pages )
+{
+	if (pages.empty())
+		return ;
+
+	_err_page = pages;
 }
 	
 void	Location::setAllowedMethods( const std::vector<std::string>& allowed_methods )

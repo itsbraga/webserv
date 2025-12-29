@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 12:24:36 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 20:37:41 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,10 +153,12 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 
 	if (it == _locations.end())
 	{
+		std::cout << "matching location not found" << std::endl;
 		Location defaultLoc;
 		defaultLoc.setUri( "/" );
 		defaultLoc.setServerRoot( _root );
 		defaultLoc.setIndex( _index );
+		defaultLoc.setErrorPage( _err_page );
 		defaultLoc.setAutoIndex( _auto_index );
 		defaultLoc.setClientMaxSizeBody( _client_max_body_size );
 		defaultLoc.setUploadAllowed( false );
@@ -164,6 +166,9 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 	}
 
 	Location resolved = it->second;
+
+	std::cout << "matching location found!" << std::endl;
+
 	if (resolved.getRoot().empty())
 		resolved.setServerRoot( _root );
 	if (resolved.getIndex().empty())
