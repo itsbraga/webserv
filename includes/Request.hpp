@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 19:42:27 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 16:07:04 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 09:23:26 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,6 @@ class Request : public Message
 
 		const std::string&	getMethod() const	{ return (_method); }
 		const std::string&	getUri() const		{ return (_uri); }
+
+		bool				clientWantsClose() const;
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 20:30:02 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 09:23:41 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,4 +162,13 @@ void	Request::process()
 
 	if (_method == "POST")
 		_bodyCheck( _raw_request );
+}
+
+/*
+	-------------------- [ Client connection check ] ---------------------
+*/
+bool	Request::clientWantsClose() const
+{
+	std::string connection_state = getHeaderValue("connection");
+	return (connection_state == "close");
 }

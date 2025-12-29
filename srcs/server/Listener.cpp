@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Listener.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:44:33 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 20:27:04 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 09:30:02 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,9 @@ int		Listener::acceptClient()
 	int client_fd = ::accept( socket_fd, NULL, NULL );
 	if (client_fd == -1)
 	{
-		if (errno != EAGAIN && errno != EWOULDBLOCK)
-			err_msg( "accept()", strerror( errno ) );
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			return (-1);
+		err_msg( "accept()", strerror( errno ) );
 		return (-1);
 	}
 
