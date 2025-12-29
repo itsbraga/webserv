@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 20:12:05 by annabrag         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/12/29 20:51:49 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #pragma once
 
@@ -125,6 +126,8 @@ class Webserv
 
 		void		addCgiPid( pid_t pid ) 		{ _up_cgis.insert( pid ); }
 		void		removeCgiPid( pid_t pid ) 	{ _up_cgis.erase( pid ); };
+
+		static bool	setCloseOnExec( int fd );
 };
 
 /**************************\

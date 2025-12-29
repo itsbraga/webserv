@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 20:48:44 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 20:50:38 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,18 @@ static void		__requestReceived( Request& request )
 	std::cout << BOLD PINK "URI: " NC << request.getUri() << std::endl;
 	std::cout << BOLD PINK "Headers:\n" NC << request.printHeaderMap() << std::endl;
 	std::cout << P_YELLOW "------------------------\n" NC << std::endl;
+}
+
+/*
+	--------------------------- [ P: Setter ] ----------------------------
+*/
+
+bool	Webserv::setCloseOnExec( int fd )
+{
+	if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
+		return (err_msg( "fcntl(F_SETFD,  FD_CLOEXEC)", strerror( errno ) ), false);
+	else
+		return (true);
 }
 
 /*
@@ -207,9 +219,15 @@ Response*	Webserv::_executeRequest( Request& request, ServerConfig& server )
 	__requestReceived( request );
 
 	if (isReturn( request, server ))
+	{
+		std::cerr << "RETURN\n";
 		return (returnHandler( request, server ));
+	}
 	else if (isCgiRequest( request, server ))
+	{
+		std::cerr << "CGI\n";
 		return (cgiHandler( request, server, (*this) ));
+	}
 	else
 		return (methodHandler( server, request ));
 }
@@ -365,6 +383,11 @@ bool	Webserv::initEpoll()
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1)
 		return (err_msg( "epoll_create()", strerror( errno ) ), false);
+	if (!setCloseOnExec(_epoll_fd))
+	{
+		::close(_epoll_fd);
+		return (false);
+	}
 
 	for (size_t i = 0; i < _listeners.size(); ++i)
 	{
@@ -374,7 +397,6 @@ bool	Webserv::initEpoll()
 	return (true);
 }
 
-// handle cleanup
 void	Webserv::run()
 {
 	epoll_event events[MAX_EVENTS];
