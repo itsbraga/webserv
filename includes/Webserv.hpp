@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 18:34:52 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 01:02:54 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ class Webserv
 
 		void		addServerConfig( ServerConfig& server );
 		bool		initListeners();
-		bool		init();
+		bool		initEpoll();
 		void		run();
 };
 
