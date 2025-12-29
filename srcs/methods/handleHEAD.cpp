@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleHEAD.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/28 21:33:44 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:53:38 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ Response*	handleHEAD( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
-	if (!server.isMethodAllowed( route, "head" ))
+	if (!server.isMethodAllowed( route, "HEAD" ))
 		return (new Response( 405, "Method Not Allowed" ));
 
-	std::string	uri = request.getUri();
+	std::string	uri = extractPathFromUri( request.getUri() );
 	std::string	path = resolvePath( route, uri );
 
 	if (!pathExists( path ))

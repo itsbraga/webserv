@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 21:22:00 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 12:54:58 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-static Response*	__buildPOSTResponse( bool created, const std::string& uri )
+static Response*	__generateResponse( bool created, const std::string& uri )
 {
 	Response* response = new Response( created ? 201 : 200, \
 									created ? "Created" : "OK" );
@@ -32,9 +32,9 @@ static Response*	__uploadPOST( const std::string& path, const std::string& route
 		uri = handleUpload( body, content_type, path, route );
 	}
 	catch (const std::exception& e) {
-		return (handleHttpException( e ));
+		return (httpExceptionHandler( e ));
 	}
-	return (__buildPOSTResponse( !uri.empty(), uri ));
+	return (__generateResponse( !uri.empty(), uri ));
 }
 
 static Response*	__classicPOST( const std::string& path, const std::string& uri, const std::string& body )
@@ -50,7 +50,7 @@ static Response*	__classicPOST( const std::string& path, const std::string& uri,
 
 	bool exists = isRegularFile( path );
 	saveFile( path, body );
-	return (__buildPOSTResponse( !exists, uri ));
+	return (__generateResponse( !exists, uri ));
 }
 
 static bool	__isValidBodySize( const Request& request, const Location& route )
@@ -68,10 +68,10 @@ Response*	handlePOST( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
 
-	if (!server.isMethodAllowed( route, "post" ))
+	if (!server.isMethodAllowed( route, "POST" ))
 		return (new Response( 405, "Method Not Allowed" ));
 
-	std::string uri = request.getUri();
+	std::string	uri = extractPathFromUri( request.getUri() );
 	std::string path = route.getRoot() + uri;
 
 	if (!isSafePath( route.getRoot(), uri ))

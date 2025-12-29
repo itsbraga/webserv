@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 09:26:11 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 12:18:55 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 	if (start == std::string::npos)
 		return (true);
 
-	int content_length = std::atoi( cl_value.c_str() + start);
-	if (content_length < 0)
+	char *endptr;
+	long content_length = std::strtol( cl_value.c_str() + start, &endptr, 10 );
+	if (*endptr != '\0' || content_length < 0 || content_length > DEFAULT_MAX_BODY_SIZE)
 		return (true);
 
 	size_t body_received = _read_buffer.size() - body_start;

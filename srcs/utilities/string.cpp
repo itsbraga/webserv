@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 13:08:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 18:51:22 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/29 12:51:14 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,25 @@ void	lowerStr( std::string& str )
 		str[i] = std::tolower( static_cast<unsigned char>( str[i] ) );
 }
 
-std::string		extractQueryString( const std::string &uri )
+std::string		extractPathFromUri( const std::string& uri )
 {
-	std::string result;
-
 	size_t pos = uri.find('?');
 	if (pos != std::string::npos)
-	{
-		result = uri.substr(pos + 1);
-		return (result);
-	}
+		return (uri.substr( 0, pos ));
+	else
+		return (uri);
+}
+
+std::string		extractQueryString( const std::string &uri )
+{
+	size_t pos = uri.find('?');
+	if (pos != std::string::npos)
+		return (uri.substr( pos + 1 ));
 	else
 		return ("");
 }
 
-std::string	decodeUri( const std::string& uri )
+std::string		decodeUri( const std::string& uri )
 {
 	std::string result;
 	size_t i = 0;
@@ -66,9 +70,9 @@ std::string	decodeUri( const std::string& uri )
 		}
 		else if (uri[i] == '%' && i + 2 < uri.length())
 		{
-			std::string hex = uri.substr(i + 1, 2);
+			std::string hex = uri.substr( i + 1, 2 );
 			long converted = strtol( hex.c_str(), NULL, 16 );
-			char decoded_char = static_cast<char>(converted);
+			char decoded_char = static_cast<char>( converted );
 			result += decoded_char;
 			i += 3;
 		}
@@ -80,4 +84,3 @@ std::string	decodeUri( const std::string& uri )
 	}
 	return (result);
 }
-
