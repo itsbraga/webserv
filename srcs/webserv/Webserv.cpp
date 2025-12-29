@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 08:47:46 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 09:24:29 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,9 +253,7 @@ void	Webserv::_processRequest( int client_fd )
 	Request request( client.getReadBuffer() );
 	Response* response = _buildResponse( request, *listener );
 
-	std::string req_conn = request.getHeaderValue( "connection" );
-	std::string resp_conn = response->getHeaderValue( "connection" );
-	if (req_conn == "close" || resp_conn == "close")
+	if (request.clientWantsClose() || response->getHeaderValue( "connection" ) == "close")
 		client.setShouldClose( true );
 
 	std::string serialized = response->getSerializedResponse();

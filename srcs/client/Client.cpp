@@ -6,7 +6,7 @@
 /*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 08:24:33 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 09:26:11 by art3mis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,14 @@ bool	Client::hasDataToSend() const
 
 bool	Client::sendData()
 {
-	if (_write_buffer.empty())
-		return (true);
-
-	ssize_t sent = ::send( _socket_fd, _write_buffer.c_str(), _write_buffer.size(), 0 );
-	if (sent < 0)
-		return (false);
-
-	_write_buffer.erase( 0, sent );
+	while (!_write_buffer.empty())
+	{
+		ssize_t sent = ::send( _socket_fd, _write_buffer.c_str(), _write_buffer.size(), 0 );
+		if (sent > 0)
+			_write_buffer.erase( 0, sent );
+		else
+			break;
+	}
 	return (_write_buffer.empty());
 }
 
