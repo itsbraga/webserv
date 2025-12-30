@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 20:37:41 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 20:03:37 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ ServerConfig&		ServerConfig::operator=( const ServerConfig& toCopy )
 		_cgi_extension = toCopy._cgi_extension;
 		_return_code = toCopy._return_code;
 		_return_uri = toCopy._return_uri; 
-		_err_page = toCopy._err_page;
+		_err_pages = toCopy._err_pages;
 		_locations = toCopy._locations;
 	}
 	return (*this);
@@ -117,29 +117,29 @@ std::map<std::string, Location>::const_iterator		ServerConfig::findMatchingLocat
 
 	std::map<std::string, Location>::const_iterator it = _locations.begin();
 	std::map<std::string, Location>::const_iterator current_match = _locations.end();
-	size_t current_match_length = 0;
+	size_t current_match_len = 0;
 	
 	for (; it != _locations.end(); ++it)
 	{
 		std::string path = it->first;
-		size_t path_length = path.length();
+		size_t path_len = path.size();
 		if (path == "/")
 		{
-			if (path_length > current_match_length)
+			if (path_len > current_match_len)
 			{
 				current_match = it;
-				current_match_length = path_length;
+				current_match_len = path_len;
 			}
 			continue;
 		}
 		if (uri.find( path ) == 0)
 		{
-			if (uri.length() == path_length || uri[path_length] == '/')
+			if (uri.size() == path_len || uri[path_len] == '/')
 			{
-				if (path_length > current_match_length)
+				if (path_len > current_match_len)
 				{
 					current_match = it;
-					current_match_length = path_length;
+					current_match_len = path_len;
 				}
 			}
 		}
@@ -153,21 +153,21 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 
 	if (it == _locations.end())
 	{
-		std::cout << "matching location not found" << std::endl;
+		// std::cout << BOLD RED "Matching location NOT FOUND\n" NC << std::endl;
 		Location defaultLoc;
+
 		defaultLoc.setUri( "/" );
 		defaultLoc.setServerRoot( _root );
 		defaultLoc.setIndex( _index );
-		defaultLoc.setErrorPage( _err_page );
+		defaultLoc.setErrorPages( _err_pages );
 		defaultLoc.setAutoIndex( _auto_index );
 		defaultLoc.setClientMaxSizeBody( _client_max_body_size );
 		defaultLoc.setUploadAllowed( false );
 		return (defaultLoc);
 	}
 
+	// std::cout << BOLD P_GREEN "Matching location FOUND!\n" NC << std::endl;
 	Location resolved = it->second;
-
-	std::cout << "matching location found!" << std::endl;
 
 	if (resolved.getRoot().empty())
 		resolved.setServerRoot( _root );
@@ -175,6 +175,43 @@ Location	ServerConfig::resolveRoute( const Request& request ) const
 		resolved.setIndex( _index );
 	if (resolved.getClientMaxSizeBody().empty())
 		resolved.setClientMaxSizeBody( _client_max_body_size );
+	if (resolved.getErrorPages().empty())
+	{
+		resolved.setErrorPages( _err_pages );
+		// std::cout << BOLD P_ORANGE "resolved.getErrorPages() " RED "EMPTY ---> server heritage: " NC << std::endl;
+		// std::vector<ErrorPage>::const_iterator it = _err_pages.begin();
+
+		// for (; it != _err_pages.end(); ++it)
+		// {
+		// 	std::cout << " file: " << it->getFile() << " | status: ";
+		// 	const std::vector<int>& statuses = it->getStatus();
+		// 	for (size_t i = 0; i < statuses.size(); ++i)
+		// 	{
+		// 		std::cout << statuses[i];
+		// 		if (i < statuses.size() - 1)
+		// 			std::cout << ", ";
+		// 	}
+		// 	std::cout << std::endl;
+		// }
+	}
+	// else
+	// {
+	// 	std::cout << "resolved.getErrorPages(): " << std::endl;
+	// 	std::vector<ErrorPage>::const_iterator it = _err_pages.begin();
+
+	// 	for (; it != _err_pages.end(); ++it)
+	// 	{
+	// 		std::cout << " file: " << it->getFile() << " | status: ";
+	// 		const std::vector<int>& statuses = it->getStatus();
+	// 		for (size_t i = 0; i < statuses.size(); ++i)
+	// 		{
+	// 			std::cout << statuses[i];
+	// 			if (i < statuses.size() - 1)
+	// 				std::cout << ", ";
+	// 		}
+	// 		std::cout << std::endl;
+	// 	}
+	// }
 	return (resolved);
 }
 
@@ -202,14 +239,14 @@ std::ostream&	operator<<( std::ostream &os, const ServerConfig& server )
 		os << P_BLUE << "ROOT -> " << P_YELLOW << server.getRoot() << NC << std::endl;
 	if (server.getIndex() != "")
 		os << P_BLUE << "INDEX -> " << P_YELLOW << server.getIndex() << NC << std::endl;
-	if (server.getErrorPage().size() != 0)
+	if (server.getErrorPages().size() != 0)
 	{
-		for (size_t i = 0; i < server.getErrorPage().size(); ++i)
+		for (size_t i = 0; i < server.getErrorPages().size(); ++i)
 		{
 			os << P_BLUE << "ERR_PAGE -> " << NC;
-			for (size_t j = 0; j < server.getErrorPage()[i].getStatus().size(); ++j)
-				os << P_YELLOW << server.getErrorPage()[i].getStatus()[j] << " -> ";
-			os << server.getErrorPage()[i].getFile() << NC << std::endl;
+			for (size_t j = 0; j < server.getErrorPages()[i].getStatus().size(); ++j)
+				os << P_YELLOW << server.getErrorPages()[i].getStatus()[j] << " -> ";
+			os << server.getErrorPages()[i].getFile() << NC << std::endl;
 		}
 	}
 	os << P_BLUE << "AUTOINDEX -> " << P_YELLOW;

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 12:57:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 21:27:22 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ std::string	Parser::normalizePath(const std::string& path) const
 {
 	std::string normalized_path = path;
 	
-	if (path.length() > 1)
+	if (path.size() > 1)
 	{
-		if (path[path.length() - 1] == '/')
-			normalized_path = path.substr(0, path.length() - 1);
+		if (path[path.size() - 1] == '/')
+			normalized_path = path.substr(0, path.size() - 1);
 	}
 	return (normalized_path);
 }
@@ -110,7 +110,7 @@ bool	Parser::isExtension( const std::string& to_compare ) const
 
 bool	Parser::isStatusCode( const std::string& to_compare ) const
 {
-	if (!isNumber( to_compare ) && to_compare.length() != 3)
+	if (!isNumber( to_compare ) && to_compare.size() != 3)
 		return (false);
 
 	unsigned int to_find;
@@ -166,14 +166,14 @@ bool	Parser::isValidBodySize( const std::string& value ) const
 		return (false);
 	
 	size_t i = 0;
-	while (i < value.length() && std::isdigit( value[i] ))
+	while (i < value.size() && std::isdigit( value[i] ))
 		++i;
 	
 	if (i == 0)
 		return (false);
-	else if (i == value.length())
+	else if (i == value.size())
 		return (true);
-	else if (i != value.length() - 1)
+	else if (i != value.size() - 1)
 		return (false);
 
 	char unit = value[i];

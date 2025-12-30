@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 15:12:36 by kbaridon          #+#    #+#             */
-/*   Updated: 2025/12/28 20:01:42 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 19:22:46 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ std::pair<std::string, std::string>		Message::_parseHeaderLine( const std::strin
 	if (name.find( ' ' ) != std::string::npos || name.find( '\t' ) != std::string::npos)
 		throw BadRequestException( "Space in header name" );
 	
-	lowerStr( name );
+	name = toLower( name );
 
 	size_t value_start = colonPos + 1;
 	while (value_start < line.size() && (line[value_start] == ' ' || line[value_start] == '\t'))

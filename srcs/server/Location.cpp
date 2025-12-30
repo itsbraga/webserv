@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 03:17:07 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 20:32:38 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 17:08:48 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Location&		Location::operator=( const Location& toCopy )
 		_uri = toCopy._uri;
 		_root = toCopy._root;
 		_index = toCopy._index;
-		_err_page = toCopy._err_page;
+		_err_pages = toCopy._err_pages;
 		_allowed_methods = toCopy._allowed_methods;
 		_cgi_extension = toCopy._cgi_extension;
 		_client_max_body_size = toCopy._client_max_body_size;
@@ -72,12 +72,9 @@ void	Location::setIndex( const std::string& index )
 	_index = index;
 }
 
-void	Location::setErrorPage( const std::vector<ErrorPage>& pages )
+void	Location::setErrorPages( const std::vector<ErrorPage>& pages )
 {
-	if (pages.empty())
-		return ;
-
-	_err_page = pages;
+	_err_pages = pages;
 }
 	
 void	Location::setAllowedMethods( const std::vector<std::string>& allowed_methods )

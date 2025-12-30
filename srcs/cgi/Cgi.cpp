@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 18:48:04 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,7 +270,7 @@ char**	createEnvp( const Request& request, const ServerConfig& server, const std
 		std::memset(envp, 0, (envp_vec.size() + 1) * sizeof(char *));
 		for (size_t i = 0; i < envp_vec.size(); ++i)
 		{
-			size_t length = envp_vec[i].length();
+			size_t length = envp_vec[i].size();
 			envp[i] = new char[length + 1];
 			std::strcpy(envp[i], envp_vec[i].c_str());
 		}
@@ -373,7 +373,7 @@ std::multimap<std::string, std::string>	handleOutputHeaders( const std::string& 
 		header_pair.second = line.substr(colon + 1);
 		
 		size_t j = 0;
-		while (j < header_pair.second.length() && \
+		while (j < header_pair.second.size() && \
 			(header_pair.second[j] == ' ' || header_pair.second[j] == '\t'))
 			j++;
 		header_pair.second = header_pair.second.substr(j);
@@ -388,7 +388,7 @@ std::string	toUpperCgi( const std::string& name )
 {
 	std::string formated_name;
 
-	for (size_t i = 0; i < name.length(); ++i)
+	for (size_t i = 0; i < name.size(); ++i)
 	{
 		if (name[i] == '-')
 			formated_name += '_';
