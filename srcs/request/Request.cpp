@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/30 19:59:33 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:55:33 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ void	Request::_headerCheck( const std::string& serialized )
 void	Request::_handleChunkedBody( const std::string& serialized, size_t body_start )
 {
 	std::string te_value = getHeaderValue( "transfer-encoding" );
+	if (te_value.empty())
+		return ;
 
 	if (te_value.find( "chunked" ) != std::string::npos)
 	{
@@ -130,11 +132,28 @@ void	Request::_handleBody( const std::string& serialized, size_t body_start )
 	size_t content_length = 0;
 	if (!parseContentLength( cl_value, content_length ))
 			throw BadRequestException( "Invalid Content-Length" );
+
 	if (body_start + content_length > serialized.size())
 			throw BadRequestException( "Body shorter than Content-Length" );
 
 	_body = serialized.substr( body_start, content_length );
 }
+
+// void	Request::_handleBody( const std::string& serialized, size_t body_start )
+// {
+// 	std::string cl_value = getHeaderValue( "content-length" );
+// 	if (cl_value.empty())
+// 		return ;
+
+// 	int content_length = std::atoi( cl_value.c_str() );
+// 	if (content_length > 0)
+// 	{
+// 		if (body_start + static_cast<size_t>( content_length ) > serialized.size())
+// 			throw BadRequestException( "Body shorter than Content-Length" );
+		
+// 		_body = serialized.substr( body_start, content_length );
+// 	}
+// }
 
 void	Request::_bodyCheck( const std::string& serialized )
 {

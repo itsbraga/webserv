@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/30 20:01:53 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:55:42 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,9 @@ static bool	__isValidBodySize( const Request& request, const Location& route )
 	std::string cl_value = request.getHeaderValue( "content-length" );
 	std::string max_config = route.getClientMaxSizeBody();
 
-	size_t body_size = 0;
-	parseContentLength( cl_value, body_size );
+	size_t body_size;
+	if (!parseContentLength( cl_value, body_size ))
+		return (false);
 
 	size_t max_body_size = max_config.empty() ? DEFAULT_MAX_BODY_SIZE : convertBodySize( max_config );
 	return (body_size <= max_body_size);
