@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 17:55:12 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 15:46:40 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 14:35:51 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,14 @@ class Location;
 \**************************/
 
 // Cgi.cpp
-Response*		doCgi( const Request& request, const ServerConfig& server, const std::string& path, Webserv& webserv );
+Response*		doCgi( int client_fd, const Request& request, const ServerConfig& server, const std::string& path, Webserv& webserv );
 void			childExec( const Request& request, const ServerConfig& server, const std::string& path, int (&pipes)[2][2] );
 char**			createEnvp( const Request& request, const ServerConfig& server, const std::string& path );
 Response*		handleOutput( const std::string& output );
 std::multimap<std::string, std::string>		handleOutputHeaders( const std::string& headers_str );
 std::string		toUpperCgi( const std::string& name );
 bool			isCgiRequest(const Request& request, const ServerConfig& server);
+void			freeEnvp(char **envp);
 bool			setCgiCloseOnExec(int *pipe_parent, int *pipe_children);
 
-Response*		cgiHandler( const Request& request, const ServerConfig& server, Webserv& webserv );
+Response*		cgiHandler( int client_fd, const Request& request, const ServerConfig& server, Webserv& webserv );

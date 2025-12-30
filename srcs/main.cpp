@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 01:03:04 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 19:29:29 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,23 @@ int	main( int argc, char **argv )
 		parser.parse();
 		std::cout << BOLD P_GREEN "PARSING OK\n" NC << std::endl;
 		parser.createAllObjects( webserv );
+
+		if (!__initUtilities( webserv ))
+			return (FAILURE);
+		if (!webserv.initEpoll())
+			return (FAILURE);
+
+		webserv.run();
+	}
+	catch (const ChildErrorException& e) {
+		if (e.getErrorCode() == 502)
+			return (CGI_ERROR);
+		else
+			return (INTERNAL_ERROR);
 	}
 	catch (const std::exception& e) {
 		return (err_msg( "Parser", e.what() ), FAILURE);
 	}
 
-	if (!__initUtilities( webserv ))
-		return (FAILURE);
-	if (!webserv.initEpoll())
-		return (FAILURE);
-	webserv.run();
 	return (SUCCESS);
 }

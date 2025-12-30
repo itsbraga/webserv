@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:56:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 15:32:26 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 19:17:22 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ class Webserv
 		std::vector<ServerConfig>	_servers;
 		std::vector<Listener>		_listeners;
 		std::map<int, Client>		_clients;
+		std::map<int, int>			_cgi_pipes;
 		std::set<pid_t>				_up_cgis;
 
 		Listener*	_getListenerByFd( int fd );
@@ -105,10 +106,16 @@ class Webserv
 		void		_handleClientRead( int client_fd );
 		void		_handleClientWrite( int client_fd );
 
-		Response*	_executeRequest( Request& request, Listener& listener );
+		Response*	_executeRequest( int client_fd, Request& request, Listener& listener );
 		void		_processRequest( int client_fd );
 
 		void		_checkClientTimeout();
+		//CGI
+		void		_handleCgiEvent(int pipe, unsigned int events);
+		void		_handleCgiResponse(int client_fd);
+		void		_killCgi(int client_fd, int status_code);
+		void		_checkCgiTimeout();
+		bool		_isCgiPipe(int fd) const;
 		void		_killAllUpCgi();
 
 		Webserv( const Webserv& toCopy );
@@ -123,10 +130,29 @@ class Webserv
 		bool		initEpoll();
 		void		run();
 
+		int			getEpollFd() const { return _epoll_fd; }
+		Client&		getClient(int fd) { return _clients.at(fd); }
+
+		//CGI
+		void		insertCgiPipe( int pipe, int client_fd ) { _cgi_pipes[pipe] = client_fd; }
 		void		addCgiPid( pid_t pid ) 		{ _up_cgis.insert( pid ); }
 		void		removeCgiPid( pid_t pid ) 	{ _up_cgis.erase( pid ); };
-
+		void		cleanUpForChild();
 		static bool	setCloseOnExec( int fd );
+};
+
+class ChildErrorException : public std::exception
+{
+	private:
+    	std::string _what;
+		int 		_error_code;
+
+	public:
+  		ChildErrorException(const std::string& msg, const int error_code) : _what(msg), _error_code(error_code) {}
+    	virtual ~ChildErrorException() throw() {}
+    	virtual const char* what() const throw() { return _what.c_str(); }
+
+		int	getErrorCode() const { return(_error_code); }
 };
 
 /**************************\

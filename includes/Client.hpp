@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 08:24:24 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 18:14:04 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,13 @@ class Client
 		time_t			_request_start;
 		bool			_should_close;
 
+		pid_t			_cgi_pid;
+		int				_cgi_pipe;
+		std::string		_cgi_output;
+		time_t			_cgi_start;
+		time_t			_cgi_last_read;
+		bool			_wait_for_cgi;
+
 		bool			_isChunkedComplete( size_t body_start ) const;
 		bool			_isContentLengthComplete( size_t header_end, size_t body_start ) const;
 
@@ -37,7 +44,8 @@ class Client
 	public:
 		Client( int socket_fd, int listener_fd ) : _socket_fd( socket_fd ), _listener_fd( listener_fd ),
 												_last_activity( time( NULL ) ), _request_start( time(NULL) ),
-												_should_close( false ) {}
+												_should_close( false ), _cgi_pid(-1), _cgi_pipe(-1),
+												_cgi_start(0), _cgi_last_read(0),  _wait_for_cgi(false) {}
 		~Client() {}
 
 		int					getSocketFd() const			{ return (_socket_fd); }
@@ -49,6 +57,22 @@ class Client
 
 		void			setShouldClose( bool value )	{ _should_close = value; }
 		void			resetForNextRequest()			{ _should_close = false; }
+
+		void			setCgiPid(pid_t pid) 				{ _cgi_pid = pid; }
+		void			setCgiPipe(int pipe) 				{ _cgi_pipe = pipe; }
+		void			setCgiOuput(std::string output) 	{ _cgi_output = output; }
+		void			setCgiStart(time_t start) 			{ _cgi_start = start; }
+		void			setCgiLastRead(time_t last_read)	{ _cgi_last_read = last_read; }
+		void			setWaitForCgi(bool wait)			{ _wait_for_cgi = wait; }
+
+		pid_t			getCgiPid() 						{ return (_cgi_pid); }
+		int				getCgiPipe()						{ return (_cgi_pipe); }
+		std::string&	getCgiOuput() 						{ return (_cgi_output); }
+		time_t			getCgiStart() 						{ return (_cgi_start); }
+		time_t			getCgiLastRead()					{ return (_cgi_last_read); }
+		bool			getWaitForCgi()						{ return (_wait_for_cgi); }
+
+
 
 		void			appendToReadBuffer( const char *data, size_t len );
 		void			appendToWriteBuffer( const std::string& data );

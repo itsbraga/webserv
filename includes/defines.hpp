@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:43 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 15:59:15 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 19:21:58 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,13 @@
 
 # define SUCCESS 0
 # define FAILURE 1
+
+/**************************\
+ *	Return status
+\**************************/
+
+# define INTERNAL_ERROR 1
+# define CGI_ERROR 2
 
 /**************************\
  *	Parsing
@@ -53,6 +60,7 @@
 \**************************/
 
 # define MAX_EVENTS 512
+# define EPOLL_TIMEOUT 1000
 
 /**************************\
  *	Error
