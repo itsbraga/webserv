@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/30 20:41:12 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 22:26:23 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,15 @@
 Response*	cgiHandler( int client_fd, const Request& request, const ServerConfig& server, Webserv& webserv )
 {
 	std::string root;
-	std::map<std::string, Location>::const_iterator it = server.findMatchingLocation( request );
+	Location route = server.resolveRoute(request);
 
-	if (it != server.getLocations().end() && it->second.getRoot().empty() == false)
-		root = it->second.getRoot();
+	if (!server.isMethodAllowed(route, request.getMethod()))
+		return (new Response(405, "Method Not Allowed"));
+
+	if (route.getRoot().empty() == false)
+		root = route.getRoot();
 	else
-		root = server.getRoot();
+		root = route.getServerRoot();
 	
 	std::string clean_uri = request.getUri();
 	size_t pos = clean_uri.find( '?' );
@@ -28,6 +31,8 @@ Response*	cgiHandler( int client_fd, const Request& request, const ServerConfig&
 		clean_uri = clean_uri.substr( 0, pos );
 
 	std::string path = root + clean_uri;
+
+	std::cerr << RED << "PATH = " << NC << path << std::endl;
 
 	struct stat st;
 	if (stat( path.c_str(), &st ) != 0)
