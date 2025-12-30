@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 23:10:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/28 20:23:27 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/29 19:36:20 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,5 @@ bool	isSafePath( const std::string& root, const std::string& requested_path )
 		else
 			real_path.push_back( segment );
 	}
-
 	return (true);
 }

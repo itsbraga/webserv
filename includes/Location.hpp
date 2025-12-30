@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 02:46:45 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 20:04:32 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 14:35:36 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Location
 		std::string					_server_root;
 		std::string					_root;
 		std::string 				_index;
-		std::vector<ErrorPage>		_err_page;
+		std::vector<ErrorPage>		_err_pages;
 		std::vector<std::string>	_allowed_methods;
 		std::vector<std::string>	_cgi_extension;
 		bool						_auto_index;
@@ -42,6 +42,7 @@ class Location
 		void		setServerRoot( const std::string& server_root );
 		void		setRoot( const std::string& root );
 		void		setIndex( const std::string& index );
+		void		setErrorPages( const std::vector<ErrorPage>& pages );
 		void		setAllowedMethods( const std::vector<std::string>& allowed_methods );
 		void		setCgiExtension( const std::vector<std::string>& cgi_extension );
 		void		setClientMaxSizeBody( const std::string& max_size );
@@ -55,7 +56,7 @@ class Location
 		std::string&												getServerRoot()					{ return (_server_root); }
 		std::string&												getRoot()						{ return (_root); }
 		std::string& 												getIndex()						{ return (_index); }
-		std::vector<ErrorPage>&										getErrorPage()					{ return (_err_page); }
+		std::vector<ErrorPage>&										getErrorPages()					{ return (_err_pages); }
 		std::vector<std::string>&									getAllowedMethods()				{ return (_allowed_methods); }
 		std::vector<std::string>&									getCgiExtension()				{ return (_cgi_extension); }
 		std::string&												getClientMaxSizeBody()			{ return (_client_max_body_size); }
@@ -69,7 +70,7 @@ class Location
 		const std::string&											getServerRoot() const			{ return (_server_root); }
 		const std::string&											getRoot() const					{ return (_root); }
 		const std::string& 											getIndex() const				{ return (_index); }
-		const std::vector<ErrorPage>&								getErrorPage() const			{ return (_err_page); }
+		const std::vector<ErrorPage>&								getErrorPages() const			{ return (_err_pages); }
 		const std::vector<std::string>&								getAllowedMethods() const		{ return (_allowed_methods); }
 		const std::vector<std::string>&								getCgiExtension() const			{ return (_cgi_extension); }
 		const std::string&											getClientMaxSizeBody() const	{ return (_client_max_body_size); }

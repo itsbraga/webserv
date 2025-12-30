@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:18:13 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 03:12:03 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 14:35:23 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ class ServerConfig
 		std::string						_client_max_body_size;
 		unsigned int					_return_code;
 		std::string						_return_uri;
-		std::vector<ErrorPage>			_err_page;
+		std::vector<ErrorPage>			_err_pages;
 		std::map<std::string, Location>	_locations;
 		
 	public:
@@ -85,7 +85,7 @@ class ServerConfig
 		bool&								getAutoIndex()					{ return (_auto_index); }
 		unsigned int&						getReturnCode()					{ return (_return_code); }
 		std::string&						getReturnUri()					{ return (_return_uri); }
-		std::vector<ErrorPage>&				getErrorPage()					{ return (_err_page); }
+		std::vector<ErrorPage>&				getErrorPages()					{ return (_err_pages); }
 		std::map<std::string, Location>& 	getLocations()					{ return (_locations); }
 
 		const unsigned short&					getPort() const					{ return (_port); }
@@ -97,7 +97,7 @@ class ServerConfig
 		const bool&								getAutoIndex() const			{ return (_auto_index); }
 		const unsigned int&						getReturnCode() const			{ return (_return_code); }
 		const std::string&						getReturnUri() const			{ return (_return_uri); }
-		const std::vector<ErrorPage>&			getErrorPage() const			{ return (_err_page); }
+		const std::vector<ErrorPage>&			getErrorPages() const			{ return (_err_pages); }
 		const std::map<std::string, Location>& 	getLocations() const			{ return (_locations); }
 
 		std::map<std::string, Location>::const_iterator		findMatchingLocation( const Request& request ) const;

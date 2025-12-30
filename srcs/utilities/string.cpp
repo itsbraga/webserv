@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 13:08:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 12:51:14 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,14 @@ std::string		decodeUri( const std::string& uri )
 	std::string result;
 	size_t i = 0;
 
-	while (i < uri.length())
+	while (i < uri.size())
 	{
 		if (uri[i] == '+')
 		{
 			result += ' ';
 			i++;	
 		}
-		else if (uri[i] == '%' && i + 2 < uri.length())
+		else if (uri[i] == '%' && i + 2 < uri.size())
 		{
 			std::string hex = uri.substr( i + 1, 2 );
 			long converted = strtol( hex.c_str(), NULL, 16 );
