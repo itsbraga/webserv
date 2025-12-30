@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 18:14:04 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 20:40:45 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ class Client
 		time_t			_cgi_last_read;
 		bool			_wait_for_cgi;
 
-		bool			_isChunkedComplete( size_t body_start ) const;
+		size_t			_findHeaderInBuffer( const std::string& name, size_t limit ) const;
 		bool			_isContentLengthComplete( size_t header_end, size_t body_start ) const;
+		bool			_isChunkedComplete( size_t body_start ) const;
 
 		Client();
 

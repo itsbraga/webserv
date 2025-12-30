@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 00:03:17 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,12 @@ std::string		ensureTrailingSlash( const std::string& path )
 		return (path + "/");
 }
 
-// std::string		resolvePath( Location& route, const std::string& uri )
-// {
-// 	std::string root = route.getRoot();
-
-// 	if (uri == "/")
-// 		return (root + "/" + route.getIndex());
-
-// 	if (!root.empty() && root[root.size() - 1] == '/' && uri[0] == '/')
-// 		return (root + uri.substr( 1 ));
-
-// 	return (root + uri);
-// }
-
 std::string		resolvePath( Location& route, const std::string& uri )
 {
 	std::string root = route.getRoot();
 	std::string server_root;
-	if (route.getServerRoot().empty() == false)
+
+	if (!route.getServerRoot().empty())
 		server_root = route.getServerRoot();
 	if (uri == "/")
 		return (server_root + "/" + route.getIndex());
@@ -51,10 +39,10 @@ std::string		resolvePath( Location& route, const std::string& uri )
 	std::string path;
 	if (route.getUri() != "/")
 	{
-		if (route.getRoot().empty() == true)
+		if (route.getRoot().empty())
 			path = server_root + uri;
 		else
-			path = root + uri.substr(route.getUri().length()); // alias behaviour
+			path = root + uri.substr(route.getUri().size()); // alias behaviour
 	}
 	else
 		path = server_root + uri;

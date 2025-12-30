@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 20:29:18 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 20:46:39 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,12 +214,9 @@ void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 /*
 	---------------------- [ P: Request handling ] ----------------------
 */
-Response*	Webserv::_executeRequest( int client_fd, Request& request, Listener& listener )
+Response*	Webserv::_executeRequest( int client_fd, Request& request, ServerConfig& server )
 {
 	__requestReceived( request );
-
-	std::string hostname = request.getHeaderValue( "host" );
-	ServerConfig server = listener.resolveVirtualHosting( hostname );
 
 	if (isReturn( request, server ))
 	{
@@ -253,9 +250,14 @@ void	Webserv::_processRequest( int client_fd )
 	try {
 		Request request( client.getReadBuffer() );
 		close_client = request.clientWantsClose();
-		response = _executeRequest( client_fd, request, *listener );
-		if (response == NULL) //WaitForCgi
+
+		std::string hostname = request.getHeaderValue( "host" );
+		ServerConfig server = listener->resolveVirtualHosting( hostname );
+
+		response = _executeRequest( client_fd, request, server );
+		if (response == NULL)
 			return ;
+		ErrorPageHandler( *response, request, server );
 	}
 	catch (const BadRequestException& e) {
 		close_client = true;
@@ -522,7 +524,7 @@ void	Webserv::addServerConfig( ServerConfig& server )
 
 bool	Webserv::initListeners()
 {
-	std::cout << BOLD P_YELLOW "===== initListeners =====\n" NC << std::endl;
+	std::cout << BOLD PINK "=================== initListeners ===================\n" NC << std::endl;
 	std::cout << "_servers.size() = " << _servers.size() << std::endl;
 
 	std::map<unsigned short, std::vector<ServerConfig*> > serversByPort;
@@ -557,6 +559,7 @@ bool	Webserv::initListeners()
 	}
 
 	std::cout << "Total listeners: " << _listeners.size() << "\n\n";
+	std::cout << BOLD PINK "=====================================================\n" NC;
 	return (true);
 }
 
@@ -590,8 +593,8 @@ void	Webserv::run()
 	std::cout << P_YELLOW "\nWaiting for new connections...\n" NC << std::endl;
 	while (!g_stop)
 	{
-		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, 1000 );
-		if (nbFds == -1)
+		int nbReady = epoll_wait( _epoll_fd, events, MAX_EVENTS, EPOLL_TIMEOUT );
+		if (nbReady == -1)
 		{
 			if (errno == EINTR)
 			{
@@ -606,7 +609,7 @@ void	Webserv::run()
 		_checkCgiTimeout();
 		_checkClientTimeout();
 
-		for (int i = 0; i < nbFds; ++i)
+		for (int i = 0; i < nbReady; ++i)
 		{
 			if (g_stop == 1)
 				break;

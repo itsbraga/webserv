@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_map.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 21:02:09 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 12:47:16 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 19:34:15 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ Response*	methodHandler( const ServerConfig& server, const Request& request )
 		response = (*it->second)( server, request );
 	else
 		response = new Response( 501, "Not Implemented" );
-	// ErrorPageHandler(*response, request, server);
 	return (response);
 }
 

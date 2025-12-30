@@ -6,11 +6,21 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 15:07:03 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 20:27:20 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+/*
+	----------------------------- [ Helper ] -----------------------------
+*/
+static std::string	__buildBody( const std::string& title )
+{
+	std::string html = "<!DOCTYPE html><head><title>" + title + "</title></head>";
+	html += "<h1>" + title + "</h1><ul>";
+	return (html);
+}
 
 /*
 	--------------------- [ Private setter methods ] ---------------------
@@ -21,13 +31,13 @@ void	Response::_setCommonHeaders( bool keepAlive )
 	addHeader( "connection", keepAlive ? "keep-alive" : "close" );
 }
 
-void	Response::_setErrorPage( const std::string& title )
+void	Response::_setDefaultErrorPage( const std::string& title )
 {
 	addHeader( "content-type", "text/html; charset=utf-8" );
 
-	std::string body = "<!DOCTYPE html><head><title>" + title + "</title></head>";
+	std::string body = __buildBody( title );
 	setBody( body );
-	addHeader( "content-length", toString( body.length() ) );
+	addHeader( "content-length", toString( body.size() ) );
 }
 
 /*
@@ -79,7 +89,7 @@ void	Response::TemporaryRedirect()
 	_status_code = 307;
 	_status_name = "Temporary Redirect";
 	_setCommonHeaders( true );
-	addHeader( "content-length", 0 );
+	addHeader( "content-length", "0" );
 }
 
 void	Response::PermanentRedirect()
@@ -87,7 +97,7 @@ void	Response::PermanentRedirect()
 	_status_code = 308;
 	_status_name = "Permanent Redirect";
 	_setCommonHeaders( true );
-	addHeader( "content-length", 0 );
+	addHeader( "content-length", "0" );
 }
 
 /*
@@ -98,7 +108,7 @@ void	Response::BadRequest()
 	_status_code = 400;
 	_status_name = "Bad Request";
 	_setCommonHeaders( false );
-	_setErrorPage( "400 Bad Request" );
+	_setDefaultErrorPage( "400 Bad Request" );
 }
 
 void	Response::Forbidden()
@@ -106,7 +116,7 @@ void	Response::Forbidden()
 	_status_code = 403;
 	_status_name = "Forbidden";
 	_setCommonHeaders( true );
-	_setErrorPage( "403 Forbidden" );
+	_setDefaultErrorPage( "403 Forbidden" );
 }
 
 void	Response::NotFound()
@@ -114,7 +124,7 @@ void	Response::NotFound()
 	_status_code = 404;
 	_status_name = "Not Found";
 	_setCommonHeaders( true );
-	_setErrorPage( "404 Not Found" );
+	_setDefaultErrorPage( "404 Not Found" );
 }
 
 // Allow header depends ??
@@ -124,7 +134,7 @@ void	Response::MethodNotAllowed()
 	_status_name = "Method Not Allowed";
 	_setCommonHeaders( true );
 	addHeader( "allow", "GET, POST, HEAD, DELETE" );
-	_setErrorPage( "405 Method Not Allowed" );
+	_setDefaultErrorPage( "405 Method Not Allowed" );
 }
 
 void 	Response::Gone()
@@ -132,7 +142,7 @@ void 	Response::Gone()
 	_status_code = 410;
 	_status_name = "Gone";
 	_setCommonHeaders( true );
-	_setErrorPage( "410 Gone" );
+	_setDefaultErrorPage( "410 Gone" );
 }
 
 void	Response::LengthRequired()
@@ -140,7 +150,7 @@ void	Response::LengthRequired()
 	_status_code = 411;
 	_status_name = "Length Required";
 	_setCommonHeaders( true );
-	_setErrorPage( "411 Length Required" );
+	_setDefaultErrorPage( "411 Length Required" );
 }
 
 void	Response::PayloadTooLarge()
@@ -148,7 +158,7 @@ void	Response::PayloadTooLarge()
 	_status_code = 413;
 	_status_name = "Payload Too Large";
 	_setCommonHeaders( false );
-	_setErrorPage( "413 Payload Too Large" );
+	_setDefaultErrorPage( "413 Payload Too Large" );
 }
 
 void	Response::URITooLong()
@@ -156,7 +166,7 @@ void	Response::URITooLong()
 	_status_code = 414;
 	_status_name = "URI Too Long";
 	_setCommonHeaders( true );
-	_setErrorPage( "414 URI Too Long" );
+	_setDefaultErrorPage( "414 URI Too Long" );
 }
 
 void	Response::ImATeapot()
@@ -164,7 +174,7 @@ void	Response::ImATeapot()
 	_status_code = 418;
 	_status_name = "I'm a teapot";
 	_setCommonHeaders( true );
-	_setErrorPage( "418 I'm a teapot" );
+	_setDefaultErrorPage( "418 I'm a teapot" );
 }
 
 void	Response::TooManyRequest()
@@ -173,7 +183,7 @@ void	Response::TooManyRequest()
 	_status_name = "Too Many Request";
 	_setCommonHeaders( false );
 	addHeader( "retry-after", "1800" );
-	_setErrorPage( "429 Too Many Request" );
+	_setDefaultErrorPage( "429 Too Many Request" );
 }
 
 /*
@@ -184,7 +194,7 @@ void	Response::InternalServerError()
 	_status_code = 500;
 	_status_name = "Internal Server Error";
 	_setCommonHeaders( false );
-	_setErrorPage( "500 Internal Server Error" );
+	_setDefaultErrorPage( "500 Internal Server Error" );
 }
 
 void	Response::NotImplemented()
@@ -192,7 +202,7 @@ void	Response::NotImplemented()
 	_status_code = 501;
 	_status_name = "Not Implemented";
 	_setCommonHeaders( true );
-	_setErrorPage( "501 Not Implemented" );
+	_setDefaultErrorPage( "501 Not Implemented" );
 }
 
 void	Response::BadGateway()
@@ -200,7 +210,7 @@ void	Response::BadGateway()
 	_status_code = 502;
 	_status_name = "Bad Gateway";
 	_setCommonHeaders( false );
-	_setErrorPage( "502 Bad Gateway" );
+	_setDefaultErrorPage( "502 Bad Gateway" );
 }
 
 void	Response::ServiceUnavailable()
@@ -208,7 +218,7 @@ void	Response::ServiceUnavailable()
 	_status_code = 503;
 	_status_name = "Service Unavailable";
 	_setCommonHeaders( false );
-	_setErrorPage( "503 Service Unavailable" );
+	_setDefaultErrorPage( "503 Service Unavailable" );
 }
 
 void	Response::GatewayTimeout()
@@ -216,7 +226,7 @@ void	Response::GatewayTimeout()
 	_status_code = 504;
 	_status_name = "Gateway Timeout";
 	_setCommonHeaders( false );
-	_setErrorPage( "504 Gateway Timeout" );
+	_setDefaultErrorPage( "504 Gateway Timeout" );
 }
 
 void	Response::HttpVersionNotSupported()
@@ -224,7 +234,7 @@ void	Response::HttpVersionNotSupported()
 	_status_code = 505;
 	_status_name = "HTTP Version Not Supported";
 	_setCommonHeaders( false );
-	_setErrorPage( "505 HTTP Version Not Supported" );
+	_setDefaultErrorPage( "505 HTTP Version Not Supported" );
 }
 
 std::string		Response::getStatusNameFromStatusCode( int status_code )
@@ -246,7 +256,7 @@ std::string		Response::getStatusNameFromStatusCode( int status_code )
 		case 411: return("Length Required");
 		case 413: return("Payload Too Large");
 		case 414: return("URI Too Long");
-		case 418: return("Im A Teapot");
+		case 418: return("I'm a teapot");
 		case 429: return("TooManyRequest");
 		case 500: return("Internal Server Error");
 		case 501: return("Not Implemented");
