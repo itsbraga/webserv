@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 21:49:03 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:38:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ bool	Webserv::_addClientToEpoll( int client_fd )
 {
 	epoll_event ev;
 	std::memset( &ev, 0, sizeof( ev ) );
-	ev.events = EPOLLIN | EPOLLET;
+	ev.events = EPOLLIN;
 	ev.data.fd = client_fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_ADD, client_fd, &ev ) == -1)
@@ -123,7 +123,7 @@ bool	Webserv::_modifyEpollEvents( int fd, unsigned int events )
 {
 	epoll_event ev;
 	std::memset( &ev, 0, sizeof(ev) );
-	ev.events = events | EPOLLET;
+	ev.events = events;
 	ev.data.fd = fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_MOD, fd, &ev ) == -1)
@@ -262,6 +262,7 @@ void	Webserv::_processRequest( int client_fd )
 	catch (const BadRequestException& e) {
 		close_client = true;
 		std::cerr << P_YELLOW "[DEBUG] " << e.what() << NC << std::endl;
+		std::cerr << P_YELLOW "[DEBUG] Buffer content:\n" << client.getReadBuffer() << NC << std::endl;
 		response = httpExceptionHandler( e );
 	}
 	catch (const ChildErrorException&e ) {
