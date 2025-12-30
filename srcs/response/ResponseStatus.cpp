@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:37:59 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 20:27:20 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	Response::TemporaryRedirect()
 	_status_code = 307;
 	_status_name = "Temporary Redirect";
 	_setCommonHeaders( true );
-	addHeader( "content-length", 0 );
+	addHeader( "content-length", "0" );
 }
 
 void	Response::PermanentRedirect()
@@ -97,7 +97,7 @@ void	Response::PermanentRedirect()
 	_status_code = 308;
 	_status_name = "Permanent Redirect";
 	_setCommonHeaders( true );
-	addHeader( "content-length", 0 );
+	addHeader( "content-length", "0" );
 }
 
 /*
@@ -256,7 +256,7 @@ std::string		Response::getStatusNameFromStatusCode( int status_code )
 		case 411: return("Length Required");
 		case 413: return("Payload Too Large");
 		case 414: return("URI Too Long");
-		case 418: return("Im A Teapot");
+		case 418: return("I'm a teapot");
 		case 429: return("TooManyRequest");
 		case 500: return("Internal Server Error");
 		case 501: return("Not Implemented");
