@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 20:46:39 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 21:49:03 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ bool	Webserv::_modifyEpollEvents( int fd, unsigned int events )
 {
 	epoll_event ev;
 	std::memset( &ev, 0, sizeof(ev) );
-	ev.events = events;
+	ev.events = events | EPOLLET;
 	ev.data.fd = fd;
 
 	if (epoll_ctl( _epoll_fd, EPOLL_CTL_MOD, fd, &ev ) == -1)
