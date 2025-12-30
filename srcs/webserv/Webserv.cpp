@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 19:06:33 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 20:29:18 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 /*
 	---------------------- [ P: Request handling ] ----------------------
 */
-Response*	Webserv::_executeRequest( Request& request, Listener& listener )
+Response*	Webserv::_executeRequest( int client_fd, Request& request, Listener& listener )
 {
 	__requestReceived( request );
 
@@ -229,7 +229,7 @@ Response*	Webserv::_executeRequest( Request& request, Listener& listener )
 	else if (isCgiRequest( request, server ))
 	{
 		std::cerr << "CGI\n";
-		return (cgiHandler( request, server, (*this) ));
+		return (cgiHandler( client_fd, request, server, (*this) ));
 	}
 	else
 		return (methodHandler( server, request ));
@@ -253,13 +253,17 @@ void	Webserv::_processRequest( int client_fd )
 	try {
 		Request request( client.getReadBuffer() );
 		close_client = request.clientWantsClose();
-		response = _executeRequest( request, *listener );
-		
+		response = _executeRequest( client_fd, request, *listener );
+		if (response == NULL) //WaitForCgi
+			return ;
 	}
 	catch (const BadRequestException& e) {
 		close_client = true;
 		std::cerr << P_YELLOW "[DEBUG] " << e.what() << NC << std::endl;
 		response = httpExceptionHandler( e );
+	}
+	catch (const ChildErrorException&e ) {
+		throw ;
 	}
 	catch (const std::exception& e) {
 		close_client = true;
@@ -308,12 +312,176 @@ void	Webserv::_checkClientTimeout()
 }
 
 /*
-	-------------------- [ P: CGI process clean_up ] ---------------------
+	-------------------- [ CGI ] ---------------------
 */
+void 	Webserv::_handleCgiEvent(int pipe_fd, unsigned int events)
+{
+
+	std::cerr << "[DEBUG] _handleCgiEvent called, pipe_fd=" << pipe_fd 
+              << " events=" << events << std::endl;
+	std::map<int, int>::iterator it = _cgi_pipes.find(pipe_fd);
+	if (it == _cgi_pipes.end())
+	{
+		std::cerr << "[DEBUG] pipe_fd not found in _cgi_pipes!" << std::endl;
+		return ;
+	}
+
+	int client_fd = it->second;
+
+	std::map<int, Client>::iterator client_it = _clients.find(client_fd);
+	if (client_it == _clients.end())
+	{
+		epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, pipe_fd, NULL);
+		close(pipe_fd);
+		_cgi_pipes.erase(it);
+		return ;
+	}
+
+	Client& client = client_it->second;
+
+	if (events & (EPOLLERR | EPOLLHUP))
+		_handleCgiResponse(client_fd);
+
+	if (events & EPOLLIN)
+	{
+		char buffer[4096];
+		ssize_t bytes = read(pipe_fd, buffer, sizeof(buffer));
+		std::cerr << "[DEBUG] read() returned " << bytes << std::endl;
+		if (bytes > 0)
+		{
+			client.getCgiOuput().append(buffer, bytes);
+			client.setCgiLastRead(time(NULL));
+		}
+		else if (bytes == 0)
+		{
+			std::cerr << "[DEBUG] EOF detected, calling _handleCgiResponse" << std::endl;
+			_handleCgiResponse(client_fd);
+		}
+		else
+		{
+			std::cerr << "[DEBUG] read error: " << strerror(errno) << std::endl;
+			_killCgi(client_fd, 500);
+		}
+	}
+}
+
+void	Webserv::_handleCgiResponse(int client_fd)
+{
+	std::map<int, Client>::iterator it = _clients.find(client_fd);
+	if (it == _clients.end())
+		return;
+	Client& client = it->second;
+
+	epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, client.getCgiPipe(), NULL);
+	close(client.getCgiPipe());
+	_cgi_pipes.erase(client.getCgiPipe());
+
+	int status;
+	waitpid(client.getCgiPid(), &status, 0);
+	removeCgiPid(client.getCgiPid());
+
+	Response *response = NULL;
+	if (WIFEXITED(status))
+	{
+		if (WEXITSTATUS(status) == SUCCESS)
+			response = handleOutput(client.getCgiOuput());
+		else if (WEXITSTATUS(status) == CGI_ERROR)
+			response = new Response(502, "Bad Gateway");
+		else
+			response = new Response(500, "Internal Server Error");
+	}
+	else if (WIFSIGNALED(status))
+		response = new Response(502, "Bad Gateway");
+	else
+		response = new Response(502, "Bad Gateway");
+	bool close = client.shouldClose();
+	if (response->getHeaderValue("connection") == "close")
+		close = true;
+	client.setShouldClose(close);
+
+	std::string serialized = response->getSerializedResponse();
+	delete response;
+	client.appendToWriteBuffer(serialized);
+	client.setWaitForCgi(false);
+	client.getCgiOuput().clear();
+	_modifyEpollEvents(client_fd, EPOLLIN | EPOLLOUT);
+}
+
+bool 	Webserv::_isCgiPipe(int fd) const
+{
+	return (_cgi_pipes.find(fd) != _cgi_pipes.end());
+}
+
+void	Webserv::_killCgi(int client_fd, int status_code)
+{
+	std::map<int, Client>::iterator it = _clients.find(client_fd);
+	if (it == _clients.end())
+		return ;
+	Client& client = it->second;
+	epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, client.getCgiPipe(), NULL);
+	close(client.getCgiPipe());
+	_cgi_pipes.erase(client.getCgiPipe());
+	kill(client.getCgiPid(), SIGKILL);
+	waitpid(client.getCgiPid(), NULL, 0);
+	removeCgiPid(client.getCgiPid());
+	Response* response = NULL;
+	if (status_code == 504)
+		response = new Response(504, "Gateway Timeout");
+	else
+		response = new Response(500, "Internal Server Error");
+	bool close = client.shouldClose();
+	if (response->getHeaderValue("connection") == "close")
+		close = true;
+	client.setShouldClose(close);
+	std::string serialized = response->getSerializedResponse();
+	delete response;
+	client.appendToWriteBuffer(serialized);
+	client.setWaitForCgi(false);
+	client.getCgiOuput().clear();
+	_modifyEpollEvents(client_fd, EPOLLIN | EPOLLOUT);
+}
+
+void	Webserv::_checkCgiTimeout()
+{
+	time_t tmp = time(NULL);
+
+	std::map<int, Client>::iterator it = _clients.begin();
+	for (; it != _clients.end(); ++it)
+	{
+		Client &client = it->second;
+		if (client.getWaitForCgi() == false)
+			continue;
+
+		if (tmp - client.getCgiLastRead() > CGI_INACTIVITY_TIMEOUT)
+		{
+			_killCgi(it->first, 504);
+			continue;
+		}
+
+		if (tmp - client.getCgiStart() > CGI_SLOWLORIS_TIMEOUT)
+		{
+			_killCgi(it->first, 504);
+			continue;
+		}
+	}
+}
+
 void	Webserv::_killAllUpCgi()
 {
-	if (_up_cgis.empty())
-		return ;
+	std::map<int, Client>::iterator client_it = _clients.begin();
+	for(; client_it != _clients.end(); ++client_it)
+	{
+		Client& client = client_it->second;
+		if (client.getWaitForCgi() == true)
+		{
+			epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, client.getCgiPipe(), NULL);
+			close(client.getCgiPipe());
+			_cgi_pipes.erase(client.getCgiPipe());
+			kill(client.getCgiPid(), SIGKILL);
+			waitpid(client.getCgiPid(), NULL, 0);
+			removeCgiPid(client.getCgiPid());
+		}
+	}
 
 	std::set<pid_t>::const_iterator it = _up_cgis.begin();
 
@@ -323,6 +491,25 @@ void	Webserv::_killAllUpCgi()
 		waitpid( *it, NULL, 0 );
 	}
 	_up_cgis.clear();
+}
+
+void	Webserv::cleanUpForChild()
+{
+	std::map<int, Client>::iterator client_it = _clients.begin();
+
+	for (; client_it != _clients.end(); ++client_it)
+		::close( client_it->first );
+
+	for (size_t i = 0; i < _listeners.size(); ++i)
+		_listeners[i].closeSocketFd();
+
+	if (_epoll_fd != -1)
+		::close( _epoll_fd );
+
+	std::map<int, int>::iterator it = _cgi_pipes.begin();
+	for (; it != _cgi_pipes.end(); ++it)
+		close(it->first);
+	// _cgi_pipes.clear();
 }
 
 /*
@@ -403,7 +590,7 @@ void	Webserv::run()
 	std::cout << P_YELLOW "\nWaiting for new connections...\n" NC << std::endl;
 	while (!g_stop)
 	{
-		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, -1 );
+		int nbFds = epoll_wait( _epoll_fd, events, MAX_EVENTS, 1000 );
 		if (nbFds == -1)
 		{
 			if (errno == EINTR)
@@ -416,6 +603,9 @@ void	Webserv::run()
 			break;
 		}
 
+		_checkCgiTimeout();
+		_checkClientTimeout();
+
 		for (int i = 0; i < nbFds; ++i)
 		{
 			if (g_stop == 1)
@@ -424,11 +614,21 @@ void	Webserv::run()
 			int fd = events[i].data.fd;
 			Listener* listener = _getListenerByFd( fd );
 			if (listener)
+			{
+				std::cerr << "[DEBUG] -> Listener event" << std::endl;
 				_handleListenerEvent( *listener );
+			}
+			else if (_isCgiPipe(fd) == true)
+			{
+				std::cerr << "[DEBUG] -> CGI pipe event" << std::endl;
+				_handleCgiEvent( fd, events[i].events );
+			}
 			else
+			{
+				std::cerr << "[DEBUG] -> Client event" << std::endl;
 				_handleClientEvent( fd, events[i].events );
+			}
 		}
-		_checkClientTimeout();
 	}
 	_killAllUpCgi();
 }

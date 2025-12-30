@@ -6,13 +6,13 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 18:48:04 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 20:26:41 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-Response*	cgiHandler( const Request& request, const ServerConfig& server, Webserv& webserv )
+Response*	cgiHandler( int client_fd, const Request& request, const ServerConfig& server, Webserv& webserv )
 {
 	std::string root;
 	std::map<std::string, Location>::const_iterator it = server.findMatchingLocation( request );
@@ -45,11 +45,11 @@ Response*	cgiHandler( const Request& request, const ServerConfig& server, Webser
 		err_msg( "cgiHandler()", "Script exists but is not executable" );
 		return (new Response( 403, "Forbidden" ));
 	}
-	return (doCgi( request, server, path, webserv ));
+	return (doCgi( client_fd, request, server, path, webserv ));
 	
 }
 
-Response*	doCgi( const Request& request, const ServerConfig& server, const std::string& path, Webserv& webserv )
+Response*	doCgi( int client_fd, const Request& request, const ServerConfig& server, const std::string& path, Webserv& webserv )
 {
 	std::string output;
 	int	pipe_parent[2];
@@ -73,109 +73,76 @@ Response*	doCgi( const Request& request, const ServerConfig& server, const std::
 		int pipes[2][2];
 		pipes[0][0] = pipe_parent[0], pipes[0][1] = pipe_parent[1];
 		pipes[1][0] = pipe_children[0], pipes[1][1] = pipe_children[1];
-		childExec(request, server, path, pipes);
+		try 
+		{
+			childExec(request, server, path, pipes);	
+		}
+		catch(const ChildErrorException& e)
+		{
+			std::string reason(strerror(errno));
+			std::cerr << "runtime_error: " << e.what() << " : "  << reason << std::endl;
+			webserv.cleanUpForChild();
+			throw ;
+		}
 	}
 	else
 	{
-		webserv.addCgiPid(pid);
 		close(pipe_parent[0]), close(pipe_children[1]);
+
 		if (request.getBody().empty() == false)
 			write(pipe_parent[1], request.getBody().c_str(), request.getBody().size());
 		close(pipe_parent[1]);
+		int flags = fcntl(pipe_children[0], F_GETFL, 0);
+		fcntl(pipe_children[0], F_SETFL, flags | O_NONBLOCK);
 
-		time_t start = time(NULL);
-		time_t last_read = time(NULL);
-		char buffer[4096];
-		ssize_t bytes;
-		
-		while (true)
+		epoll_event ev;
+		ev.events = EPOLLIN;
+		ev.data.fd = pipe_children[0];
+		if (epoll_ctl(webserv.getEpollFd(), EPOLL_CTL_ADD, pipe_children[0], &ev) == -1)
 		{
-			fd_set	fds;
-			FD_ZERO(&fds);
-			FD_SET(pipe_children[0], &fds);
-			struct timeval timeout;
-			timeout.tv_sec = 1;
-			timeout.tv_usec = 0;
-
-			int select_ret = select(pipe_children[0] + 1, &fds, NULL, NULL, &timeout);
-			if (select_ret == -1)
-			{
-				kill(pid, SIGKILL);
-				waitpid(pid, NULL, 0);
-				close(pipe_children[0]);
-				webserv.removeCgiPid(pid);
-				return (new Response(500, "Internal Server Error"));
-			}
-			
-			time_t tmp = time(NULL);
-			if (tmp - last_read > CGI_INACTIVITY_TIMEOUT)
-			{
-				kill(pid, SIGKILL);
-				waitpid(pid, NULL, 0);
-				close(pipe_children[0]);
-				webserv.removeCgiPid(pid);
-				return (new Response(504, "Gateway Timeout"));
-			}
-			if (tmp - start > CGI_SLOWLORIS_TIMEOUT)
-			{
-				kill(pid, SIGKILL);
-				waitpid(pid, NULL, 0);
-				close(pipe_children[0]);
-				webserv.removeCgiPid(pid);
-				return (new Response(504, "Gateway Timeout"));
-			}
-			
-			if (select_ret == 0)
-				continue;
-
-			bytes = read(pipe_children[0], buffer, sizeof(buffer));
-			if (bytes < 0)
-			{
-				kill(pid, SIGKILL);
-				waitpid(pid, NULL, 0);
-				close(pipe_children[0]);
-				webserv.removeCgiPid(pid);
-				return (new Response(500, "Internal Server Error"));
-			}
-			else if (bytes == 0)
-				break;
-			
-			output.append(buffer, bytes);
-			last_read = tmp;
-		}
-		
-		close(pipe_children[0]);
-		int status;
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status) == false || WEXITSTATUS(status) != 0)
+			std::cerr << "[ERROR] epoll_ctl failed: " << strerror(errno) << std::endl;
+			close(pipe_children[0]);
+			kill(pid, SIGKILL);
+			waitpid(pid, NULL, 0);
 			return (new Response(500, "Internal Server Error"));
-		webserv.removeCgiPid(pid);
+		}
+		else
+			std::cerr << "[DEBUG] Pipe " << pipe_children[0] << " added to epoll" << std::endl;
+
+		Client& client = webserv.getClient(client_fd);
+		client.setWaitForCgi(true);
+		client.setCgiPid(pid);
+		client.setCgiPipe(pipe_children[0]);
+		client.getCgiOuput().clear();
+		client.setCgiStart(time(NULL));
+		client.setCgiLastRead(time(NULL));
+
+		webserv.insertCgiPipe(pipe_children[0], client_fd);
+		webserv.addCgiPid(pid);
 	}
-	return (handleOutput(output));
+	return (NULL);
 }
 
 void	childExec( const Request& request, const ServerConfig& server, \
-	const std::string& path, int (&pipes)[2][2] )
+					 const std::string& path, int (&pipes)[2][2])
 {
+	char **envp = NULL;
 	char *argv[2];
-	char **envp;
 	std::string path_dir;
 	
 	close(pipes[0][1]);
 	if (dup2(pipes[0][0], STDIN_FILENO) == -1)
 	{
-		std::cerr << strerror(errno) << std::endl;
 		close(pipes[0][0]);
 		close(pipes[1][0]), close(pipes[1][1]);
-		exit(FAILURE);
+		throw ChildErrorException("dup2 failed", 500);
 	}
 	close(pipes[0][0]);
 	close(pipes[1][0]);
 	if (dup2(pipes[1][1], STDOUT_FILENO) == -1)
 	{
-		std::cerr << strerror(errno) << std::endl;
 		close(pipes[1][1]);
-		exit(FAILURE);
+		throw ChildErrorException("dup2 failed", 500);
 	}
 	close(pipes[1][1]);
 
@@ -188,10 +155,7 @@ void	childExec( const Request& request, const ServerConfig& server, \
 		path_dir = path.substr(0, pos);
 
 	if (chdir(path_dir.c_str()) == -1)
-	{
-		std::cerr << "chdir failed" << std::endl;
-		exit(FAILURE);
-	}
+		throw ChildErrorException("chdir failed", 500);
 
 	std::string	file_name;
 	if (pos == std::string::npos)
@@ -200,34 +164,16 @@ void	childExec( const Request& request, const ServerConfig& server, \
 		file_name = path.substr(pos + 1);
 
 	file_name = "./" + file_name;
+
+	envp = createEnvp(request, server, path);
 	
 	argv[0] = const_cast<char*>(file_name.c_str());
 	argv[1] = NULL; 
-	try
-	{
-		envp = createEnvp(request, server, path);
-		std::cerr << "path = " << path << std::endl;
-		std::cerr << "argv[0] = " << argv[0] << std::endl;
-		if (execve(file_name.c_str(), argv, envp) == -1)
-			throw std::runtime_error("execve failed");
-	}
-	catch (std::bad_alloc& e)
-	{
-		std::cerr << "bad_alloc: " << e.what() << std::endl;
-		exit(FAILURE);
-	}
-	catch (std::runtime_error& e)
-	{
-		std::string reason(strerror(errno));
-		std::cerr << "runtime_error: prout" << e.what() << " : "  << reason << std::endl;
-		if (envp != NULL)
-		{
-			for (size_t i = 0; envp[i] != NULL; ++i)
-				delete [] envp[i];
-			delete [] envp;
-		}
-		exit(FAILURE);
-	}
+	std::cerr << "path = " << path << std::endl;
+	std::cerr << "argv[0] = " << argv[0] << std::endl;
+	execve(file_name.c_str(), argv, envp);
+	freeEnvp(envp);
+	throw ChildErrorException("execve failed", 502);
 }
 
 char**	createEnvp( const Request& request, const ServerConfig& server, const std::string& path )
@@ -279,12 +225,7 @@ char**	createEnvp( const Request& request, const ServerConfig& server, const std
 	}
 	catch (std::bad_alloc& e)
 	{
-		if (envp != NULL)
-		{
-			for (size_t i = 0; envp[i] != NULL; ++i)
-				delete [] envp[i];
-			delete [] envp;
-		}
+		freeEnvp(envp);
 		throw;
 	}
 }
@@ -434,17 +375,25 @@ bool	isCgiRequest( const Request& request, const ServerConfig& server )
 	return (false);
 }
 
-// bool			setCgiCloseOnExec(int *pipe_parent, int *pipe_children)
-// {
-// 	if (fcntl(pipe_parent[0], F_SETFD, FD_CLOEXEC) == -1 
-// 		|| fcntl(pipe_parent[1], F_SETFD, FD_CLOEXEC) == -1
-// 		|| fcntl(pipe_children[0], F_SETFD, FD_CLOEXEC) == -1
-// 		|| fcntl(pipe_children[1], F_SETFD, FD_CLOEXEC) == -1)
-// 	{
-// 		close(pipe_parent[0]), close(pipe_parent[1]);
-// 		close(pipe_children[0]), close(pipe_children[1]);
-// 		return (err_msg( "fcntl(F_SETFD,  FD_CLOEXEC)", strerror( errno ) ), false);
-// 	}
-// 	else
-// 		return (true);
-// }
+void		freeEnvp(char **envp)
+{
+	if (envp != NULL)
+	{
+		for (size_t i = 0; envp[i] != NULL; ++i)
+			delete [] envp[i];
+		delete [] envp;
+	}
+}
+
+bool			setCgiCloseOnExec(int *pipe_parent, int *pipe_children)
+{
+	if (fcntl( pipe_parent[0], F_SETFD, O_NONBLOCK ) == -1)
+		return (err_msg( "fcntl(F_SETFD | O_NONBLOCK)", strerror( errno ) ), false);
+	if (fcntl( pipe_parent[1], F_SETFD, O_NONBLOCK ) == -1)
+		return (err_msg( "fcntl(F_SETFD | O_NONBLOCK)", strerror( errno ) ), false);
+	if (fcntl( pipe_children[0], F_SETFD, O_NONBLOCK ) == -1)
+		return (err_msg( "fcntl(F_SETFD | O_NONBLOCK)", strerror( errno ) ), false);
+	if (fcntl( pipe_children[1], F_SETFD, O_NONBLOCK ) == -1)
+		return (err_msg( "fcntl(F_SETFD | O_NONBLOCK)", strerror( errno ) ), false);
+	return (true);
+}

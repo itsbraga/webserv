@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:06:53 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 12:24:36 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/29 22:53:12 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,11 @@
 */
 ServerConfig::ServerConfig() : _port( 0 ), _auto_index( false ), _return_code( 0 ) {}
 
-ServerConfig::~ServerConfig() {}
+ServerConfig::~ServerConfig() 
+{
+	_root.~basic_string();
+	_index.~basic_string();
+}
 
 ServerConfig&		ServerConfig::operator=( const ServerConfig& toCopy )
 {
