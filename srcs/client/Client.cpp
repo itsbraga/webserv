@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 12:18:55 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 19:54:50 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,29 +20,52 @@ bool	Client::_isChunkedComplete( size_t body_start ) const
 	return (_read_buffer.find( "\r\n0\r\n\r\n", body_start ) != std::string::npos);
 }
 
+size_t	Client::_findHeaderInBuffer( const std::string& name, size_t limit ) const
+{
+	std::string pattern = toLower( name ) + ":";
+	size_t pattern_len = pattern.size();
+
+	for (size_t i = 0; i + pattern_len <= limit; ++i)
+	{
+		if (i > 0 && _read_buffer[i - 1] != '\n')
+			continue;
+		
+		bool match = true;
+		for (size_t j = 0; j < pattern_len && match; ++j)
+		{
+			char lower_buffer = std::tolower( static_cast<unsigned char>( _read_buffer[i + j] ) );
+			if (lower_buffer != pattern[j])
+				match = false;
+		}
+		if (match)
+			return (i);
+	}
+	return (std::string::npos);
+}
+
 bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) const
 {
-	size_t cl_pos = _read_buffer.find( "Content-Length:" );
-	if (cl_pos == std::string::npos || cl_pos > header_end)
+	const std::string header_name = "Content-Length";
+
+	size_t cl_pos = _findHeaderInBuffer( header_name, header_end );
+	if (cl_pos == std::string::npos)
 		return (true); // Without body
 
+	size_t value_start = cl_pos + header_name.size() + 1;
 	size_t cl_end = _read_buffer.find( "\r\n", cl_pos );
-
-	std::string cl_value = _read_buffer.substr( cl_pos + 15, cl_end - cl_pos - 15 );
-	if (cl_value.empty())
+	if (cl_end == std::string::npos)
 		return (false);
 
-	size_t start = cl_value.find_first_not_of( " \t" );
-	if (start == std::string::npos)
-		return (true);
+	std::string cl_value = _read_buffer.substr( value_start, cl_end - value_start );
 
-	char *endptr;
-	long content_length = std::strtol( cl_value.c_str() + start, &endptr, 10 );
-	if (*endptr != '\0' || content_length < 0 || content_length > DEFAULT_MAX_BODY_SIZE)
+	size_t content_length;
+	if (!parseContentLength( cl_value, content_length ))
+		return (true);
+	if (content_length > DEFAULT_MAX_BODY_SIZE)
 		return (true);
 
 	size_t body_received = _read_buffer.size() - body_start;
-	return (body_received >= static_cast<size_t>( content_length ));
+	return (body_received >= content_length);
 }
 
 /*
@@ -94,16 +117,19 @@ bool	Client::hasCompleteRequest() const
 
 	size_t body_start = header_end + 4;
 
-	size_t te_pos = _read_buffer.find( "Transfer-Encoding:" );
-	if (te_pos != std::string::npos && te_pos < header_end)
+	size_t te_pos = _findHeaderInBuffer( "Transfer-Encoding", header_end );
+	if (te_pos != std::string::npos)
 	{
+		size_t te_value_start = te_pos + 18;
 		size_t te_end = _read_buffer.find( "\r\n", te_pos );
-		std::string te_value = _read_buffer.substr( te_pos + 18, te_end - te_pos - 18 );
-		if (te_value.empty())
-			return (false);
-
-		if (te_value.find( "chunked" ) != std::string::npos)
-			return (_isChunkedComplete( body_start ));
+		if (te_end != std::string::npos && te_end > te_value_start)
+		{
+			std::string te_value = _read_buffer.substr( te_value_start, te_end - te_value_start );
+			std::string lower_te_value = toLower( te_value );
+	
+			if (lower_te_value.find( "chunked" ) != std::string::npos)
+				return (_isChunkedComplete( body_start ));
+		}
 	}
 	return (_isContentLengthComplete( header_end, body_start ));
 }

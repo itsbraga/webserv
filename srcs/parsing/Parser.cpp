@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 12:17:28 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 14:39:27 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -506,9 +506,9 @@ void		Parser::createAllObjects( Webserv& webserv )
 
 				ErrorPage err_page(status, file);
 				if (getCurrentContext() == SERVER_BLOCK)
-					current_server.getErrorPage().push_back( err_page );
+					current_server.getErrorPages().push_back( err_page );
 				else
-					current_location.getErrorPage().push_back( err_page );
+					current_location.getErrorPages().push_back( err_page );
 				current += 2;
 				break;
 			}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 08:24:24 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 19:05:39 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,9 @@ class Client
 		time_t			_request_start;
 		bool			_should_close;
 
-		bool			_isChunkedComplete( size_t body_start ) const;
+		size_t			_findHeaderInBuffer( const std::string& name, size_t limit ) const;
 		bool			_isContentLengthComplete( size_t header_end, size_t body_start ) const;
+		bool			_isChunkedComplete( size_t body_start ) const;
 
 		Client();
 

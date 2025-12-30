@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 01:46:39 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 20:44:18 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 17:25:52 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 /*
 	----------------------------- [ Setter ] -----------------------------
 */
-void	ErrorPage::setFile( std::string file )
+void	ErrorPage::setFile( std::string file_path )
 {
-	if (file.empty())
+	if (file_path.empty())
 		return ;
 
-	_file = file;
+	_file_path = file_path;
 }
 
 /*
@@ -53,15 +53,13 @@ static const ErrorPage*	__findErrorPage( const std::vector<ErrorPage>& pages, in
 	return (NULL);
 } 
 
-static bool		__loadErrorPage( const std::string& root, const std::string& filename, std::string& content )
+static bool		__loadErrorPage( const std::string& file_path, std::string& content )
 {
-	std::string path = root + filename;
-
-	if (!pathExists( path ) || !isRegularFile( path ) || !isReadable( path ))
+	if (!pathExists( file_path ) || !isRegularFile( file_path ) || !isReadable( file_path ))
 		return (false);
 
 	try {
-		content = readFileContent( path );
+		content = readFileContent( file_path );
 		return (true);
 	}
 	catch (const std::exception& e) {
@@ -78,22 +76,15 @@ void	ErrorPageHandler( Response& response, const Request& request, const ServerC
 	if (status_code < 400)
 		return ;
 
-	std::cerr << "[DEBUG] ErrorPageHandler: status=" << status_code << std::endl;
-
 	Location route = server.resolveRoute( request );
-	std::cerr << "[DEBUG] route resolved, root=" << route.getRoot() << std::endl;
 
-	const std::vector<ErrorPage>& routeErrors = route.getErrorPage();
-	std::cerr << "[DEBUG] route error_pages count=" << routeErrors.size() << std::endl;
-
-	const ErrorPage* error_page = __findErrorPage( route.getErrorPage(), status_code );
-	if (!error_page)
-		error_page = __findErrorPage( server.getErrorPage(), status_code );
-
-	if (!error_page)
+	const ErrorPage* err_page = __findErrorPage( route.getErrorPages(), status_code );
+	if (!err_page)
+		err_page = __findErrorPage( server.getErrorPages(), status_code );
+	if (!err_page)
 		return ;
 
 	std::string body;
-	if (__loadErrorPage( route.getRoot(), error_page->getFile(), body ))
-		response.setGeneratedContent( body, "text/html; charset=utf-8" );
+	if (__loadErrorPage( err_page->getFile(), body ))
+		response.replaceBody( body, "text/html; charset=utf-8" );
 }

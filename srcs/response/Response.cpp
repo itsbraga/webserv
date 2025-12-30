@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 19:02:17 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/28 15:04:55 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 17:25:30 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,19 @@ const std::string	Response::getSerializedResponse()
 	response += toString( _status_code ) + " " + _status_name + "\r\n";
 	response += getSerializedHeaders() + "\r\n" + getBody() + "\n";
 	return (response);
+}
+
+/*
+	---------------------- [ ErrorPage replacing ] -----------------------
+*/
+void	Response::replaceBody( const std::string& body, const std::string& mime_type )
+{
+	setBody( body );
+
+	_headers.erase( "content-type" );
+	_headers.erase( "content-length" );
+	addHeader( "content-type", mime_type );
+	addHeader( "content-length", toString( body.size() ));
 }
 
 /*

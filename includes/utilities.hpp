@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 14:35:06 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 12:51:05 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/30 19:52:30 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ std::string					toLower( const std::string& str );
 std::string					extractPathFromUri( const std::string& uri );
 std::string					extractQueryString( const std::string &uri );
 std::string					decodeUri( const std::string& uri );
+
+// parsing_utils.cpp
+bool						parseContentLength( const std::string& value, size_t& out );
 
 /**************************\
  *	Template function
