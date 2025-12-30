@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 19:54:50 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:55:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,12 @@ bool	Client::_isContentLengthComplete( size_t header_end, size_t body_start ) co
 	size_t value_start = cl_pos + header_name.size() + 1;
 	size_t cl_end = _read_buffer.find( "\r\n", cl_pos );
 	if (cl_end == std::string::npos)
-		return (false);
+		return (false); // Incomplete header
 
 	std::string cl_value = _read_buffer.substr( value_start, cl_end - value_start );
 
-	size_t content_length;
+	size_t content_length = 0;
 	if (!parseContentLength( cl_value, content_length ))
-		return (true);
-	if (content_length > DEFAULT_MAX_BODY_SIZE)
 		return (true);
 
 	size_t body_received = _read_buffer.size() - body_start;
@@ -88,14 +86,17 @@ bool	Client::hasDataToSend() const
 
 bool	Client::sendData()
 {
-	while (!_write_buffer.empty())
-	{
-		ssize_t sent = ::send( _socket_fd, _write_buffer.c_str(), _write_buffer.size(), 0 );
-		if (sent > 0)
-			_write_buffer.erase( 0, sent );
-		else
-			break;
-	}
+	if (_write_buffer.empty())
+		return (true);
+
+	// std::cerr << BOLD RED "[DEBUG] fd=" << _socket_fd 
+	// 		<< " write_buffer size=" << _write_buffer.size() 
+	// 		<< " first 100 chars: " << _write_buffer.substr(0, 100) << NC << std::endl;
+	
+	ssize_t sent = ::send( _socket_fd, _write_buffer.c_str(), _write_buffer.size(), 0 );
+	if (sent > 0)
+		_write_buffer.erase( 0, sent );
+
 	return (_write_buffer.empty());
 }
 
