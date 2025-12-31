@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/30 22:26:23 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/31 01:03:57 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ char**	createEnvp( const Request& request, const ServerConfig& server, const std
 	std::vector<std::string> envp_vec;
 
 	envp_vec.push_back("REQUEST_METHOD=" + request.getMethod());
-	envp_vec.push_back("QUERY_STRING=" + extractQueryString(request.getUri()));
+	envp_vec.push_back("QUERY_STRING=" + decodeUri(extractQueryString(request.getUri())));
 	envp_vec.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	envp_vec.push_back("SERVER_SOFTWARE=WebServ/1.0");
 	if (server.getServerName().empty() == false)

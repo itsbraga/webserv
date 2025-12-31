@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:19:17 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 22:38:02 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 23:49:47 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,26 +165,64 @@ void	Webserv::_handleClientRead( int client_fd )
 	char buffer[8192];
 
 	ssize_t nBytes = ::recv( client_fd, buffer, sizeof(buffer), 0 );
-	if (nBytes > 0)
-		client.appendToReadBuffer( buffer, nBytes );
-	else if (nBytes == 0)
-		return (_removeClient( client_fd ));
 
-	client.updateLastActivity();
-	if (client.hasCompleteRequest())
-		_processRequest( client_fd );
+	std::cout << CYAN << "[DEBUG] " << NC << "Read event fd=" << client_fd 
+              << " bytes=" << nBytes 
+              << " pending=" << client.isResponsePending() << std::endl;
+	if (nBytes > 0)
+	{
+		client.appendToReadBuffer( buffer, nBytes );
+		client.updateLastActivity();
+		if (client.hasCompleteRequest() && !client.isResponsePending())
+		{
+			std::cout << GREEN "[DEBUG] " NC "Processing request (fd=" << client_fd << ")" << std::endl;
+			_processRequest( client_fd );
+		}
+	}
+	else if (nBytes == 0)
+	{
+		std::cout << YELLOW << "[DEBUG] " NC "EOF received (fd=" << client_fd 
+                  << ") pending=" << client.isResponsePending() << std::endl;
+		client.updateLastActivity();
+		if (client.hasCompleteRequest() && !client.isResponsePending())
+		{
+			std::cout << P_GREEN "[DEBUG] " NC "Processing request after EOF (fd=" << client_fd << ")" << std::endl;
+			_processRequest( client_fd );
+		}
+		else if (!client.isResponsePending())
+		{
+			std::cout << RED << "[DEBUG] " NC "Closing - no complete request (fd=" << client_fd << ")" << std::endl;
+			return (_removeClient( client_fd ));
+		}
+		else
+		{
+			std::cout << P_YELLOW "[DEBUG] " NC "EOF ignored - response pending (fd=" << client_fd << ")" << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << RED << "[DEBUG] " NC "Read error (fd=" << client_fd << ")" << std::endl;
+		return (_removeClient( client_fd ));
+	}
 }
 
 void	Webserv::_handleClientWrite( int client_fd )
 {
 	std::map<int, Client>::iterator it = _clients.find( client_fd );
 	if (it == _clients.end())
+	{
+		std::cout << RED << "[DEBUG] " NC "Write event but client not found (fd=" << client_fd << ")" << std::endl;
 		return ;
+	}
 
 	Client& client = it->second;
 
+	std::cout << CYAN << "[DEBUG] " NC "Write event (fd=" << client_fd << ")" << std::endl;
+
 	if (client.sendData())
 	{
+		std::cout << P_GREEN << "[DEBUG] " NC "All data sent (fd=" << client_fd << ")" << std::endl;
+		client.setResponsePending( false );
 		if (client.shouldClose())
 		{
 			std::cout << P_BLUE "[INFO] " NC "Closing connection as requested..." << std::endl;
@@ -195,10 +233,18 @@ void	Webserv::_handleClientWrite( int client_fd )
 		client.clearReadBuffer();
 		client.setRequestStartTime();
 	}
+	else	
+		std::cout << P_YELLOW "[DEBUG] " NC "Partial send, waiting for next EPOLLOUT (fd=" << client_fd << ")" << std::endl;
 }
 
 void	Webserv::_handleClientEvent( int client_fd, unsigned int events )
 {
+	std::cout << CYAN << "[DEBUG] " NC "-> Client event fd=" << client_fd 
+              << " EPOLLIN=" << !!(events & EPOLLIN)
+              << " EPOLLOUT=" << !!(events & EPOLLOUT)
+              << " EPOLLERR=" << !!(events & EPOLLERR)
+              << " EPOLLHUP=" << !!(events & EPOLLHUP) << std::endl;
+	
 	std::map<int, Client>::iterator it = _clients.find( client_fd );
 	if (it == _clients.end())
 		return ;
@@ -282,6 +328,7 @@ void	Webserv::_processRequest( int client_fd )
 	delete response;
 
 	client.appendToWriteBuffer( serialized );
+	client.setResponsePending( true );
 	_modifyEpollEvents( client_fd, EPOLLIN | EPOLLOUT );
 }
 
@@ -405,6 +452,7 @@ void	Webserv::_handleCgiResponse(int client_fd)
 	std::string serialized = response->getSerializedResponse();
 	delete response;
 	client.appendToWriteBuffer(serialized);
+	client.setResponsePending(true);
 	client.setWaitForCgi(false);
 	client.getCgiOuput().clear();
 	_modifyEpollEvents(client_fd, EPOLLIN | EPOLLOUT);
@@ -439,6 +487,7 @@ void	Webserv::_killCgi(int client_fd, int status_code)
 	std::string serialized = response->getSerializedResponse();
 	delete response;
 	client.appendToWriteBuffer(serialized);
+	client.setResponsePending( true );
 	client.setWaitForCgi(false);
 	client.getCgiOuput().clear();
 	_modifyEpollEvents(client_fd, EPOLLIN | EPOLLOUT);
