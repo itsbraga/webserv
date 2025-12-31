@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 23:25:12 by panther           #+#    #+#             */
-/*   Updated: 2025/12/29 12:32:16 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/31 01:22:58 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,12 @@ Response*	returnHandler( const Request& request, const ServerConfig& server )
 	if (status_code == 301 || status_code == 302 || status_code == 307 || status_code == 308)
 	{
 		std::string return_uri;
+		std::string query_string = extractQueryString(request.getUri());
 		if (it != server.getLocations().end())
-			return_uri = it->second.getReturnUri();
+			return_uri = it->second.getReturnUri() + query_string;
 		else
-			return_uri = server.getReturnUri();
+			return_uri = server.getReturnUri() + query_string;
+		std::cerr << return_uri << std::endl;
 		response->addHeader( "location", return_uri );
 	}
 	return (response);

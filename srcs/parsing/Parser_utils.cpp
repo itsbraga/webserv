@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 12:57:08 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 02:31:46 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,16 @@ bool	Parser::isValidExtension( const std::string& to_compare ) const
 
 bool	Parser::isValidPath( const std::string& to_check) const
 {
+	if (to_check.find("http://") == 0 || to_check.find("https://") == 0)
+	{
+		size_t pos = to_check.find("://");
+		if (pos != std::string::npos)
+		{
+			std::string after_pos = to_check.substr(pos + 3);
+			return (after_pos.find("//") == std::string::npos);
+		}
+	}
+	
 	return (to_check.find("//") == std::string::npos);
 }
 

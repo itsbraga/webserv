@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 18:08:52 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 20:40:45 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/30 23:29:02 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Client
 		time_t			_last_activity;
 		time_t			_request_start;
 		bool			_should_close;
+		bool			_response_pending;
 
 		pid_t			_cgi_pid;
 		int				_cgi_pipe;
@@ -45,7 +46,7 @@ class Client
 	public:
 		Client( int socket_fd, int listener_fd ) : _socket_fd( socket_fd ), _listener_fd( listener_fd ),
 												_last_activity( time( NULL ) ), _request_start( time(NULL) ),
-												_should_close( false ), _cgi_pid(-1), _cgi_pipe(-1),
+												_should_close( false ), _response_pending(false), _cgi_pid(-1), _cgi_pipe(-1),
 												_cgi_start(0), _cgi_last_read(0),  _wait_for_cgi(false) {}
 		~Client() {}
 
@@ -72,6 +73,9 @@ class Client
 		time_t			getCgiStart() 						{ return (_cgi_start); }
 		time_t			getCgiLastRead()					{ return (_cgi_last_read); }
 		bool			getWaitForCgi()						{ return (_wait_for_cgi); }
+
+		bool isResponsePending() const { return _response_pending; }
+    	void setResponsePending(bool pending) { _response_pending = pending; }
 
 
 

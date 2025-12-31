@@ -3,14 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/30 21:46:19 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 00:50:08 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+static bool __checkTimeOutDefine()
+{
+	if (CGI_INACTIVITY_TIMEOUT >= CLIENT_INACTIVITY_TIMEOUT)
+		return (false);
+	else if (CGI_SLOWLORIS_TIMEOUT >= CLIENT_SLOWLORIS_TIMEOUT)
+		return (false);
+	return (true);
+}
 
 static bool	__initUtilities( Webserv& webserv )
 {
@@ -35,6 +44,8 @@ int	main( int argc, char **argv )
 {
 	if (argc > 2)
 		return (err_msg( NULL, "Too many arguments" ), FAILURE);
+	else if (__checkTimeOutDefine() == false)
+		return (err_msg(NULL, "Bad timeout define"), FAILURE);
 	
 	Webserv		webserv;
 	std::string config_path = __loadConfigPath( argc, argv );
