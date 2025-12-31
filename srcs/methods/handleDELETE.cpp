@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleDELETE.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 20:07:51 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 12:54:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/31 00:49:03 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 Response*	handleDELETE( const ServerConfig& server, const Request& request )
 {
 	Location route = server.resolveRoute( request );
-	std::string root = route.getRoot();
 
 	if (!server.isMethodAllowed( route, "DELETE" ))
 		return (new Response( 405, "Method Not Allowed" ));
@@ -23,10 +22,11 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 	std::string	uri = extractPathFromUri( request.getUri() );
 	if (uri == "/")
 		return (new Response( 403, "Forbidden" ));
-	if (!isSafePath( root, uri ))
-		return (new Response( 403, "Forbidden" ));
 
-	std::string	path = root + uri;
+	std::string	path = resolvePath( route, uri );
+
+	if (!isSafePath( route.getRoot(), uri ))
+		return (new Response( 403, "Forbidden" ));
 	if (!pathExists( path ))
 		return (new Response( 404, "Not Found" ));
 	if (isDirectory( path ))
