@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 13:08:55 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 01:21:59 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ std::vector<std::string>	split( const std::string& str, char delimiter )
 {
 	std::vector<std::string>	tokens;
 	std::string					token;
-	std::stringstream			ss(str);
+	std::stringstream			ss( str );
 
-	while (std::getline(ss, token, delimiter))
-		tokens.push_back(token);
+	while (std::getline( ss, token, delimiter ))
+		tokens.push_back( token );
 	return (tokens);
 }
 
