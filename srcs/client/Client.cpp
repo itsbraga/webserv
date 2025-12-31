@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 22:55:02 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/30 22:58:21 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,20 +79,11 @@ void	Client::appendToWriteBuffer( const std::string& data )
 	_write_buffer.append( data );
 }
 
-bool	Client::hasDataToSend() const
-{
-	return (!_write_buffer.empty());
-}
-
 bool	Client::sendData()
 {
 	if (_write_buffer.empty())
 		return (true);
 
-	// std::cerr << BOLD RED "[DEBUG] fd=" << _socket_fd 
-	// 		<< " write_buffer size=" << _write_buffer.size() 
-	// 		<< " first 100 chars: " << _write_buffer.substr(0, 100) << NC << std::endl;
-	
 	ssize_t sent = ::send( _socket_fd, _write_buffer.c_str(), _write_buffer.size(), 0 );
 	if (sent > 0)
 		_write_buffer.erase( 0, sent );

@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/30 21:46:19 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 00:23:43 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	main( int argc, char **argv )
 	try {
 		Parser parser( config_path );
 		parser.bufferTokenize();
-		std::cout << parser << std::endl;
+		// std::cout << parser << std::endl;
 		parser.parse();
 		std::cout << BOLD P_GREEN "PARSING OK\n" NC << std::endl;
 		parser.createAllObjects( webserv );

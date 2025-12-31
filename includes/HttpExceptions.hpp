@@ -6,7 +6,7 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 02:08:19 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/24 18:39:20 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 01:53:15 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,12 @@ class MethodNotAllowedException : public HttpException
 {
 	public:
 		MethodNotAllowedException() : HttpException( 405, "Method Not Allowed" ) {}
+};
+
+class GoneException : public HttpException
+{
+	public:
+		GoneException() : HttpException( 410, "Gone" ) {}
 };
 
 class LengthRequiredException : public HttpException
