@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseInit.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:51:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/27 20:42:35 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/31 01:51:16 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,14 @@ void	Response::initBuilders()
 	Response::_builders[201] = &Response::Created;
 	Response::_builders[204] = &Response::NoContent;
 	Response::_builders[301] = &Response::MovedPermanently;
+	Response::_builders[302] = &Response::Found;
+	Response::_builders[307] = &Response::TemporaryRedirect;
+	Response::_builders[308] = &Response::PermanentRedirect;
 	Response::_builders[400] = &Response::BadRequest;
 	Response::_builders[403] = &Response::Forbidden;
 	Response::_builders[404] = &Response::NotFound;
 	Response::_builders[405] = &Response::MethodNotAllowed;
+	Response::_builders[410] = &Response::Gone;
 	Response::_builders[411] = &Response::LengthRequired;
 	Response::_builders[413] = &Response::PayloadTooLarge;
 	Response::_builders[414] = &Response::URITooLong;

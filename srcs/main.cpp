@@ -6,7 +6,7 @@
 /*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:53:10 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/31 00:50:08 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/31 02:47:41 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	main( int argc, char **argv )
 	try {
 		Parser parser( config_path );
 		parser.bufferTokenize();
-		std::cout << parser << std::endl;
+		// std::cout << parser << std::endl;
 		parser.parse();
 		std::cout << BOLD P_GREEN "PARSING OK\n" NC << std::endl;
 		parser.createAllObjects( webserv );

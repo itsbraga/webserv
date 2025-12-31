@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Listener.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/25 18:44:33 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/29 18:24:18 by pmateo           ###   ########.fr       */
+/*   Updated: 2025/12/31 00:40:42 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,13 @@ bool	Listener::createSocketFd()
 	socket_fd = ::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if (socket_fd == -1)
 		return (err_msg( "socket()", strerror( errno ) ), false);
-	else
+	
+	if (!Webserv::setCloseOnExec( socket_fd ))
 	{
-		if (Webserv::setCloseOnExec(socket_fd) == false)
-		{
-			::close(socket_fd);
-			return (false);
-		}
-		else
-			return (true);
+		::close( socket_fd );
+		return (false);
 	}
+	return (true);
 }
 
 bool	Listener::configureSocket()
@@ -34,14 +31,14 @@ bool	Listener::configureSocket()
 	int opt = 1;
 
 	if (setsockopt( socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof( opt ) ) == -1)
-		return (err_msg( "setsockopt()", strerror( errno ) ), false);
+		return (err_msg( "setsockopt(SO_REUSEADDR)", strerror( errno ) ), false);
 	else
 		return (true);
 }
 
 bool	Listener::bindAndListen()
 {
-	std::memset( &addr, 0, sizeof(addr) );
+	std::memset( &addr, 0, sizeof( addr ) );
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl( INADDR_ANY );
 	addr.sin_port = htons( port );
@@ -89,20 +86,9 @@ int		Listener::acceptClient()
 {
 	int client_fd = ::accept( socket_fd, NULL, NULL );
 	if (client_fd == -1)
-	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			return (-1);
-		err_msg( "accept()", strerror( errno ) );
 		return (-1);
-	}
 
-	if(!Webserv::setCloseOnExec(client_fd))
-	{
-		::close( client_fd );
-		return (-1);
-	}
-
-	if (!setNonBlocking( client_fd ))
+	if(!Webserv::setCloseOnExec( client_fd ) || !setNonBlocking( client_fd ))
 	{
 		::close( client_fd );
 		return (-1);
