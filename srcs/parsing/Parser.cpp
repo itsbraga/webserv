@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 21:37:42 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/30 14:39:27 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 03:26:11 by pmateo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,7 +304,7 @@ void	Parser::parse()
 			case K_CLIENTMAXSIZEBODY :
 				if (!isInContext( SERVER_BLOCK ))
 					throw SyntaxErrorException( "The keyword client_max_body_size is only expected in a SERVER_BLOCK or a LOCATION_BLOCK context" );
-				else if (peekType( current, 1 ) != V_STR)
+				else if (peekType( current, 1 ) != V_STR && peekType( current, 1) != V_NUMBER)
 					throw SyntaxErrorException( "The keyword client_max_body_size need to be followed by a STR token" );
 				else if (!isValidBodySize( (current + 1)->getValue() ))
 					throw ConfigurationErrorException( "Value for client_max_body_size isn't valid" );
