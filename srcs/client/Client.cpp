@@ -6,11 +6,31 @@
 /*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 19:24:31 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 22:58:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2025/12/31 05:58:01 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+
+/*
+	---------------------- [ Object manipulation ] -----------------------
+*/
+Client::Client( int socket_fd, int listener_fd ) 
+{
+	_socket_fd = socket_fd;
+	_listener_fd = listener_fd;
+	_last_activity = time(NULL);
+	_request_start = time(NULL);
+	_should_close = false;
+	_response_pending = false;
+	_cgi_pid = -1;
+	_cgi_pipe = -1;
+	_cgi_start = 0;
+	_cgi_last_read = 0;
+	_wait_for_cgi = false;
+}
+
+Client::~Client() {}
 
 /*
 	------------------------ [ Private methods ] -------------------------
@@ -93,12 +113,12 @@ bool	Client::sendData()
 
 void	Client::updateLastActivity()
 {
-	_last_activity = time( NULL );
+	_last_activity = time(NULL);
 }
 
 void	Client::setRequestStartTime()
 {
-	_request_start = time( NULL );
+	_request_start = time(NULL);
 }
 
 bool	Client::hasCompleteRequest() const
@@ -138,7 +158,7 @@ void	Client::clearWriteBuffer()
 
 bool	Client::isTimedOut( int timeout ) const
 {
-	return ((time( NULL ) - _last_activity) > timeout);
+	return ((time(NULL) - _last_activity) > timeout);
 }
 
 bool	Client::isRequestTimedOut( int timeout ) const

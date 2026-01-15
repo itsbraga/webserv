@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 04:56:56 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/29 12:17:02 by art3mis          ###   ########.fr       */
+/*   Updated: 2025/12/31 05:50:02 by annabrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ class SyntaxErrorException : public std::exception
 		explicit SyntaxErrorException( const std::string& detail ) : _detail( "Syntax Error: " + detail ) {}
 		virtual ~SyntaxErrorException() throw() {}
 
-		virtual const char		*what() const throw()
-		{ return (_detail.c_str()); }	
+		virtual const char	*what() const throw()	{ return (_detail.c_str()); }	
 };
 
 class ConfigurationErrorException : public std::exception
@@ -56,8 +55,7 @@ class ConfigurationErrorException : public std::exception
 		explicit ConfigurationErrorException( const std::string& detail ) : _detail( "Configuration Error: " + detail ) {}
 		virtual ~ConfigurationErrorException() throw() {}
 
-		virtual const char		*what() const throw()
-		{ return (_detail.c_str()); }
+		virtual const char	*what() const throw()	{ return (_detail.c_str()); }
 };
 
 /**************************\
