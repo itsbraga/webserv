@@ -25,7 +25,7 @@ Response*	handleDELETE( const ServerConfig& server, const Request& request )
 
 	std::string	path = resolvePath( route, uri );
 
-	if (!isSafePath( route.getRoot(), uri ))
+	if (path.empty())
 		return (new Response( 403, "Forbidden" ));
 	if (!pathExists( path ))
 		return (new Response( 404, "Not Found" ));

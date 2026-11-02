@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 23:00:45 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/30 19:10:21 by annabrag         ###   ########.fr       */
+/*   Updated: 2026/11/01 20:06:38 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,17 @@ std::string		resolvePath( Location& route, const std::string& uri )
 	if (uri == "/")
 		return (server_root + "/" + route.getIndex());
 
-	std::string path;
-	if (route.getUri() != "/")
+	std::string base = server_root;
+	std::string suffix = uri;
+
+	if (route.getUri() != "/" && !route.getRoot().empty())
 	{
-		if (route.getRoot().empty())
-			path = server_root + uri;
-		else
-			path = root + uri.substr(route.getUri().size()); // alias behaviour
+		base = root;									// alias behaviour
+		suffix = uri.substr( route.getUri().size() );
 	}
-	else
-		path = server_root + uri;
-	return (path);
+	if (!isSafePath( base, suffix ))				// the appended part must never climb above base
+		return ("");
+	return (base + suffix);
 }
 
 bool	isRegularFile( const std::string& path )

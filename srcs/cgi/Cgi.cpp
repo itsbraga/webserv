@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmateo <pmateo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 20:02:54 by pmateo            #+#    #+#             */
-/*   Updated: 2025/12/31 01:03:57 by pmateo           ###   ########.fr       */
+/*   Updated: 2026/11/01 20:04:02 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ Response*	cgiHandler( int client_fd, const Request& request, const ServerConfig&
 	if (pos != std::string::npos)
 		clean_uri = clean_uri.substr( 0, pos );
 
-	std::string path = root + clean_uri;
+	if (!isSafePath( root, clean_uri ))
+		return (new Response( 403, "Forbidden" ));
 
-	std::cerr << RED << "PATH = " << NC << path << std::endl;
+	std::string path = root + clean_uri;
+	// std::cerr << RED << "PATH = " << NC << path << std::endl;
 
 	struct stat st;
 	if (stat( path.c_str(), &st ) != 0)

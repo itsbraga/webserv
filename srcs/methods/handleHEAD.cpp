@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleHEAD.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: art3mis <art3mis@student.42.fr>            +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:38:47 by annabrag          #+#    #+#             */
-/*   Updated: 2025/12/29 12:53:38 by art3mis          ###   ########.fr       */
+/*   Updated: 2026/11/01 20:05:35 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,10 @@ Response*	handleHEAD( const ServerConfig& server, const Request& request )
 
 	std::string	uri = extractPathFromUri( request.getUri() );
 	std::string	path = resolvePath( route, uri );
-
+	if (path.empty())
+		return (new Response( 403, "Forbidden" ));
+	// std::cerr << RED << "PATH = " << NC << path << std::endl;
+	
 	if (!pathExists( path ))
 		return (new Response( 404, "Not Found" ));
 	if (!isReadable( path ))

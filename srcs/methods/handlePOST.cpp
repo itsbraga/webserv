@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handlePOST.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: annabrag <annabrag@student.42.fr>          +#+  +:+       +#+        */
+/*   By: panther <panther@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 00:00:23 by art3mis           #+#    #+#             */
-/*   Updated: 2025/12/30 22:55:42 by annabrag         ###   ########.fr       */
+/*   Updated: 2026/11/01 20:05:12 by panther          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,9 @@ Response*	handlePOST( const ServerConfig& server, const Request& request )
 
 	std::string	uri = extractPathFromUri( request.getUri() );
 	std::string path = resolvePath( route, uri );
-
-	std::cerr << RED << "PATH = " << NC << path << std::endl;
-
-	if (!isSafePath( route.getRoot(), uri ))
+	if (path.empty())
 		return (new Response( 403, "Forbidden" ));
+	// std::cerr << RED << "PATH = " << NC << path << std::endl;
 
 	std::string ct_value = request.getHeaderValue( "content-type" );
 	std::string body = request.getBody();
